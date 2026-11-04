@@ -25,7 +25,17 @@ export function validateBackupFileStructure(parsedData) {
   }
 
   // Validar que las colecciones presentes sean arreglos
-  const expectedCollections = ['water_sources', 'pluviometers', 'rainfall_records', 'sites', 'parcels', 'crops', 'observations'];
+  const expectedCollections = [
+    'water_sources',
+    'water_measurements',
+    'water_alerts',
+    'pluviometers',
+    'rainfall_records',
+    'sites',
+    'parcels',
+    'crops',
+    'observations'
+  ];
   const presentCollections = Object.keys(data);
 
   const invalidCollections = presentCollections.filter(c => expectedCollections.includes(c) && !Array.isArray(data[c]));

@@ -1,9 +1,11 @@
 /**
- * Servicio de Importación de Respaldos JSON para PAnA V2 AGUA
+ * Servicio de Importación de Respaldos JSON para HIDROTERRA
  */
 
 import { validateBackupFileStructure } from './file-validation.js';
 import { waterSourceRepository } from '../database/repositories/water-source.repository.js';
+import { waterMeasurementRepository } from '../database/repositories/water-measurement.repository.js';
+import { waterAlertRepository } from '../database/repositories/water-alert.repository.js';
 import { pluviometerRepository } from '../database/repositories/pluviometer.repository.js';
 import { rainfallRepository } from '../database/repositories/rainfall.repository.js';
 import { siteRepository } from '../database/repositories/site.repository.js';
@@ -50,6 +52,8 @@ export class JsonImportService {
     // Obtener registros actuales para calcular qué es nuevo y qué es actualización
     const [
       curSources,
+      curMeasurements,
+      curAlerts,
       curPluvs,
       curRain,
       curSites,
@@ -58,6 +62,8 @@ export class JsonImportService {
       curObs
     ] = await Promise.all([
       waterSourceRepository.getAll(),
+      waterMeasurementRepository.getAll(),
+      waterAlertRepository.getAll(),
       pluviometerRepository.getAll(),
       rainfallRepository.getAll(),
       siteRepository.getAll(),
@@ -89,6 +95,8 @@ export class JsonImportService {
 
     const diff = {
       water_sources: buildEntityDiff(data.water_sources, curSources),
+      water_measurements: buildEntityDiff(data.water_measurements, curMeasurements),
+      water_alerts: buildEntityDiff(data.water_alerts, curAlerts),
       pluviometers: buildEntityDiff(data.pluviometers, curPluvs),
       rainfall_records: buildEntityDiff(data.rainfall_records, curRain),
       sites: buildEntityDiff(data.sites, curSites),
@@ -119,6 +127,8 @@ export class JsonImportService {
         // Limpiar almacenes primero
         await Promise.all([
           waterSourceRepository.clear(),
+          waterMeasurementRepository.clear(),
+          waterAlertRepository.clear(),
           pluviometerRepository.clear(),
           rainfallRepository.clear(),
           siteRepository.clear(),
@@ -132,6 +142,8 @@ export class JsonImportService {
       const promises = [];
       if (data.sites && data.sites.length > 0) promises.push(siteRepository.saveBatch(data.sites));
       if (data.water_sources && data.water_sources.length > 0) promises.push(waterSourceRepository.saveBatch(data.water_sources));
+      if (data.water_measurements && data.water_measurements.length > 0) promises.push(waterMeasurementRepository.saveBatch(data.water_measurements));
+      if (data.water_alerts && data.water_alerts.length > 0) promises.push(waterAlertRepository.saveBatch(data.water_alerts));
       if (data.pluviometers && data.pluviometers.length > 0) promises.push(pluviometerRepository.saveBatch(data.pluviometers));
       if (data.rainfall_records && data.rainfall_records.length > 0) promises.push(rainfallRepository.saveBatch(data.rainfall_records));
       if (data.parcels && data.parcels.length > 0) promises.push(parcelRepository.saveBatch(data.parcels));

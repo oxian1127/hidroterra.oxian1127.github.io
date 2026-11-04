@@ -120,9 +120,9 @@ export class MapService {
   }
 
   /**
-   * Crea un icono SVG personalizado de alta resolución para Leaflet
+   * Crea un icono SVG personalizado de alta resolución para Leaflet diferenciando tipos de infraestructura y estado
    */
-  _createIcon(type, status = '') {
+  _createIcon(type, status = '', subType = '') {
     let color = '#0077b6'; // Default azul agua
     let symbol = '<i class="fa-solid fa-droplet"></i>';
     let label = 'Fuente';
@@ -134,14 +134,32 @@ export class MapService {
     } else if (type === 'site') {
       color = '#b08968';
       symbol = '<i class="fa-solid fa-house-chimney"></i>';
-      label = 'Sitio';
+      label = 'Comunidad';
     } else if (type === 'parcel') {
       color = '#2d6a4f';
       symbol = '<i class="fa-solid fa-seedling"></i>';
       label = 'Parcela';
     } else if (type === 'water_source') {
-      if (status === 'seca') color = '#d90429';
-      else if (status === 'limitada') color = '#e07a5f';
+      // Icono según subtipo de infraestructura hídrica
+      if (subType === 'reservorio' || subType === 'jaguey') {
+        symbol = '<i class="fa-solid fa-water"></i>';
+        label = subType === 'jaguey' ? 'Jagüey' : 'Reservorio';
+      } else if (subType === 'tanque' || subType === 'almacenamiento') {
+        symbol = '<i class="fa-solid fa-database"></i>';
+        label = 'Tanque / Almacenamiento';
+      } else if (subType === 'captacion') {
+        symbol = '<i class="fa-solid fa-cloud-showers-water"></i>';
+        label = 'Punto de Captación';
+      } else if (subType === 'pozo') {
+        symbol = '<i class="fa-solid fa-arrow-up-from-ground-water"></i>';
+        label = 'Pozo';
+      }
+
+      // Color según estado de disponibilidad hídrica o estado observado
+      if (status === 'critica' || status === 'seca') color = '#d90429';
+      else if (status === 'baja' || status === 'limitada') color = '#e07a5f';
+      else if (status === 'moderada') color = '#e9c46a';
+      else if (status === 'alta' || status === 'disponible') color = '#0077b6';
       else if (status === 'contaminada') color = '#6c757d';
       else color = '#0096c7';
     }
@@ -170,28 +188,57 @@ export class MapService {
 
     const allMarkers = [];
 
-    // Fuentes de agua
+    // Fuentes de agua (incluyendo reservorios, tanques, captación, almacenamiento y mediciones georreferenciadas)
     waterSources.forEach(source => {
       if (source.latitude !== null && source.longitude !== null && source.active !== false) {
-        const icon = this._createIcon('water_source', source.status);
+        const availStatus = source.availabilityStatus || source.status;
+        const icon = this._createIcon('water_source', availStatus, source.type);
         const marker = window.L.marker([source.latitude, source.longitude], { icon });
+
+        const latestMeas = source.latestMeasurement || null;
+        const measCount = source.measurementsCount || 0;
 
         marker.bindPopup(`
           <div class="map-popup-card">
-            <span class="popup-tag water">Fuente de Agua</span>
+            <span class="popup-tag water">${escapeHtml(source.typeLabel || 'Fuente Hídrica')}</span>
             <h4>${escapeHtml(source.name)}</h4>
             <p><strong>Código:</strong> ${escapeHtml(source.code)}</p>
-            <p><strong>Tipo:</strong> ${escapeHtml(source.type)}</p>
-            <p><strong>Estado:</strong> <span class="status-indicator status-${source.status}">${escapeHtml(source.status)}</span></p>
-            <p><strong>Uso:</strong> ${escapeHtml(source.mainUse)}</p>
-            <button class="btn btn-sm btn-outline-primary popup-action-btn" data-action="view-source" data-id="${source.id}">Ver Ficha Completa</button>
+            ${source.siteName ? `<p><strong>Comunidad:</strong> ${escapeHtml(source.siteName)} ${source.municipality && source.municipality !== '—' ? `(${escapeHtml(source.municipality)})` : ''}</p>` : ''}
+            <p><strong>Estado Observado:</strong> <span class="status-indicator status-${source.status}">${escapeHtml(source.status)}</span></p>
+            <p><strong>Disponibilidad Hídrica:</strong> <strong>${escapeHtml(source.availabilityStatus ? source.availabilityStatus.toUpperCase() : 'SIN MEDIR')}</strong></p>
+            ${latestMeas ? `
+              <p><strong>Última Medición:</strong> ${latestMeas.waterLevel} ${escapeHtml(latestMeas.unit)} ${latestMeas.availableCapacityPct !== null ? `(${latestMeas.availableCapacityPct}%)` : ''}</p>
+            ` : ''}
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+              <button class="btn btn-sm btn-primary popup-action-btn" data-action="view-tech-sheet" data-id="${source.id}">
+                <i class="fa-solid fa-file-lines"></i> Ficha Técnica de Disponibilidad
+              </button>
+              <button class="btn btn-sm btn-outline-primary popup-action-btn" data-action="view-history" data-id="${source.id}">
+                <i class="fa-solid fa-chart-line"></i> Historial de Mediciones (${measCount})
+              </button>
+              <button class="btn btn-sm btn-outline-primary popup-action-btn" data-action="view-source" data-id="${source.id}">
+                <i class="fa-solid fa-droplet"></i> Ver en Inventario de Fuentes
+              </button>
+            </div>
           </div>
         `);
 
         if (onMarkerClick) {
           marker.on('popupopen', (e) => {
-            const btn = e.popup.getElement().querySelector('.popup-action-btn');
-            if (btn) btn.addEventListener('click', () => onMarkerClick('water-sources', source.id));
+            const popupEl = e.popup.getElement();
+            if (!popupEl) return;
+            popupEl.querySelectorAll('.popup-action-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                if (action === 'view-tech-sheet') {
+                  onMarkerClick('water-availability', source.id, { openSheet: true });
+                } else if (action === 'view-history') {
+                  onMarkerClick('water-availability', source.id, { openSheet: false });
+                } else {
+                  onMarkerClick('water-sources', source.id, { openDetails: true });
+                }
+              });
+            });
           });
         }
 

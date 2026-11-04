@@ -1,10 +1,11 @@
 /**
- * Configuración de la base de datos IndexedDB para PAnA V2 AGUA
+ * Configuración de la base de datos IndexedDB para HIDROTERRA
+ * Conserva el nombre físico 'pana_v2_agua_db' para garantizar compatibilidad y cero pérdida de datos previos.
  */
 
 export const DB_CONFIG = {
   name: 'pana_v2_agua_db',
-  version: 2,
+  version: 3,
 
   stores: {
     water_sources: {
@@ -15,6 +16,29 @@ export const DB_CONFIG = {
         { name: 'siteId', keyPath: 'siteId', unique: false },
         { name: 'status', keyPath: 'status', unique: false },
         { name: 'type', keyPath: 'type', unique: false },
+        { name: 'createdAt', keyPath: 'createdAt', unique: false }
+      ]
+    },
+
+    water_measurements: {
+      name: 'water_measurements',
+      keyPath: 'id',
+      indexes: [
+        { name: 'sourceId', keyPath: 'sourceId', unique: false },
+        { name: 'measuredAt', keyPath: 'measuredAt', unique: false },
+        { name: 'createdAt', keyPath: 'createdAt', unique: false },
+        { name: 'status', keyPath: 'status', unique: false }
+      ]
+    },
+
+    water_alerts: {
+      name: 'water_alerts',
+      keyPath: 'id',
+      indexes: [
+        { name: 'ruleCode', keyPath: 'ruleCode', unique: false },
+        { name: 'status', keyPath: 'status', unique: false },
+        { name: 'priority', keyPath: 'priority', unique: false },
+        { name: 'relatedEntityId', keyPath: 'relatedEntityId', unique: false },
         { name: 'createdAt', keyPath: 'createdAt', unique: false }
       ]
     },
@@ -96,6 +120,16 @@ export const DB_CONFIG = {
         { name: 'coordKey', keyPath: 'coordKey', unique: true },
         { name: 'fetchedAt', keyPath: 'fetchedAt', unique: false },
         { name: 'entityId', keyPath: 'entityId', unique: false }
+      ]
+    },
+
+    sync_queue: {
+      name: 'sync_queue',
+      keyPath: 'id',
+      indexes: [
+        { name: 'entityName', keyPath: 'entityName', unique: false },
+        { name: 'status', keyPath: 'status', unique: false },
+        { name: 'createdAt', keyPath: 'createdAt', unique: false }
       ]
     }
   }

@@ -284,6 +284,15 @@ export function buildPrecipitationComparison(weatherRecord, rainfallRecords = []
   );
   const dryDaysCount7d = days.filter(d => (safeNumber(d.precipitationSumMm, 0) || 0) < 1.0).length;
 
+  // Diferencia neta entre precipitación observada reciente (últimos 7d) y pronosticada (próximos 7d)
+  const diffObservedVsForecast7dMm = Number((forecasted7dMm - observedLast7dMm).toFixed(1));
+  let precipitationTrendLabel = 'Comportamiento estable';
+  if (forecasted7dMm > observedLast7dMm + 15) {
+    precipitationTrendLabel = 'Tendencia al incremento de lluvias en los próximos 7 días';
+  } else if (forecasted7dMm + 15 < observedLast7dMm) {
+    precipitationTrendLabel = 'Tendencia a la disminución de lluvias respecto a la semana previa';
+  }
+
   // Serie para tabla y gráfico comparativo (fechas recientes con observación + 7 días de pronóstico)
   const recentObservedDates = Object.keys(observedByDate).sort().slice(-5);
   const forecastDates = days.map(d => d.date);
@@ -319,6 +328,8 @@ export function buildPrecipitationComparison(weatherRecord, rainfallRecords = []
     observedLast30dMm,
     estimatedNext24hMm,
     forecasted7dMm,
+    diffObservedVsForecast7dMm,
+    precipitationTrendLabel,
     dryDaysCount7d,
     timeline
   };

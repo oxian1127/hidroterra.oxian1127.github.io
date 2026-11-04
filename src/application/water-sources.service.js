@@ -4,6 +4,8 @@
 
 import { WaterSource } from '../domain/models/WaterSource.js';
 import { waterSourceRepository } from '../infrastructure/database/repositories/water-source.repository.js';
+import { waterMeasurementRepository } from '../infrastructure/database/repositories/water-measurement.repository.js';
+import { assertCanDeleteWaterSource } from '../domain/rules/data-integrity.rules.js';
 import { ValidationError } from '../core/errors.js';
 
 export class WaterSourcesService {
@@ -78,6 +80,8 @@ export class WaterSourcesService {
   }
 
   static async delete(id) {
+    const measurements = await waterMeasurementRepository.getBySourceId(id);
+    assertCanDeleteWaterSource(id, measurements);
     return await waterSourceRepository.delete(id);
   }
 }

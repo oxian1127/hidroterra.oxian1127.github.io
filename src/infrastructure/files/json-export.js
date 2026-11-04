@@ -1,10 +1,12 @@
 /**
- * Servicio de exportación de datos a JSON y CSV para PAnA V2 AGUA
+ * Servicio de exportación de datos a JSON y CSV para HIDROTERRA
  */
 
 import { APP_CONFIG } from '../../config/app.config.js';
 import { nowIso, getDayKey } from '../../core/date-utils.js';
 import { waterSourceRepository } from '../database/repositories/water-source.repository.js';
+import { waterMeasurementRepository } from '../database/repositories/water-measurement.repository.js';
+import { waterAlertRepository } from '../database/repositories/water-alert.repository.js';
 import { pluviometerRepository } from '../database/repositories/pluviometer.repository.js';
 import { rainfallRepository } from '../database/repositories/rainfall.repository.js';
 import { siteRepository } from '../database/repositories/site.repository.js';
@@ -21,6 +23,8 @@ export class JsonExportService {
   static async buildFullBackupPayload() {
     const [
       water_sources,
+      water_measurements,
+      water_alerts,
       pluviometers,
       rainfall_records,
       sites,
@@ -29,6 +33,8 @@ export class JsonExportService {
       observations
     ] = await Promise.all([
       waterSourceRepository.getAll(),
+      waterMeasurementRepository.getAll(),
+      waterAlertRepository.getAll(),
       pluviometerRepository.getAll(),
       rainfallRepository.getAll(),
       siteRepository.getAll(),
@@ -49,6 +55,8 @@ export class JsonExportService {
         region: APP_CONFIG.geo.regionName,
         counts: {
           water_sources: water_sources.length,
+          water_measurements: water_measurements.length,
+          water_alerts: water_alerts.length,
           pluviometers: pluviometers.length,
           rainfall_records: rainfall_records.length,
           sites: sites.length,
@@ -59,6 +67,8 @@ export class JsonExportService {
       },
       data: {
         water_sources,
+        water_measurements,
+        water_alerts,
         pluviometers,
         rainfall_records,
         sites,
@@ -77,7 +87,7 @@ export class JsonExportService {
   static async exportFullBackup() {
     const payload = await this.buildFullBackupPayload();
     const dateStamp = getDayKey(payload.metadata.exportedAt);
-    const filename = `pana-v2-agua-respaldo-${dateStamp}.json`;
+    const filename = `hidroterra-respaldo-${dateStamp}.json`;
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8;' });
     this._triggerDownload(blob, filename);
@@ -100,7 +110,7 @@ export class JsonExportService {
   static async exportSingleEntity(entityName, records) {
     const exportedAt = nowIso();
     const dateStamp = getDayKey(exportedAt);
-    const filename = `pana-${entityName}-${dateStamp}.json`;
+    const filename = `hidroterra-${entityName}-${dateStamp}.json`;
 
     const payload = {
       metadata: {

@@ -46,3 +46,15 @@ export function assertCanDeleteParcel(parcelId, crops = []) {
   }
   return true;
 }
+
+export function assertCanDeleteWaterSource(sourceId, waterMeasurements = []) {
+  if (!waterMeasurements || !Array.isArray(waterMeasurements)) return true;
+  const count = waterMeasurements.filter(m => m.sourceId === sourceId).length;
+  if (count > 0) {
+    throw new IntegrityError(
+      `No se puede eliminar físicamente la fuente hídrica porque tiene ${count} mediciones de disponibilidad vinculadas. Para conservar la trazabilidad histórica, utilice la opción de desactivar la fuente.`,
+      { sourceId, waterMeasurementsCount: count }
+    );
+  }
+  return true;
+}

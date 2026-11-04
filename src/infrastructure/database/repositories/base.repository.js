@@ -5,6 +5,7 @@
 import { idb } from '../indexeddb.js';
 import { events } from '../../../core/events.js';
 import { nowIso } from '../../../core/date-utils.js';
+import { syncAdapter } from '../../sync/sync-adapter.js';
 
 export class BaseRepository {
   /**
@@ -27,10 +28,12 @@ export class BaseRepository {
   async create(data) {
     const item = {
       ...data,
+      syncStatus: data.syncStatus || 'pending',
       createdAt: data.createdAt || nowIso(),
       updatedAt: data.updatedAt || nowIso()
     };
     await idb.put(this.storeName, item);
+    await syncAdapter.enqueueOperation(this.entityName, 'create', item.id, item);
     events.emit(`${this.entityName}:created`, item);
     events.emit('data:changed', { entity: this.entityName, action: 'create', id: item.id });
     return item;
@@ -42,9 +45,11 @@ export class BaseRepository {
       ...existing,
       ...data,
       id,
+      syncStatus: 'pending',
       updatedAt: nowIso()
     };
     await idb.put(this.storeName, updated);
+    await syncAdapter.enqueueOperation(this.entityName, 'update', id, updated);
     events.emit(`${this.entityName}:updated`, updated);
     events.emit('data:changed', { entity: this.entityName, action: 'update', id });
     return updated;
@@ -53,6 +58,7 @@ export class BaseRepository {
   async delete(id) {
     const existing = await this.getById(id);
     await idb.delete(this.storeName, id);
+    await syncAdapter.enqueueOperation(this.entityName, 'delete', id, existing || { id });
     events.emit(`${this.entityName}:deleted`, { id, item: existing });
     events.emit('data:changed', { entity: this.entityName, action: 'delete', id });
     return true;

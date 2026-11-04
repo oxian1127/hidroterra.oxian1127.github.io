@@ -33,7 +33,7 @@ class IndexedDBAdapter {
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         try {
-          runMigrations(db, event.oldVersion, event.newVersion);
+          runMigrations(db, event.oldVersion, event.newVersion, event.target.transaction);
         } catch (mErr) {
           logger.error('Error durante la migración de esquema', mErr);
           reject(new StorageError('Fallo al migrar esquema de base de datos local.', mErr));

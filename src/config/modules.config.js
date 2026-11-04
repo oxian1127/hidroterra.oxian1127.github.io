@@ -1,5 +1,5 @@
 /**
- * Configuración de módulos y navegación de PAnA V2 AGUA
+ * Configuración de módulos y navegación de HIDROTERRA
  */
 
 export const MODULES_CONFIG = [
@@ -7,13 +7,31 @@ export const MODULES_CONFIG = [
     id: 'dashboard',
     label: 'Inicio / Panel',
     icon: 'dashboard',
-    description: 'Indicadores principales, precipitación acumulada y accesos rápidos'
+    description: 'Indicadores principales, disponibilidad hídrica, alertas y accesos rápidos'
   },
   {
     id: 'water-sources',
     label: 'Fuentes de Agua',
     icon: 'water_drop',
-    description: 'Inventario de pozos, arroyos, ríos, manantiales y reservorios'
+    description: 'Inventario de pozos, arroyos, ríos, manantiales, reservorios y tanques'
+  },
+  {
+    id: 'water-availability',
+    label: 'Disponibilidad Hídrica',
+    icon: 'water_level',
+    description: 'Monitoreo periódico de niveles, volúmenes, capacidad y fichas técnicas de disponibilidad'
+  },
+  {
+    id: 'water-tools',
+    label: 'Herramientas Hídricas',
+    icon: 'calculator',
+    description: 'Calculadoras de captación de agua lluvia, geometrías de almacenamiento, balance hídrico y autonomía'
+  },
+  {
+    id: 'water-alerts',
+    label: 'Alertas Hídricas',
+    icon: 'alerts',
+    description: 'Sistema de alertas tempranas configurables por niveles críticos, déficit y pronóstico'
   },
   {
     id: 'pluviometers',
@@ -37,7 +55,7 @@ export const MODULES_CONFIG = [
     id: 'map',
     label: 'Mapa Territorial',
     icon: 'map',
-    description: 'Visualización geográfica de fuentes, equipos y sitios'
+    description: 'Visualización geográfica de fuentes, reservorios, mediciones, equipos y sitios'
   },
   {
     id: 'sites',
@@ -61,7 +79,7 @@ export const MODULES_CONFIG = [
     id: 'reports',
     label: 'Reportes y Exportación',
     icon: 'bar_chart',
-    description: 'Balances acumulados, comparativas, CSV y formatos imprimibles'
+    description: 'Balances acumulados, disponibilidad territorial, CSV y formatos imprimibles'
   },
   {
     id: 'settings',

@@ -20,6 +20,11 @@
   align-items: end;
 }
 
+.climate-selector-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .climate-manual-coords-row {
   display: flex;
   flex-wrap: wrap;
@@ -48,9 +53,14 @@
 
 .climate-current-grid {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) 2fr;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr);
   gap: var(--spacing-5);
   align-items: center;
+}
+
+.climate-current-grid > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .climate-main-temp-box {
@@ -61,6 +71,13 @@
   background: linear-gradient(135deg, var(--color-blue-50) 0%, var(--color-green-50) 100%);
   border: 1px solid var(--color-neutral-200);
   border-radius: 0.85rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.climate-main-temp-box > div {
+  min-width: 0;
+  flex: 1;
 }
 
 .climate-condition-icon {
@@ -92,8 +109,13 @@
 
 .climate-variables-subgrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
   gap: var(--spacing-3);
+}
+
+.climate-variables-subgrid > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .climate-stat-item {
@@ -104,6 +126,14 @@
   background-color: var(--color-neutral-50);
   border: 1px solid var(--color-neutral-200);
   border-radius: var(--radius-md);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.climate-stat-item > div {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .climate-stat-icon {
@@ -123,11 +153,18 @@
   display: block;
   font-size: 0.72rem;
   color: var(--color-neutral-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .climate-stat-val {
+  display: block;
   font-size: var(--font-size-sm);
   color: var(--color-neutral-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Tira interactiva de 7 días de pronóstico */

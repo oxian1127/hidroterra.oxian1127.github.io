@@ -180,6 +180,13 @@ class WeatherCacheRepository {
   }
 
   /**
+   * Alias compatible para consultar todas las ubicaciones en caché
+   */
+  async getAllCachedLocations() {
+    return this.getAllCached();
+  }
+
+  /**
    * Guarda la última ubicación consultada por el usuario para restaurarla al abrir el módulo
    */
   saveLastLocation(locationObj) {

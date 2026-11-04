@@ -1,14 +1,14 @@
 /**
- * Configuración general de la aplicación PAnA V2 AGUA
- * Plataforma de monitoreo hídrico rural para Montes de María
+ * Configuración general de la aplicación HIDROTERRA
+ * Plataforma de monitoreo hídrico rural, gestión territorial y análisis agroclimático
  */
 
 export const APP_CONFIG = {
   name: 'HIDROTERRA',
-  fullName: 'Plataforma de Monitoreo Hídrico Rural — Montes de María',
+  fullName: 'Plataforma de Monitoreo Hídrico Rural y Gestión Territorial — Montes de María',
   version: '2.0.0',
-  schemaVersion: '2.0',
-  description: 'Plataforma HIDROTERRA para registro, seguimiento y consulta del recurso hídrico y precipitaciones.',
+  schemaVersion: '3.0',
+  description: 'Plataforma HIDROTERRA para registro, seguimiento y gestión del recurso hídrico, disponibilidad, alertas y precipitaciones.',
 
   // Contexto geográfico: Montes de María, Colombia
   geo: {

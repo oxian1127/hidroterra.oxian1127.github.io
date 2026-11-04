@@ -6,6 +6,8 @@ import { JsonExportService } from '../infrastructure/files/json-export.js';
 import { JsonImportService } from '../infrastructure/files/json-import.js';
 import { APP_CONFIG } from '../config/app.config.js';
 import { waterSourceRepository } from '../infrastructure/database/repositories/water-source.repository.js';
+import { waterMeasurementRepository } from '../infrastructure/database/repositories/water-measurement.repository.js';
+import { waterAlertRepository } from '../infrastructure/database/repositories/water-alert.repository.js';
 import { pluviometerRepository } from '../infrastructure/database/repositories/pluviometer.repository.js';
 import { rainfallRepository } from '../infrastructure/database/repositories/rainfall.repository.js';
 import { siteRepository } from '../infrastructure/database/repositories/site.repository.js';
@@ -33,6 +35,8 @@ export class BackupService {
   static async getStorageInfo() {
     const [
       sourcesCount,
+      waterMeasurementsCount,
+      waterAlertsCount,
       pluviometersCount,
       rainfallCount,
       sitesCount,
@@ -41,6 +45,8 @@ export class BackupService {
       observationsCount
     ] = await Promise.all([
       waterSourceRepository.count(),
+      waterMeasurementRepository.count(),
+      waterAlertRepository.count(),
       pluviometerRepository.count(),
       rainfallRepository.count(),
       siteRepository.count(),
@@ -49,7 +55,7 @@ export class BackupService {
       observationRepository.count()
     ]);
 
-    const totalRecords = sourcesCount + pluviometersCount + rainfallCount + sitesCount + parcelsCount + cropsCount + observationsCount;
+    const totalRecords = sourcesCount + waterMeasurementsCount + waterAlertsCount + pluviometersCount + rainfallCount + sitesCount + parcelsCount + cropsCount + observationsCount;
 
     let quotaEstimate = null;
     if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.estimate) {
@@ -76,6 +82,8 @@ export class BackupService {
     return {
       counts: {
         sourcesCount,
+        waterMeasurementsCount,
+        waterAlertsCount,
         pluviometersCount,
         rainfallCount,
         sitesCount,
@@ -95,6 +103,8 @@ export class BackupService {
   static async clearAll() {
     await Promise.all([
       waterSourceRepository.clear(),
+      waterMeasurementRepository.clear(),
+      waterAlertRepository.clear(),
       pluviometerRepository.clear(),
       rainfallRepository.clear(),
       siteRepository.clear(),

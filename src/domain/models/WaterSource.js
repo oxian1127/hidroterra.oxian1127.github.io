@@ -1,5 +1,5 @@
 /**
- * Modelo de Dominio: Fuente de Agua (WaterSource)
+ * Modelo de Dominio: Fuente de Agua (WaterSource) — HIDROTERRA
  */
 
 import { generateId, isValidLatitude, isValidLongitude, isRequired } from '../../core/validators.js';
@@ -15,6 +15,8 @@ export const WATER_SOURCE_TYPES = {
   reservorio: 'Reservorio / Represa',
   acueducto: 'Acueducto rural / Veredal',
   tanque: 'Tanque de almacenamiento',
+  captacion: 'Punto de captación de agua lluvia',
+  almacenamiento: 'Punto / Sistema de almacenamiento',
   otra: 'Otra fuente'
 };
 
@@ -34,6 +36,8 @@ export const WATER_SOURCE_USES = {
   otro: 'Otro uso'
 };
 
+export const WATER_SOURCE_TYPE_LABELS = WATER_SOURCE_TYPES;
+
 export class WaterSource {
   constructor(data = {}) {
     this.id = data.id || generateId();
@@ -46,9 +50,17 @@ export class WaterSource {
     this.status = data.status || 'sin_verificar';
     this.observationDate = data.observationDate || nowIso();
     this.mainUse = data.mainUse || 'domestico';
+    this.knownCapacityLiters = data.knownCapacityLiters !== undefined && data.knownCapacityLiters !== '' && data.knownCapacityLiters !== null
+      ? Number(data.knownCapacityLiters)
+      : null;
+    this.referenceDepthMeters = data.referenceDepthMeters !== undefined && data.referenceDepthMeters !== '' && data.referenceDepthMeters !== null
+      ? Number(data.referenceDepthMeters)
+      : null;
+    this.photoDataUrl = data.photoDataUrl || null;
     this.responsible = (data.responsible || '').trim();
     this.notes = (data.notes || '').trim();
     this.active = data.active !== false; // True por defecto (desactivable de forma lógica)
+    this.syncStatus = data.syncStatus || 'pending';
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -74,6 +86,12 @@ export class WaterSource {
     if (this.longitude !== null && !isValidLongitude(this.longitude)) {
       errors.longitude = 'La longitud debe estar entre -180 y 180 grados.';
     }
+    if (this.knownCapacityLiters !== null && (!Number.isFinite(this.knownCapacityLiters) || this.knownCapacityLiters < 0)) {
+      errors.knownCapacityLiters = 'La capacidad conocida debe ser un número mayor o igual a cero.';
+    }
+    if (this.referenceDepthMeters !== null && (!Number.isFinite(this.referenceDepthMeters) || this.referenceDepthMeters < 0)) {
+      errors.referenceDepthMeters = 'La profundidad de referencia debe ser un número mayor o igual a cero.';
+    }
 
     if (Object.keys(errors).length > 0) {
       throw new ValidationError('Datos de la fuente de agua inválidos.', errors);
@@ -93,9 +111,13 @@ export class WaterSource {
       status: this.status,
       observationDate: this.observationDate,
       mainUse: this.mainUse,
+      knownCapacityLiters: this.knownCapacityLiters,
+      referenceDepthMeters: this.referenceDepthMeters,
+      photoDataUrl: this.photoDataUrl,
       responsible: this.responsible,
       notes: this.notes,
       active: this.active,
+      syncStatus: this.syncStatus,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

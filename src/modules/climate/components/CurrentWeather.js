@@ -195,7 +195,9 @@ export function renderEntityIntegrationCard({
   selectedEntity,
   siteName,
   precipComparison,
-  indicators
+  indicators,
+  latestSourceMeasurement = null,
+  relatedCrops = []
 }) {
   if (!selectedEntity || !selectedEntity.entityType || selectedEntity.entityType === 'coordinates' || selectedEntity.entityType === 'reference') {
     return '';
@@ -249,6 +251,12 @@ export function renderEntityIntegrationCard({
                   <span><strong>4. Pronóstico acumulado próximos 7 días:</strong></span>
                   <span class="badge badge-neutral">${indicators?.precipitation?.rainNext7dMm ?? 0} mm</span>
                 </div>
+                ${precipComparison?.precipitationTrendLabel ? `
+                  <div class="d-flex justify-between">
+                    <span><strong>5. Tendencia y diferencia (Pronóstico 7d vs Observado 7d):</strong></span>
+                    <strong>${precipComparison.diffObservedVsForecast7dMm >= 0 ? `+${precipComparison.diffObservedVsForecast7dMm}` : precipComparison.diffObservedVsForecast7dMm} mm (${escapeHtml(precipComparison.precipitationTrendLabel)})</strong>
+                  </div>
+                ` : ''}
               </div>
             </div>
           </div>
@@ -257,17 +265,17 @@ export function renderEntityIntegrationCard({
     `;
   }
 
-  // 5.2 Integración con Fuentes Hídricas
+  // 5.2 Integración con Fuentes Hídricas y Disponibilidad de Agua
   if (entityType === 'water_source') {
     return `
       <div class="card mb-4" style="border-left: 4px solid var(--color-blue-700);">
         <div class="card-header">
           <div>
-            <span class="badge badge-info mb-1"><i class="fa-solid fa-faucet-drip"></i> Integración con Fuente Hídrica Registrada</span>
+            <span class="badge badge-info mb-1"><i class="fa-solid fa-faucet-drip"></i> Integración con Fuente Hídrica y Disponibilidad</span>
             <h3 class="card-title">${escapeHtml(rawEntity.code)} — ${escapeHtml(rawEntity.name)}</h3>
-            <p class="card-subtitle">Monitoreo meteorológico sobre la microcuenca o punto de captación de la fuente de agua</p>
+            <p class="card-subtitle">Monitoreo meteorológico sobre la microcuenca y relación con la disponibilidad medida en la fuente</p>
           </div>
-          ${renderStatusBadge(rawEntity.status)}
+          ${renderStatusBadge(latestSourceMeasurement ? latestSourceMeasurement.status : rawEntity.status)}
         </div>
         <div class="card-body">
           <div class="form-grid-2">
@@ -276,7 +284,10 @@ export function renderEntityIntegrationCard({
               <p><strong>Ubicación / Comunidad:</strong> ${escapeHtml(siteName || 'Sin comunidad asignada')}</p>
               <p><strong>Coordenadas:</strong> ${formatCoordinates(rawEntity.latitude, rawEntity.longitude)}</p>
               <p><strong>Uso principal registrado:</strong> ${escapeHtml(WATER_SOURCE_USES[rawEntity.mainUse] || rawEntity.mainUse)}</p>
-              ${rawEntity.notes ? `<p><strong>Capacidad / Notas técnicas:</strong> ${escapeHtml(rawEntity.notes)}</p>` : ''}
+              ${latestSourceMeasurement ? `
+                <p><strong>Última medición de disponibilidad:</strong> <strong>${latestSourceMeasurement.waterLevel} ${escapeHtml(latestSourceMeasurement.unit)}</strong>
+                ${latestSourceMeasurement.availableCapacityPct !== null ? `(${latestSourceMeasurement.availableCapacityPct}% de capacidad)` : ''} — ${formatDateTime(latestSourceMeasurement.measuredAt)}</p>
+              ` : '<p class="text-muted"><strong>Disponibilidad medida:</strong> Sin mediciones periódicas aún.</p>'}
             </div>
 
             <div class="coords-picker-box" style="margin-bottom: 0;">
@@ -301,6 +312,33 @@ export function renderEntityIntegrationCard({
                   <span>${indicators?.evapotranspiration?.cumulativeEt07dMm ?? 0} mm (${indicators?.precipitation?.consecutiveDryDays ?? 0} días secos seguidos)</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 5.3 Integración con Parcelas y Cultivos
+  if (entityType === 'parcel' || entityType === 'site') {
+    return `
+      <div class="card mb-4" style="border-left: 4px solid var(--color-earth-600);">
+        <div class="card-header">
+          <div>
+            <span class="badge badge-warning mb-1"><i class="fa-solid fa-seedling"></i> Integración Productiva y Territorial</span>
+            <h3 class="card-title">${escapeHtml(selectedEntity.name)}</h3>
+            <p class="card-subtitle">Condiciones agroclimáticas vinculadas a las parcelas y cultivos registrados</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid-2">
+            <div style="font-size: var(--font-size-sm); line-height: 1.65;">
+              <p><strong>Coordenadas:</strong> ${formatCoordinates(selectedEntity.latitude, selectedEntity.longitude)}</p>
+              <p><strong>Cultivos asociados en la zona:</strong> ${relatedCrops.length > 0 ? relatedCrops.map(c => escapeHtml(c.name)).join(', ') : 'Sin cultivos registrados en este punto'}</p>
+            </div>
+            <div class="coords-picker-box" style="margin-bottom: 0; font-size: var(--font-size-xs);">
+              <div><strong>Balance Atmosférico 7 días (Lluvia pron. – ET₀):</strong> <strong>${indicators?.evapotranspiration?.estimatedAtmosphericBalance7dMm ?? 0} mm</strong></div>
+              <div><strong>Humedad superficial del suelo estimada (modelo):</strong> <strong>${indicators?.humidity?.estimatedSoilMoisturePct !== null ? `${indicators.humidity.estimatedSoilMoisturePct}%` : 'No disponible'}</strong></div>
             </div>
           </div>
         </div>
