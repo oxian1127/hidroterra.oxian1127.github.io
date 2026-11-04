@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="HIDROTERRA — Plataforma tecnológica de monitoreo hídrico rural para Montes de María, Colombia. Datos de hoy para un territorio con agua mañana.">
+  <meta name="theme-color" content="#1b4332" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HIDROTERRA" />
+
+  <title>HIDROTERRA — Plataforma tecnológica de monitoreo hídrico rural</title>
+
+  <!-- Inicialización inmediata del Tema (previene parpadeos de modo oscuro) -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('hidroterra_theme');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          t = 'dark';
+        }
+        if (t === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- PWA Manifest & Favicon -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon-192.svg" />
+  <link rel="apple-touch-icon" href="./assets/icons/icon.svg" />
+
+  <!-- Tipografía Open Sans (Google Fonts con fallback local autónomo offline en assets/fonts/) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" />
+
+  <!-- Vendor CSS (Copia Local Offline) -->
+  <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="./assets/vendor/fontawesome/css/all.min.css" />
+
+  <!-- Estilos de la Aplicación -->
+  <link rel="stylesheet" href="./src/styles/reset.css" />
+  <link rel="stylesheet" href="./src/styles/variables.css" />
+  <link rel="stylesheet" href="./src/styles/global.css" />
+  <link rel="stylesheet" href="./src/styles/layout.css" />
+  <link rel="stylesheet" href="./src/styles/components.css" />
+  <link rel="stylesheet" href="./src/styles/forms.css" />
+  <link rel="stylesheet" href="./src/styles/tables.css" />
+  <link rel="stylesheet" href="./src/styles/dashboard.css" />
+  <link rel="stylesheet" href="./src/styles/maps.css" />
+  <link rel="stylesheet" href="./src/styles/responsive.css" />
+
+  <!-- Vendor JS (Copias Locales Autónomas Offline) -->
+  <script src="./assets/vendor/leaflet/leaflet.js"></script>
+  <script src="./assets/vendor/chartjs/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Contenedor Principal de la Aplicación -->
+  <div id="app"></div>
+
+  <!-- Script Principal de la Aplicación (ES Modules) -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
