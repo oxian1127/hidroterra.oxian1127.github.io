@@ -47,6 +47,7 @@
     import { runBackupTests } from './backup.test.js';
     import { runRepositoriesTests } from './repositories.test.js';
     import { runClimateTests } from './climate.test.js';
+    import { runWaterManagementTests } from './water-management.test.js';
 
     // Registrar todas las suites
     runValidatorsTests(suite);
@@ -54,6 +55,7 @@
     runBackupTests(suite);
     runRepositoriesTests(suite);
     runClimateTests(suite);
+    runWaterManagementTests(suite);
 
     const container = document.getElementById('test-results-container');
     const runBtn = document.getElementById('btn-run-all-tests');

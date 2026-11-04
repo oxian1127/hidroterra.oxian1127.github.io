@@ -3,7 +3,7 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v1.5.2';
+const CACHE_NAME = 'hidroterra-cache-v2.0.7';
 
 const PRECACHE_ASSETS = [
   './',
@@ -47,6 +47,8 @@ const PRECACHE_ASSETS = [
   './src/core/validators.js',
   './src/core/date-utils.js',
   './src/domain/models/WaterSource.js',
+  './src/domain/models/WaterMeasurement.js',
+  './src/domain/models/WaterAlert.js',
   './src/domain/models/Pluviometer.js',
   './src/domain/models/RainfallRecord.js',
   './src/domain/models/Site.js',
@@ -57,8 +59,14 @@ const PRECACHE_ASSETS = [
   './src/domain/rules/rainfall.rules.js',
   './src/domain/rules/coordinates.rules.js',
   './src/domain/rules/data-integrity.rules.js',
+  './src/domain/rules/water-availability.rules.js',
+  './src/domain/rules/water-calculators.rules.js',
+  './src/domain/rules/water-alerts.rules.js',
   './src/application/dashboard.service.js',
   './src/application/water-sources.service.js',
+  './src/application/water-availability.service.js',
+  './src/application/water-calculators.service.js',
+  './src/application/water-alerts.service.js',
   './src/application/pluviometers.service.js',
   './src/application/rainfall.service.js',
   './src/application/sites.service.js',
@@ -71,6 +79,8 @@ const PRECACHE_ASSETS = [
   './src/infrastructure/database/migrations.js',
   './src/infrastructure/database/repositories/base.repository.js',
   './src/infrastructure/database/repositories/water-source.repository.js',
+  './src/infrastructure/database/repositories/water-measurement.repository.js',
+  './src/infrastructure/database/repositories/water-alert.repository.js',
   './src/infrastructure/database/repositories/pluviometer.repository.js',
   './src/infrastructure/database/repositories/rainfall.repository.js',
   './src/infrastructure/database/repositories/site.repository.js',
@@ -94,6 +104,9 @@ const PRECACHE_ASSETS = [
   './src/ui/layouts/app-layout.js',
   './src/ui/views/dashboard.view.js',
   './src/ui/views/water-sources.view.js',
+  './src/ui/views/water-availability.view.js',
+  './src/ui/views/water-tools.view.js',
+  './src/ui/views/water-alerts.view.js',
   './src/ui/views/pluviometers.view.js',
   './src/ui/views/rainfall.view.js',
   './src/ui/views/climate.view.js',
