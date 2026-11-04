@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PAnA V2 AGUA Backup Schema",
+  "description": "Esquema JSON de validación para respaldos de datos de la plataforma PAnA V2 AGUA",
+  "type": "object",
+  "required": ["metadata", "data"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["appName", "version", "schemaVersion", "exportedAt"],
+      "properties": {
+        "appName": { "type": "string" },
+        "fullName": { "type": "string" },
+        "version": { "type": "string" },
+        "schemaVersion": { "type": "string" },
+        "exportedAt": { "type": "string", "format": "date-time" },
+        "region": { "type": "string" },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "water_sources": { "type": "integer", "minimum": 0 },
+            "pluviometers": { "type": "integer", "minimum": 0 },
+            "rainfall_records": { "type": "integer", "minimum": 0 },
+            "sites": { "type": "integer", "minimum": 0 },
+            "parcels": { "type": "integer", "minimum": 0 },
+            "crops": { "type": "integer", "minimum": 0 },
+            "observations": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "water_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "code", "name", "type", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "code": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "siteId": { "type": ["string", "null"] },
+              "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+              "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 },
+              "status": { "type": "string" },
+              "observationDate": { "type": "string" },
+              "mainUse": { "type": "string" },
+              "responsible": { "type": "string" },
+              "notes": { "type": "string" },
+              "active": { "type": "boolean" },
+              "createdAt": { "type": "string" },
+              "updatedAt": { "type": "string" }
+            }
+          }
+        },
+        "pluviometers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "code", "name", "equipmentType", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "code": { "type": "string" },
+              "name": { "type": "string" },
+              "equipmentType": { "type": "string" },
+              "siteId": { "type": ["string", "null"] },
+              "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+              "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 },
+              "altitudeMeters": { "type": ["number", "null"] },
+              "installDate": { "type": ["string", "null"] },
+              "responsible": { "type": "string" },
+              "status": { "type": "string" },
+              "notes": { "type": "string" },
+              "createdAt": { "type": "string" },
+              "updatedAt": { "type": "string" }
+            }
+          }
+        },
+        "rainfall_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "pluviometerId", "measuredAt", "precipitationMm"],
+            "properties": {
+              "id": { "type": "string" },
+              "pluviometerId": { "type": "string" },
+              "measuredAt": { "type": "string" },
+              "precipitationMm": { "type": "number", "minimum": 0 },
+              "measurementType": { "type": "string" },
+              "responsible": { "type": "string" },
+              "notes": { "type": "string" },
+              "createdAt": { "type": "string" },
+              "updatedAt": { "type": "string" }
+            }
+          }
+        },
+        "sites": { "type": "array" },
+        "parcels": { "type": "array" },
+        "crops": { "type": "array" },
+        "observations": { "type": "array" }
+      }
+    }
+  }
+}

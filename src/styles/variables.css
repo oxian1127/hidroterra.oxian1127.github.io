@@ -1,0 +1,208 @@
+/**
+ * Variables de diseño y temas visuales (Claro / Oscuro) para HIDROTERRA
+ * Enfoque: Monitoreo hídrico territorial, alto contraste y lectura clara en campo
+ */
+
+/* ==========================================================================
+   Tipografía Open Sans (Copia Local Offline en assets/fonts/)
+   ========================================================================== */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('../../assets/fonts/open-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('../../assets/fonts/open-sans-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ==========================================================================
+   Tema Claro (Light Theme - Predeterminado)
+   ========================================================================== */
+:root {
+  /* Paleta Verde Rural (Territorio y agro) */
+  --color-green-900: #081c15;
+  --color-green-800: #1b4332;
+  --color-green-700: #2d6a4f;
+  --color-green-600: #40916c;
+  --color-green-500: #52b788;
+  --color-green-400: #74c69d;
+  --color-green-200: #b7e4c7;
+  --color-green-100: #d8f3dc;
+  --color-green-50:  #f2f9f4;
+
+  /* Paleta Azul Hídrico (Agua y lluvia) */
+  --color-blue-900: #03045e;
+  --color-blue-800: #023e8a;
+  --color-blue-700: #0077b6;
+  --color-blue-600: #0096c7;
+  --color-blue-500: #00b4d8;
+  --color-blue-200: #90e0ef;
+  --color-blue-100: #caf0f8;
+  --color-blue-50:  #f0f9ff;
+
+  /* Paleta Tierra y Comunidades (Montes de María) */
+  --color-earth-800: #583101;
+  --color-earth-700: #7f4f24;
+  --color-earth-600: #936639;
+  --color-earth-500: #b08968;
+  --color-earth-100: #ede0d4;
+
+  /* Neutros y Fondos */
+  --color-neutral-900: #0f172a;
+  --color-neutral-800: #1e293b;
+  --color-neutral-700: #334155;
+  --color-neutral-600: #475569;
+  --color-neutral-500: #64748b;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-50:  #f8fafc;
+  --color-white:        #ffffff;
+
+  /* Superficies semánticas */
+  --bg-page: var(--color-neutral-100);
+  --bg-card: var(--color-white);
+  --bg-header: var(--color-white);
+  --bg-subtle: var(--color-neutral-50);
+  --border-color: var(--color-neutral-200);
+  --border-input: var(--color-neutral-300);
+  --text-main: var(--color-neutral-800);
+  --text-heading: var(--color-neutral-900);
+  --text-muted: var(--color-neutral-500);
+
+  /* Estados Funcionales */
+  --color-success: #15803d;
+  --color-success-bg: #dcfce7;
+  --color-warning: #b45309;
+  --color-warning-bg: #fef3c7;
+  --color-danger:  #b91c1c;
+  --color-danger-bg:  #fee2e2;
+  --color-info:    #0369a1;
+  --color-info-bg:    #e0f2fe;
+
+  /* Tipografía Open Sans solicitada */
+  --font-family: 'Open Sans', 'Open_Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-md: 1.125rem;    /* 18px */
+  --font-size-lg: 1.25rem;     /* 20px */
+  --font-size-xl: 1.5rem;      /* 24px */
+  --font-size-2xl: 1.875rem;   /* 30px */
+
+  /* Espaciado */
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-5: 1.25rem;  /* 20px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-10: 2.5rem;  /* 40px */
+
+  /* Bordes y Sombras */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --header-height: 64px;
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ==========================================================================
+   Tema Oscuro (Dark Theme)
+   Optimizado para baja luminosidad, campo y reducción de fatiga visual
+   ========================================================================== */
+[data-theme="dark"] {
+  /* Neutros y Fondos en Modo Oscuro */
+  --color-neutral-900: #f8fafc;
+  --color-neutral-800: #f1f5f9;
+  --color-neutral-700: #e2e8f0;
+  --color-neutral-600: #cbd5e1;
+  --color-neutral-500: #94a3b8;
+  --color-neutral-400: #64748b;
+  --color-neutral-300: #475569;
+  --color-neutral-200: #334155;
+  --color-neutral-100: #0f172a;
+  --color-neutral-50:  #1e293b;
+  --color-white:        #1e293b;
+
+  /* Superficies semánticas */
+  --bg-page: #0b1120;
+  --bg-card: #151e2e;
+  --bg-header: #151e2e;
+  --bg-subtle: #1a2538;
+  --border-color: #26354a;
+  --border-input: #37475f;
+  --text-main: #e2e8f0;
+  --text-heading: #f8fafc;
+  --text-muted: #94a3b8;
+
+  /* Paleta Verde en Modo Oscuro */
+  --color-green-900: #04120a;
+  --color-green-800: #082114;
+  --color-green-700: #1b4332;
+  --color-green-600: #2d6a4f;
+  --color-green-500: #40916c;
+  --color-green-400: #52b788;
+  --color-green-200: #95d5b2;
+  --color-green-100: #133a28;
+  --color-green-50:  #081c15;
+
+  /* Paleta Azul Hídrico en Modo Oscuro */
+  --color-blue-900: #030816;
+  --color-blue-800: #091f3a;
+  --color-blue-700: #0284c7;
+  --color-blue-600: #38bdf8;
+  --color-blue-500: #7dd3fc;
+  --color-blue-200: #0c4a6e;
+  --color-blue-100: #0c2d48;
+  --color-blue-50:  #071928;
+
+  /* Paleta Tierra en Modo Oscuro */
+  --color-earth-800: #2a1805;
+  --color-earth-700: #482b0e;
+  --color-earth-600: #8c5b2e;
+  --color-earth-500: #c29b7a;
+  --color-earth-100: #2e1e10;
+
+  /* Estados Funcionales con contraste accesible */
+  --color-success: #4ade80;
+  --color-success-bg: rgba(34, 197, 94, 0.18);
+  --color-warning: #fbbf24;
+  --color-warning-bg: rgba(245, 158, 11, 0.18);
+  --color-danger:  #f87171;
+  --color-danger-bg:  rgba(239, 68, 68, 0.18);
+  --color-info:    #38bdf8;
+  --color-info-bg:    rgba(14, 165, 233, 0.18);
+
+  /* Sombras oscuras de alta profundidad */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+}

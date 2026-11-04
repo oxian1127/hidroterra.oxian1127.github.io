@@ -1,0 +1,294 @@
+/**
+ * Estructura y maquetación (App Layout)
+ */
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Barra lateral de navegación (Sidebar) */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--color-green-900);
+  color: var(--color-green-100);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform var(--transition-normal);
+  z-index: 40;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-header {
+  padding: var(--spacing-5) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.sidebar-title-group h1 {
+  font-size: var(--font-size-md);
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.sidebar-title-group p {
+  font-size: var(--font-size-xs);
+  color: var(--color-green-400);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: var(--spacing-4) var(--spacing-2);
+  overflow-y: auto;
+}
+
+.nav-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-green-500);
+  padding: var(--spacing-2) var(--spacing-3);
+  margin-top: var(--spacing-2);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  color: var(--color-green-200);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.nav-item.active {
+  background-color: var(--color-green-700);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-icon {
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: var(--spacing-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-400);
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.sidebar-storage-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+}
+
+/* Área principal (Main Content) */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--color-neutral-100);
+  transition: background-color var(--transition-normal);
+}
+
+/* Encabezado superior (Header) */
+.app-header {
+  height: var(--header-height);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-neutral-200);
+  padding: 0 var(--spacing-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+  flex: 1;
+}
+
+.menu-toggle-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--color-neutral-700);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.menu-toggle-btn:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.header-title-wrapper {
+  min-width: 0;
+}
+
+.header-title-wrapper h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-neutral-900);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-breadcrumb {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+}
+
+.btn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-neutral-700);
+  border: 1px solid var(--color-neutral-300);
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-theme-toggle:hover {
+  background-color: var(--color-neutral-50);
+  color: var(--color-neutral-900);
+  border-color: var(--color-neutral-400);
+}
+
+.connectivity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.connectivity-badge.online {
+  background-color: var(--color-green-100);
+  color: var(--color-green-800);
+}
+
+[data-theme="dark"] .connectivity-badge.online {
+  background-color: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+}
+
+.connectivity-badge.offline {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* Contenido de la vista activa */
+.app-content {
+  flex: 1;
+  padding: var(--spacing-6);
+  max-width: 1400px;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* Alerta persistente si el respaldo está vencido */
+.global-alert-banner {
+  background-color: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  padding: var(--spacing-3) var(--spacing-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: #92400e;
+  border-bottom: 1px solid #fef3c7;
+}
+
+[data-theme="dark"] .global-alert-banner {
+  background-color: #271a06;
+  border-left-color: #f59e0b;
+  color: #fde68a;
+  border-bottom: 1px solid #3d2605;
+}
+
+.global-alert-banner button {
+  font-size: var(--font-size-xs);
+  padding: 0.25rem 0.65rem;
+}
+
+/* Fondo oscurecido para menú lateral en móvil */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 35;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}

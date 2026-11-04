@@ -1,0 +1,476 @@
+{
+  "metadata": {
+    "appName": "PAnA V2 AGUA",
+    "fullName": "Plataforma de Monitoreo Hídrico Rural — Montes de María",
+    "version": "2.0.0",
+    "schemaVersion": "2.0",
+    "exportedAt": "2026-10-26T12:00:00.000Z",
+    "region": "Montes de María",
+    "counts": {
+      "water_sources": 4,
+      "pluviometers": 4,
+      "rainfall_records": 12,
+      "sites": 4,
+      "parcels": 3,
+      "crops": 3,
+      "observations": 3
+    }
+  },
+  "data": {
+    "sites": [
+      {
+        "id": "site-carmen-caracoli",
+        "name": "Vereda Caracolí",
+        "municipality": "El Carmen de Bolívar",
+        "department": "Bolívar",
+        "latitude": 9.7185,
+        "longitude": -75.1220,
+        "description": "Zona alta montañosa de El Carmen de Bolívar, vocación productiva tradicional.",
+        "notes": "Acceso por trocha veredal transitable en verano.",
+        "createdAt": "2026-09-01T08:00:00.000Z",
+        "updatedAt": "2026-09-01T08:00:00.000Z"
+      },
+      {
+        "id": "site-sanjacinto-palmas",
+        "name": "Corregimiento Las Palmas",
+        "municipality": "San Jacinto",
+        "department": "Bolívar",
+        "latitude": 9.8320,
+        "longitude": -75.1215,
+        "description": "Comunidad artesana y agrícola ubicada al oriente de San Jacinto.",
+        "notes": "Presencia de reservorios y jagüeyes ganaderos.",
+        "createdAt": "2026-09-01T08:00:00.000Z",
+        "updatedAt": "2026-09-01T08:00:00.000Z"
+      },
+      {
+        "id": "site-sanjuan-sanpedro",
+        "name": "Vereda San Pedro Consolado",
+        "municipality": "San Juan Nepomuceno",
+        "department": "Bolívar",
+        "latitude": 9.9510,
+        "longitude": -75.0830,
+        "description": "Población rural cercana al Santuario de Flora y Fauna Los Colorados.",
+        "notes": "Nacimientos de agua protegidos por bosque seco tropical.",
+        "createdAt": "2026-09-01T08:00:00.000Z",
+        "updatedAt": "2026-09-01T08:00:00.000Z"
+      },
+      {
+        "id": "site-ovejas-canutalito",
+        "name": "Corregimiento Canutalito",
+        "municipality": "Ovejas",
+        "department": "Sucre",
+        "latitude": 9.5310,
+        "longitude": -75.2340,
+        "description": "Sector sur de Montes de María en el departamento de Sucre.",
+        "notes": "Plano aluvial con arroyos estacionales.",
+        "createdAt": "2026-09-01T08:00:00.000Z",
+        "updatedAt": "2026-09-01T08:00:00.000Z"
+      }
+    ],
+
+    "water_sources": [
+      {
+        "id": "source-001",
+        "code": "FNT-CARM-01",
+        "name": "Pozo Profundo Comunal Caracolí",
+        "type": "pozo",
+        "siteId": "site-carmen-caracoli",
+        "latitude": 9.7192,
+        "longitude": -75.1235,
+        "status": "disponible",
+        "observationDate": "2026-10-15T10:00:00.000Z",
+        "mainUse": "domestico",
+        "responsible": "Comité de Agua Caracolí",
+        "notes": "Bomba sumergible alimentada con panel solar comunitario. Caudal constante.",
+        "active": true,
+        "createdAt": "2026-09-05T09:00:00.000Z",
+        "updatedAt": "2026-10-15T10:00:00.000Z"
+      },
+      {
+        "id": "source-002",
+        "code": "FNT-SJAC-01",
+        "name": "Jagüey Comunitario El Tamarindo",
+        "type": "jaguey",
+        "siteId": "site-sanjacinto-palmas",
+        "latitude": 9.8340,
+        "longitude": -75.1240,
+        "status": "limitada",
+        "observationDate": "2026-10-20T11:00:00.000Z",
+        "mainUse": "agropecuario",
+        "responsible": "Asociación Agropecuaria Las Palmas",
+        "notes": "Nivel al 40% de su capacidad. Requiere mantenimiento de sedimentos.",
+        "active": true,
+        "createdAt": "2026-09-10T10:00:00.000Z",
+        "updatedAt": "2026-10-20T11:00:00.000Z"
+      },
+      {
+        "id": "source-003",
+        "code": "FNT-SJNP-01",
+        "name": "Manantial Ojo de Agua Los Colorados",
+        "type": "manantial",
+        "siteId": "site-sanjuan-sanpedro",
+        "latitude": 9.9535,
+        "longitude": -75.0815,
+        "status": "disponible",
+        "observationDate": "2026-10-22T08:30:00.000Z",
+        "mainUse": "consumo",
+        "responsible": "Guardabosques Comunitarios",
+        "notes": "Agua cristalina y fresca protegida por la ronda de bosque nativo.",
+        "active": true,
+        "createdAt": "2026-09-12T08:00:00.000Z",
+        "updatedAt": "2026-10-22T08:30:00.000Z"
+      },
+      {
+        "id": "source-004",
+        "code": "FNT-OVEJ-01",
+        "name": "Arroyo Mancomoján (Paso Canutalito)",
+        "type": "arroyo",
+        "siteId": "site-ovejas-canutalito",
+        "latitude": 9.5325,
+        "longitude": -75.2360,
+        "status": "limitada",
+        "observationDate": "2026-10-24T16:00:00.000Z",
+        "mainUse": "riego",
+        "responsible": "Junta de Acción Comunal Canutalito",
+        "notes": "Caudal estacional. Aguas turbias con arrastre de material fino.",
+        "active": true,
+        "createdAt": "2026-09-15T11:00:00.000Z",
+        "updatedAt": "2026-10-24T16:00:00.000Z"
+      }
+    ],
+
+    "pluviometers": [
+      {
+        "id": "pluv-001",
+        "code": "PLUV-CARM-01",
+        "name": "Pluviómetro Escuela Caracolí",
+        "equipmentType": "manual",
+        "siteId": "site-carmen-caracoli",
+        "latitude": 9.7180,
+        "longitude": -75.1218,
+        "altitudeMeters": 195,
+        "installDate": "2026-08-15",
+        "responsible": "Prof. Martha Gómez",
+        "status": "activo",
+        "notes": "Instalado sobre poste de madera a 1.5 m del suelo en patio despejado.",
+        "createdAt": "2026-08-20T08:00:00.000Z",
+        "updatedAt": "2026-08-20T08:00:00.000Z"
+      },
+      {
+        "id": "pluv-002",
+        "code": "PLUV-SJAC-01",
+        "name": "Pluviómetro Finca Bella Vista",
+        "equipmentType": "manual",
+        "siteId": "site-sanjacinto-palmas",
+        "latitude": 9.8315,
+        "longitude": -75.1205,
+        "altitudeMeters": 170,
+        "installDate": "2026-08-18",
+        "responsible": "Don Emiro Torres",
+        "status": "activo",
+        "notes": "Pluviómetro cónico con probeta milimétrica de lectura directa.",
+        "createdAt": "2026-08-20T08:30:00.000Z",
+        "updatedAt": "2026-08-20T08:30:00.000Z"
+      },
+      {
+        "id": "pluv-003",
+        "code": "PLUV-SJNP-01",
+        "name": "Pluviómetro Vereda San Pedro",
+        "equipmentType": "manual",
+        "siteId": "site-sanjuan-sanpedro",
+        "latitude": 9.9505,
+        "longitude": -75.0840,
+        "altitudeMeters": 210,
+        "installDate": "2026-08-25",
+        "responsible": "Comité Ambiental Los Colorados",
+        "status": "activo",
+        "notes": "Lectura matutina diaria a las 7:00 AM.",
+        "createdAt": "2026-08-26T09:00:00.000Z",
+        "updatedAt": "2026-08-26T09:00:00.000Z"
+      },
+      {
+        "id": "pluv-004",
+        "code": "PLUV-OVEJ-01",
+        "name": "Pluviómetro Comunitario Canutalito",
+        "equipmentType": "manual",
+        "siteId": "site-ovejas-canutalito",
+        "latitude": 9.5305,
+        "longitude": -75.2335,
+        "altitudeMeters": 140,
+        "installDate": "2026-09-01",
+        "responsible": "Luis Carlos Martínez",
+        "status": "activo",
+        "notes": "Ubicado junto al centro de acopio comunal.",
+        "createdAt": "2026-09-02T10:00:00.000Z",
+        "updatedAt": "2026-09-02T10:00:00.000Z"
+      }
+    ],
+
+    "rainfall_records": [
+      {
+        "id": "rain-001",
+        "pluviometerId": "pluv-001",
+        "measuredAt": "2026-10-02T07:00:00.000Z",
+        "precipitationMm": 18.5,
+        "measurementType": "manual",
+        "responsible": "Martha Gómez",
+        "notes": "Lluvia serena durante la noche anterior.",
+        "createdAt": "2026-10-02T07:15:00.000Z",
+        "updatedAt": "2026-10-02T07:15:00.000Z"
+      },
+      {
+        "id": "rain-002",
+        "pluviometerId": "pluv-001",
+        "measuredAt": "2026-10-06T07:00:00.000Z",
+        "precipitationMm": 42.0,
+        "measurementType": "manual",
+        "responsible": "Martha Gómez",
+        "notes": "Aguacero fuerte con vientos moderados.",
+        "createdAt": "2026-10-06T07:10:00.000Z",
+        "updatedAt": "2026-10-06T07:10:00.000Z"
+      },
+      {
+        "id": "rain-003",
+        "pluviometerId": "pluv-001",
+        "measuredAt": "2026-10-12T07:00:00.000Z",
+        "precipitationMm": 9.5,
+        "measurementType": "manual",
+        "responsible": "Martha Gómez",
+        "notes": "Llovizna dispersa.",
+        "createdAt": "2026-10-12T07:20:00.000Z",
+        "updatedAt": "2026-10-12T07:20:00.000Z"
+      },
+      {
+        "id": "rain-004",
+        "pluviometerId": "pluv-001",
+        "measuredAt": "2026-10-20T07:00:00.000Z",
+        "precipitationMm": 26.0,
+        "measurementType": "manual",
+        "responsible": "Martha Gómez",
+        "notes": "Buena precipitación para los cultivos de ñame.",
+        "createdAt": "2026-10-20T07:10:00.000Z",
+        "updatedAt": "2026-10-20T07:10:00.000Z"
+      },
+      {
+        "id": "rain-005",
+        "pluviometerId": "pluv-002",
+        "measuredAt": "2026-10-02T07:00:00.000Z",
+        "precipitationMm": 14.0,
+        "measurementType": "manual",
+        "responsible": "Emiro Torres",
+        "notes": "Lluvia pareja en Las Palmas.",
+        "createdAt": "2026-10-02T07:25:00.000Z",
+        "updatedAt": "2026-10-02T07:25:00.000Z"
+      },
+      {
+        "id": "rain-006",
+        "pluviometerId": "pluv-002",
+        "measuredAt": "2026-10-06T07:00:00.000Z",
+        "precipitationMm": 38.5,
+        "measurementType": "manual",
+        "responsible": "Emiro Torres",
+        "notes": "Fuerte aguacero de tarde.",
+        "createdAt": "2026-10-06T07:20:00.000Z",
+        "updatedAt": "2026-10-06T07:20:00.000Z"
+      },
+      {
+        "id": "rain-007",
+        "pluviometerId": "pluv-002",
+        "measuredAt": "2026-10-15T07:00:00.000Z",
+        "precipitationMm": 31.0,
+        "measurementType": "manual",
+        "responsible": "Emiro Torres",
+        "notes": "Lluvia constante durante 3 horas.",
+        "createdAt": "2026-10-15T07:15:00.000Z",
+        "updatedAt": "2026-10-15T07:15:00.000Z"
+      },
+      {
+        "id": "rain-008",
+        "pluviometerId": "pluv-003",
+        "measuredAt": "2026-10-06T07:00:00.000Z",
+        "precipitationMm": 48.0,
+        "measurementType": "manual",
+        "responsible": "Comité Ambiental",
+        "notes": "Precipitación intensa en la serranía de Los Colorados.",
+        "createdAt": "2026-10-06T07:30:00.000Z",
+        "updatedAt": "2026-10-06T07:30:00.000Z"
+      },
+      {
+        "id": "rain-009",
+        "pluviometerId": "pluv-003",
+        "measuredAt": "2026-10-18T07:00:00.000Z",
+        "precipitationMm": 22.5,
+        "measurementType": "manual",
+        "responsible": "Comité Ambiental",
+        "notes": "Humedad alta y cielo nublado.",
+        "createdAt": "2026-10-18T07:10:00.000Z",
+        "updatedAt": "2026-10-18T07:10:00.000Z"
+      },
+      {
+        "id": "rain-010",
+        "pluviometerId": "pluv-004",
+        "measuredAt": "2026-10-02T07:00:00.000Z",
+        "precipitationMm": 11.0,
+        "measurementType": "manual",
+        "responsible": "Luis Carlos Martínez",
+        "notes": "Llovizna leve en Canutalito.",
+        "createdAt": "2026-10-02T07:30:00.000Z",
+        "updatedAt": "2026-10-02T07:30:00.000Z"
+      },
+      {
+        "id": "rain-011",
+        "pluviometerId": "pluv-004",
+        "measuredAt": "2026-10-06T07:00:00.000Z",
+        "precipitationMm": 35.0,
+        "measurementType": "manual",
+        "responsible": "Luis Carlos Martínez",
+        "notes": "Aguacero generalizado en la sabana de Ovejas.",
+        "createdAt": "2026-10-06T07:15:00.000Z",
+        "updatedAt": "2026-10-06T07:15:00.000Z"
+      },
+      {
+        "id": "rain-012",
+        "pluviometerId": "pluv-004",
+        "measuredAt": "2026-10-21T07:00:00.000Z",
+        "precipitationMm": 19.0,
+        "measurementType": "manual",
+        "responsible": "Luis Carlos Martínez",
+        "notes": "Lluvia de amanecer.",
+        "createdAt": "2026-10-21T07:15:00.000Z",
+        "updatedAt": "2026-10-21T07:15:00.000Z"
+      }
+    ],
+
+    "parcels": [
+      {
+        "id": "parcel-001",
+        "code": "PARC-CARM-01",
+        "name": "Parcela El Recuerdo",
+        "siteId": "site-carmen-caracoli",
+        "responsible": "Don Jacinto Paternina",
+        "latitude": 9.7195,
+        "longitude": -75.1210,
+        "area": 3.5,
+        "areaUnit": "hectareas",
+        "status": "activa",
+        "notes": "Suelo franco-arcilloso con pendiente moderada.",
+        "createdAt": "2026-09-02T10:00:00.000Z",
+        "updatedAt": "2026-09-02T10:00:00.000Z"
+      },
+      {
+        "id": "parcel-002",
+        "code": "PARC-SJAC-01",
+        "name": "Predio Las Brisas",
+        "siteId": "site-sanjacinto-palmas",
+        "responsible": "Doña Carmen Arrieta",
+        "latitude": 9.8330,
+        "longitude": -75.1225,
+        "area": 2.0,
+        "areaUnit": "hectareas",
+        "status": "activa",
+        "notes": "Cercana al jagüey comunitario.",
+        "createdAt": "2026-09-05T11:00:00.000Z",
+        "updatedAt": "2026-09-05T11:00:00.000Z"
+      },
+      {
+        "id": "parcel-003",
+        "code": "PARC-OVEJ-01",
+        "name": "Finca La Ponderosa",
+        "siteId": "site-ovejas-canutalito",
+        "responsible": "Carlos Beleño",
+        "latitude": 9.5318,
+        "longitude": -75.2350,
+        "area": 4.0,
+        "areaUnit": "hectareas",
+        "status": "activa",
+        "notes": "Doble propósito (cultivo y pastoreo).",
+        "createdAt": "2026-09-08T09:00:00.000Z",
+        "updatedAt": "2026-09-08T09:00:00.000Z"
+      }
+    ],
+
+    "crops": [
+      {
+        "id": "crop-001",
+        "parcelId": "parcel-001",
+        "name": "Ñame Espino (Dioscorea rotundata)",
+        "plantDate": "2026-05-10",
+        "cropArea": 1.5,
+        "status": "activo",
+        "notes": "En etapa de engrose del tubérculo. Muy favorecido por las lluvias de octubre.",
+        "createdAt": "2026-09-02T10:30:00.000Z",
+        "updatedAt": "2026-09-02T10:30:00.000Z"
+      },
+      {
+        "id": "crop-002",
+        "parcelId": "parcel-002",
+        "name": "Yuca Criolla",
+        "plantDate": "2026-06-01",
+        "cropArea": 1.0,
+        "status": "activo",
+        "notes": "Buen desarrollo foliar, sin signos de estrés hídrico.",
+        "createdAt": "2026-09-05T11:30:00.000Z",
+        "updatedAt": "2026-09-05T11:30:00.000Z"
+      },
+      {
+        "id": "crop-003",
+        "parcelId": "parcel-003",
+        "name": "Maíz Tradicional",
+        "plantDate": "2026-08-20",
+        "cropArea": 2.0,
+        "status": "activo",
+        "notes": "Fase de llenado de grano. Dependiente de precipitaciones de cierre de mes.",
+        "createdAt": "2026-09-08T09:30:00.000Z",
+        "updatedAt": "2026-09-08T09:30:00.000Z"
+      }
+    ],
+
+    "observations": [
+      {
+        "id": "obs-001",
+        "category": "disponibilidad_agua",
+        "relatedEntityType": "water_source",
+        "relatedEntityId": "source-001",
+        "observedAt": "2026-10-15T10:30:00.000Z",
+        "description": "El nivel de agua en el pozo comunitario de Caracolí se mantiene estable tras los aguaceros de la primera semana de octubre.",
+        "observedStatus": "Abastecimiento normal para 45 familias",
+        "responsible": "Comité de Agua",
+        "latitude": 9.7192,
+        "longitude": -75.1235,
+        "notes": "Se recomienda mantener monitoreo quincenal.",
+        "createdAt": "2026-10-15T11:00:00.000Z",
+        "updatedAt": "2026-10-15T11:00:00.000Z"
+      },
+      {
+        "id": "obs-002",
+        "category": "sequia",
+        "relatedEntityType": "water_source",
+        "relatedEntityId": "source-002",
+        "observedAt": "2026-10-20T11:30:00.000Z",
+        "description": "El jagüey El Tamarindo recuperó parte de su espejo de agua, pero aún presenta baja retención por filtración en el fondo.",
+        "observedStatus": "Caudal limitado",
+        "responsible": "Emiro Torres",
+        "latitude": 9.8340,
+        "longitude": -75.1240,
+        "notes": "Planificar descolmatado para la próxima temporada seca.",
+        "createdAt": "2026-10-20T11:45:00.000Z",
+        "updatedAt": "2026-10-20T11:45:00.000Z"
+      },
+      {
+        "id": "obs-003",
+        "category": "productiva",
+        "relatedEntityType": "parcel",
+        "relatedEntityId": "parcel-001",
+        "observedAt": "2026-10-22T09:00:00.000Z",
+        "description": "Excelente humedad del suelo para la cosecha proyectada de ñame en Caracolí.",
+        "observedStatus": "Suelo húmedo sin encharcamiento dañino",
+        "responsible": "Jacinto Paternina",
+        "latitude": 9.7195,
+        "longitude": -75.1210,
+        "notes": "Drenajes naturales de la ladera funcionan correctamente.",
+        "createdAt": "2026-10-22T09:30:00.000Z",
+        "updatedAt": "2026-10-22T09:30:00.000Z"
+      }
+    ]
+  }
+}

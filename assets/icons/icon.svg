@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00b4d8" />
+      <stop offset="50%" stop-color="#0077b6" />
+      <stop offset="100%" stop-color="#023e8a" />
+    </linearGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74c69d" />
+      <stop offset="100%" stop-color="#2d6a4f" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b4332" />
+      <stop offset="100%" stop-color="#081c15" />
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)" />
+
+  <!-- Outer subtle circular rings representing rain ripple -->
+  <circle cx="256" cy="270" r="190" fill="none" stroke="#52b788" stroke-width="3" stroke-dasharray="8 8" opacity="0.35" />
+  <circle cx="256" cy="270" r="150" fill="none" stroke="#48cae4" stroke-width="2" opacity="0.4" />
+
+  <!-- Central Water Drop -->
+  <path d="M256 70 C256 70, 140 220, 140 310 C140 374, 192 426, 256 426 C320 426, 372 374, 372 310 C372 220, 256 70, 256 70 Z" 
+        fill="url(#waterGrad)" filter="url(#dropShadow)" />
+
+  <!-- Highlights inside drop -->
+  <path d="M220 180 C200 230, 180 270, 180 320 C180 340, 190 360, 205 375 C190 355, 185 330, 188 300 C192 260, 215 210, 230 185 Z" 
+        fill="#ffffff" opacity="0.45" />
+
+  <!-- Stylized leaf representing rural agriculture (Montes de María) -->
+  <path d="M256 426 C290 400, 340 370, 350 320 C360 270, 310 280, 280 310 C265 325, 258 350, 256 426 Z" 
+        fill="url(#leafGrad)" opacity="0.9" />
+
+  <!-- Pluviometer measurement ticks inside droplet -->
+  <line x1="240" y1="260" x2="272" y2="260" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.8" />
+  <line x1="246" y1="285" x2="266" y2="285" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+  <line x1="238" y1="310" x2="274" y2="310" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.8" />
+  <line x1="246" y1="335" x2="266" y2="335" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+  <line x1="235" y1="360" x2="277" y2="360" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.8" />
+</svg>

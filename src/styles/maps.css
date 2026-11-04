@@ -1,0 +1,188 @@
+/**
+ * Estilos para el Módulo Cartográfico y Leaflet en HIDROTERRA
+ */
+
+.map-view-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--header-height) - 48px);
+  min-height: 520px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-neutral-200);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.map-toolbar {
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--color-neutral-50);
+  border-bottom: 1px solid var(--color-neutral-200);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.map-layer-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-neutral-800);
+}
+
+.map-layer-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.map-canvas {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #e5e3df; /* Color base típico de mapa */
+}
+
+/* Modo oscuro en Leaflet: Invertir solo el plano de mosaicos OSM preservando marcadores y popups */
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+[data-theme="dark"] .map-canvas {
+  background-color: #121926;
+}
+
+/* Pines personalizados de mapa */
+.custom-map-pin {
+  background: none;
+  border: none;
+}
+
+.map-pin-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.map-pin-icon {
+  transform: rotate(45deg);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* Banner de modo sin conexión sobre el mapa */
+.map-offline-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background-color: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2) var(--spacing-4);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  color: #92400e;
+  max-width: 90%;
+  pointer-events: auto;
+}
+
+[data-theme="dark"] .map-offline-banner {
+  background-color: #271a06;
+  border-color: #f59e0b;
+  color: #fde68a;
+}
+
+/* Tarjetas emergentes de Leaflet (Popups) adaptables al tema */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background-color: var(--color-white) !important;
+  color: var(--color-neutral-800) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--color-neutral-400) !important;
+  padding: 6px !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--color-neutral-800) !important;
+}
+
+.map-popup-card {
+  padding: var(--spacing-2) 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-800);
+}
+
+.map-popup-card h4 {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-900);
+  margin-bottom: var(--spacing-2);
+}
+
+.map-popup-card p {
+  margin-bottom: 4px;
+}
+
+.popup-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-1);
+}
+
+.popup-tag.water  { background-color: var(--color-blue-100); color: var(--color-blue-800); }
+.popup-tag.rain   { background-color: var(--color-green-100); color: var(--color-green-800); }
+.popup-tag.site   { background-color: var(--color-earth-100); color: var(--color-earth-800); }
+.popup-tag.parcel { background-color: var(--color-green-100); color: var(--color-green-700); }
+
+[data-theme="dark"] .popup-tag.water  { background-color: rgba(2, 132, 199, 0.25); color: #38bdf8; }
+[data-theme="dark"] .popup-tag.rain   { background-color: rgba(45, 106, 79, 0.3); color: #52b788; }
+[data-theme="dark"] .popup-tag.site   { background-color: rgba(176, 137, 104, 0.25); color: #d4a373; }
+[data-theme="dark"] .popup-tag.parcel { background-color: rgba(82, 183, 136, 0.25); color: #74c69d; }
+
+.popup-action-btn {
+  margin-top: var(--spacing-2);
+  width: 100%;
+}
+
+.map-fallback-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-6);
+  text-align: center;
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
