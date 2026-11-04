@@ -27,7 +27,7 @@ export function renderSelectField({ id, label, value = '', options = [], require
   return `
     <div class="form-group">
       <label class="form-label ${required ? 'required' : ''}" for="${id}">${escapeHtml(label)}</label>
-      <select id="${id}" name="${id}" class="form-control" ${required ? 'required' : ''}>
+      <select id="${id}" name="${id}" class="form-control form-select" ${required ? 'required' : ''}>
         ${options.map(opt => `
           <option value="${escapeHtml(opt.value)}" ${String(opt.value) === String(value) ? 'selected' : ''}>
             ${escapeHtml(opt.label)}

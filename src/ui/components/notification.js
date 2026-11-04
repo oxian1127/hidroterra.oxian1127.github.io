@@ -23,7 +23,7 @@ class NotificationManager {
     const container = this._getContainer();
 
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast show toast-${type}`;
 
     let icon = '<i class="fa-solid fa-circle-info" style="color: var(--color-info);"></i>';
     if (type === 'success') icon = '<i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i>';

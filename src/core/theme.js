@@ -42,6 +42,7 @@ export class ThemeService {
 
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', validTheme);
+      document.documentElement.setAttribute('data-bs-theme', validTheme);
     }
 
     this._updateChartDefaults(validTheme === 'dark');

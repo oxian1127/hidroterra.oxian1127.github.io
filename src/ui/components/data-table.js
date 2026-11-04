@@ -43,7 +43,7 @@ export class DataTable {
 
     let html = `
       <div class="table-responsive">
-        <table class="data-table data-table-cards">
+        <table class="data-table data-table-cards table table-hover align-middle mb-0">
           <thead>
             <tr>
               ${this.columns.map(col => `<th>${col.label}</th>`).join('')}

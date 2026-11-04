@@ -1,0 +1,364 @@
+/**
+ * Tema Visual Bootstrap 5 + Estética Avanzada para HIDROTERRA (PAnA V2 AGUA)
+ * Integra el sistema de diseño de Bootstrap 5.3 con la paleta territorial de Montes de María
+ */
+
+:root,
+[data-bs-theme="light"] {
+  --bs-primary: #2d6a4f;
+  --bs-primary-rgb: 45, 106, 79;
+  --bs-secondary: #475569;
+  --bs-secondary-rgb: 71, 85, 105;
+  --bs-success: #15803d;
+  --bs-success-rgb: 21, 128, 61;
+  --bs-info: #0077b6;
+  --bs-info-rgb: 0, 119, 182;
+  --bs-warning: #d97706;
+  --bs-warning-rgb: 217, 119, 6;
+  --bs-danger: #dc2626;
+  --bs-danger-rgb: 220, 38, 38;
+  --bs-body-font-family: var(--font-family);
+  --bs-body-bg: var(--color-neutral-100);
+  --bs-body-color: var(--color-neutral-800);
+  --bs-border-color: var(--color-neutral-200);
+  --bs-border-radius: 0.5rem;
+  --bs-border-radius-lg: 0.75rem;
+  --bs-focus-ring-color: rgba(45, 106, 79, 0.25);
+}
+
+[data-theme="dark"],
+[data-bs-theme="dark"] {
+  --bs-primary: #40916c;
+  --bs-primary-rgb: 64, 145, 108;
+  --bs-info: #0284c7;
+  --bs-info-rgb: 2, 132, 199;
+  --bs-body-bg: #0b1120;
+  --bs-body-color: #e2e8f0;
+  --bs-border-color: #26354a;
+  --bs-focus-ring-color: rgba(82, 183, 136, 0.3);
+}
+
+/* Armonización de enlaces y listas con Bootstrap */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==========================================================================
+   1. Menú Lateral (Sidebar) con Gradiente Institucional y Efecto Glass
+   ========================================================================== */
+.app-sidebar {
+  background: linear-gradient(180deg, #0d2b20 0%, #071912 60%, #04100b 100%);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-header {
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-logo {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-header:hover .sidebar-logo {
+  transform: scale(1.06);
+}
+
+.nav-item {
+  position: relative;
+  border-radius: 0.6rem;
+  margin-bottom: 4px;
+  padding: 0.68rem 0.9rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.45);
+  border-left: 3px solid #74c69d;
+}
+
+/* ==========================================================================
+   2. Encabezado Superior (Header) con Efecto Frosted Glass
+   ========================================================================== */
+.app-header {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] .app-header {
+  background-color: rgba(30, 41, 59, 0.92);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+}
+
+.connectivity-badge {
+  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.connectivity-badge.online {
+  border-color: rgba(21, 128, 61, 0.2);
+}
+
+.connectivity-badge.offline {
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+/* ==========================================================================
+   3. Encabezados de Vista (View Header)
+   ========================================================================== */
+.view-header {
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.view-header h2 {
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   4. Botones Estilo Bootstrap 5 con Gradientes Suaves y Sombras
+   ========================================================================== */
+.btn {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 0.55rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: all 0.18s ease-in-out;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  border-color: #1b4332;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus:not(:disabled) {
+  background: linear-gradient(135deg, #357a5b 0%, #23533d 100%);
+  border-color: #1b4332;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.35);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, #0077b6 0%, #023e8a 100%);
+  border-color: #023e8a;
+  color: #ffffff !important;
+}
+
+.btn-blue:hover:not(:disabled),
+.btn-blue:focus:not(:disabled) {
+  background: linear-gradient(135deg, #0088cc 0%, #034ea8 100%);
+  border-color: #023e8a;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 119, 182, 0.35);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  border-color: #991b1b;
+  color: #ffffff !important;
+}
+
+.btn-outline {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-neutral-300);
+  color: var(--color-neutral-700);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-neutral-50);
+  border-color: var(--color-green-600);
+  color: var(--color-green-700);
+}
+
+[data-theme="dark"] .btn-outline:hover:not(:disabled) {
+  border-color: var(--color-green-400);
+  color: var(--color-green-400);
+}
+
+/* ==========================================================================
+   5. Tarjetas (Cards) y Tarjetas de Métricas (KPI Cards)
+   ========================================================================== */
+.card {
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+  background-color: var(--color-white);
+}
+
+.card-header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.metric-card {
+  border-radius: 0.85rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-green-600), var(--color-blue-600));
+  opacity: 0.85;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.1);
+  border-color: var(--color-green-400);
+}
+
+.metric-icon-box {
+  border-radius: 0.75rem;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.metric-icon-box.water {
+  background: linear-gradient(135deg, #e0f7fa 0%, #bae6fd 100%);
+  color: #0369a1;
+}
+
+.metric-icon-box.rain {
+  background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 100%);
+  color: #1d4ed8;
+}
+
+.metric-icon-box.pluv {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
+}
+
+.metric-icon-box.site {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+}
+
+.metric-icon-box.agro {
+  background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%);
+  color: #1b4332;
+}
+
+/* ==========================================================================
+   6. Formularios, Buscadores y Barra de Filtros Estilo Bootstrap
+   ========================================================================== */
+.filter-bar {
+  border-radius: 0.85rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-neutral-200);
+}
+
+.form-control {
+  border-radius: 0.55rem;
+  border: 1px solid var(--color-neutral-300);
+  background-color: var(--color-white);
+  color: var(--color-neutral-800);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.form-control:focus {
+  background-color: var(--color-white);
+  color: var(--color-neutral-900);
+  border-color: var(--color-green-600);
+  box-shadow: 0 0 0 0.22rem rgba(45, 106, 79, 0.22);
+}
+
+/* ==========================================================================
+   7. Tablas de Datos (Data Tables) e Insignias (Badges)
+   ========================================================================== */
+.table-responsive {
+  border-radius: 0.85rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.data-table th {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-neutral-600);
+  background-color: var(--color-neutral-50);
+  border-bottom: 2px solid var(--color-neutral-200);
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.6);
+}
+
+[data-theme="dark"] .data-table tbody tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.35);
+}
+
+.badge {
+  padding: 0.32rem 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+}
+
+.badge-success {
+  border-color: rgba(21, 128, 61, 0.2);
+}
+
+.badge-warning {
+  border-color: rgba(180, 83, 9, 0.2);
+}
+
+.badge-danger {
+  border-color: rgba(185, 28, 28, 0.2);
+}
+
+.badge-info {
+  border-color: rgba(3, 105, 161, 0.2);
+}
+
+/* ==========================================================================
+   8. Compatibilidad Segura con Modales y Toasts Propios
+   ========================================================================== */
+.modal-overlay .modal-dialog {
+  pointer-events: auto !important;
+  border-radius: 0.9rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+}
+
+.toast-container .toast {
+  display: flex !important;
+  width: auto;
+  max-width: 100%;
+  background-color: var(--color-white);
+  border-radius: 0.65rem;
+}
+
