@@ -3,7 +3,7 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v1.4.0';
+const CACHE_NAME = 'hidroterra-cache-v1.5.2';
 
 const PRECACHE_ASSETS = [
   './',
@@ -31,6 +31,7 @@ const PRECACHE_ASSETS = [
   './src/styles/tables.css',
   './src/styles/dashboard.css',
   './src/styles/maps.css',
+  './src/modules/climate/styles/climate.css',
   './src/styles/responsive.css',
   './src/styles/bootstrap-theme.css',
   './src/main.js',
@@ -95,6 +96,7 @@ const PRECACHE_ASSETS = [
   './src/ui/views/water-sources.view.js',
   './src/ui/views/pluviometers.view.js',
   './src/ui/views/rainfall.view.js',
+  './src/ui/views/climate.view.js',
   './src/ui/views/map.view.js',
   './src/ui/views/sites.view.js',
   './src/ui/views/parcels.view.js',
@@ -102,6 +104,18 @@ const PRECACHE_ASSETS = [
   './src/ui/views/reports.view.js',
   './src/ui/views/settings.view.js',
   './src/ui/views/about.view.js',
+  './src/modules/climate/config/weatherConfig.js',
+  './src/modules/climate/utils/weatherValidators.js',
+  './src/modules/climate/utils/weatherFormatters.js',
+  './src/modules/climate/services/weatherCache.js',
+  './src/modules/climate/services/weatherApi.js',
+  './src/modules/climate/services/weatherAnalysis.js',
+  './src/modules/climate/components/CurrentWeather.js',
+  './src/modules/climate/components/AgroclimaticIndicators.js',
+  './src/modules/climate/components/ClimateAlerts.js',
+  './src/modules/climate/components/WeatherForecast.js',
+  './src/modules/climate/components/PrecipitationChart.js',
+  './src/modules/climate/components/WeatherMap.js',
   './data/examples/sample-data.js',
   './data/examples/muestra-montes-de-maria.json'
 ];

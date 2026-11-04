@@ -46,12 +46,14 @@
     import { runRainfallTests } from './rainfall.test.js';
     import { runBackupTests } from './backup.test.js';
     import { runRepositoriesTests } from './repositories.test.js';
+    import { runClimateTests } from './climate.test.js';
 
     // Registrar todas las suites
     runValidatorsTests(suite);
     runRainfallTests(suite);
     runBackupTests(suite);
     runRepositoriesTests(suite);
+    runClimateTests(suite);
 
     const container = document.getElementById('test-results-container');
     const runBtn = document.getElementById('btn-run-all-tests');
