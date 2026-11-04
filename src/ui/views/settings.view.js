@@ -102,6 +102,14 @@ export class SettingsView {
               </div>
 
               <div class="metric-card">
+                <div class="metric-icon-box water"><i class="fa-solid fa-water"></i></div>
+                <div class="metric-info">
+                  <span class="metric-value">${storageInfo.counts.waterMeasurementsCount || 0}</span>
+                  <span class="metric-label">Mediciones Hídricas</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
                 <div class="metric-icon-box pluv"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
                 <div class="metric-info">
                   <span class="metric-value">${storageInfo.counts.pluviometersCount}</span>
@@ -140,6 +148,14 @@ export class SettingsView {
                   <span class="metric-label">Observaciones</span>
                 </div>
               </div>
+
+              <div class="metric-card">
+                <div class="metric-icon-box pluv"><i class="fa-solid fa-bell"></i></div>
+                <div class="metric-info">
+                  <span class="metric-value">${storageInfo.counts.waterAlertsCount || 0}</span>
+                  <span class="metric-label">Alertas Hídricas</span>
+                </div>
+              </div>
             </div>
 
             <div style="background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); padding: var(--spacing-4); border-radius: var(--radius-md); font-size: var(--font-size-sm);">
@@ -168,7 +184,7 @@ export class SettingsView {
               <div style="background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); padding: var(--spacing-5);">
                 <h4><i class="fa-solid fa-floppy-disk" style="color: var(--color-green-600);"></i> Exportar Respaldo Completo</h4>
                 <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); margin: var(--spacing-2) 0 var(--spacing-4);">
-                  Genera un archivo <code>pana-v2-agua-respaldo-AAAA-MM-DD.json</code> con la totalidad de fuentes, pluviómetros, lluvias y notas del territorio.
+                  Genera un archivo <code>hidroterra-respaldo-AAAA-MM-DD.json</code> con la totalidad de fuentes, mediciones hídricas, pluviómetros, lluvias, alertas y notas del territorio.
                 </p>
                 <button class="btn btn-primary" id="btn-settings-export-json">
                   <span><i class="fa-solid fa-download"></i> Descargar Respaldo JSON</span>
@@ -404,6 +420,8 @@ export class SettingsView {
             </thead>
             <tbody>
               <tr><td>Fuentes de Agua</td><td>${diff.water_sources.incomingTotal}</td><td><strong>+${diff.water_sources.newCount}</strong></td><td>${diff.water_sources.updateCount}</td><td>${diff.water_sources.currentTotal}</td></tr>
+              <tr><td>Mediciones Hídricas</td><td>${diff.water_measurements?.incomingTotal || 0}</td><td><strong>+${diff.water_measurements?.newCount || 0}</strong></td><td>${diff.water_measurements?.updateCount || 0}</td><td>${diff.water_measurements?.currentTotal || 0}</td></tr>
+              <tr><td>Alertas Hídricas</td><td>${diff.water_alerts?.incomingTotal || 0}</td><td><strong>+${diff.water_alerts?.newCount || 0}</strong></td><td>${diff.water_alerts?.updateCount || 0}</td><td>${diff.water_alerts?.currentTotal || 0}</td></tr>
               <tr><td>Pluviómetros</td><td>${diff.pluviometers.incomingTotal}</td><td><strong>+${diff.pluviometers.newCount}</strong></td><td>${diff.pluviometers.updateCount}</td><td>${diff.pluviometers.currentTotal}</td></tr>
               <tr><td>Mediciones de Lluvia</td><td>${diff.rainfall_records.incomingTotal}</td><td><strong>+${diff.rainfall_records.newCount}</strong></td><td>${diff.rainfall_records.updateCount}</td><td>${diff.rainfall_records.currentTotal}</td></tr>
               <tr><td>Sitios y Comunidades</td><td>${diff.sites.incomingTotal}</td><td><strong>+${diff.sites.newCount}</strong></td><td>${diff.sites.updateCount}</td><td>${diff.sites.currentTotal}</td></tr>

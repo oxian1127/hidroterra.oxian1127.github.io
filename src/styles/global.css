@@ -56,6 +56,16 @@ h4 { font-size: var(--font-size-md); }
   cursor: pointer;
   transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
   white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .btn:active {
@@ -135,6 +145,10 @@ h4 { font-size: var(--font-size-md); }
   font-size: var(--font-size-xs);
   font-weight: 600;
   border-radius: var(--radius-full);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .badge-success {
@@ -204,6 +218,9 @@ code {
   border-radius: var(--radius-sm);
   font-size: 0.85em;
   color: var(--color-neutral-700);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }
 
 /* Accesibilidad y foco */

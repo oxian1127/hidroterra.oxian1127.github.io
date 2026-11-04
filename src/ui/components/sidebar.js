@@ -34,6 +34,9 @@ export class Sidebar {
     const iconSymbols = {
       dashboard: '<i class="fa-solid fa-gauge"></i>',
       water_drop: '<i class="fa-solid fa-faucet-drip"></i>',
+      water_level: '<i class="fa-solid fa-water"></i>',
+      calculator: '<i class="fa-solid fa-calculator"></i>',
+      alerts: '<i class="fa-solid fa-bell"></i>',
       ruler: '<i class="fa-solid fa-cloud-showers-heavy"></i>',
       rain: '<i class="fa-solid fa-cloud-rain"></i>',
       climate: '<i class="fa-solid fa-cloud-sun-rain"></i>',

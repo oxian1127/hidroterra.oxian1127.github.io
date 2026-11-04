@@ -1,9 +1,12 @@
 /**
- * Enrutador de Navegación de Vistas (Client-Side Router) para PAnA V2 AGUA
+ * Enrutador de Navegación de Vistas (Client-Side Router) para HIDROTERRA
  */
 
 import { DashboardView } from './ui/views/dashboard.view.js';
 import { WaterSourcesView } from './ui/views/water-sources.view.js';
+import { WaterAvailabilityView } from './ui/views/water-availability.view.js';
+import { WaterToolsView } from './ui/views/water-tools.view.js';
+import { WaterAlertsView } from './ui/views/water-alerts.view.js';
 import { PluviometersView } from './ui/views/pluviometers.view.js';
 import { RainfallView } from './ui/views/rainfall.view.js';
 import { ClimateView } from './ui/views/climate.view.js';
@@ -27,6 +30,9 @@ export class Router {
     this.routes = {
       'dashboard': DashboardView,
       'water-sources': WaterSourcesView,
+      'water-availability': WaterAvailabilityView,
+      'water-tools': WaterToolsView,
+      'water-alerts': WaterAlertsView,
       'pluviometers': PluviometersView,
       'rainfall': RainfallView,
       'climate': ClimateView,

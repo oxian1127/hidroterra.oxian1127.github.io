@@ -75,7 +75,17 @@
   font-weight: 500;
   margin-bottom: 2px;
   cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
   transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-item > span:not(.nav-icon) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
 }
 
 .nav-item:hover {

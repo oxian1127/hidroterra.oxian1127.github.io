@@ -43,7 +43,7 @@ export class WaterSourcesView {
           <p class="text-muted">Registro y estado observado de pozos, arroyos, ríos, manantiales y reservorios en Montes de María.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-source">
-          <span><i class="fa-solid fa-droplet"></i> Nueva Fuente de Agua</span>
+          <span><i class="fa-solid fa-faucet-drip"></i> Nueva Fuente de Agua</span>
         </button>
       </div>
 
@@ -85,6 +85,8 @@ export class WaterSourcesView {
 
     if (params.openModal) {
       this.openFormModal();
+    } else if (params.highlightId && params.openDetails) {
+      this.openDetailsModal(params.highlightId);
     }
   }
 
@@ -124,6 +126,7 @@ export class WaterSourcesView {
           render: (item) => `
             <div class="table-actions">
               <button class="btn btn-outline btn-sm btn-view-source" data-id="${item.id}" title="Ver detalles"><i class="fa-solid fa-eye"></i></button>
+              <button class="btn btn-outline btn-sm btn-avail-source" data-id="${item.id}" title="Ficha de disponibilidad y mediciones de nivel"><i class="fa-solid fa-file-lines"></i></button>
               <button class="btn btn-outline btn-sm btn-climate-source" data-id="${item.id}" title="Consultar clima y pronóstico en esta fuente"><i class="fa-solid fa-cloud-sun-rain"></i></button>
               <button class="btn btn-outline btn-sm btn-edit-source" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-outline btn-sm btn-toggle-source" data-id="${item.id}" title="${item.active !== false ? 'Desactivar fuente' : 'Activar fuente'}">
@@ -143,6 +146,12 @@ export class WaterSourcesView {
   _bindTableActionButtons(container) {
     container.querySelectorAll('.btn-view-source').forEach(btn => {
       btn.addEventListener('click', () => this.openDetailsModal(btn.dataset.id));
+    });
+
+    container.querySelectorAll('.btn-avail-source').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.router.navigate('water-availability', { sourceId: btn.dataset.id, openSheet: true });
+      });
     });
 
     container.querySelectorAll('.btn-climate-source').forEach(btn => {
@@ -290,6 +299,30 @@ export class WaterSourcesView {
           })}
         </div>
 
+        <div class="form-grid-2">
+          ${renderTextField({
+            id: 'ws-known-capacity',
+            label: 'Capacidad Total Conocida (Litros, opcional)',
+            value: current && current.knownCapacityLiters !== null && current.knownCapacityLiters !== undefined ? current.knownCapacityLiters : '',
+            placeholder: 'Ej: 10000',
+            type: 'number',
+            min: 0,
+            step: 1,
+            help: 'Capacidad nominal de reservorio, tanque o jagüey'
+          })}
+
+          ${renderTextField({
+            id: 'ws-ref-depth',
+            label: 'Profundidad Total de Referencia (m, opcional)',
+            value: current && current.referenceDepthMeters !== null && current.referenceDepthMeters !== undefined ? current.referenceDepthMeters : '',
+            placeholder: 'Ej: 4.50',
+            type: 'number',
+            min: 0,
+            step: 0.05,
+            help: 'Profundidad máxima útil para control de niveles'
+          })}
+        </div>
+
         <!-- Selector de Coordenadas GPS -->
         ${renderCoordinatesPicker({
           latId: 'ws-lat',
@@ -337,6 +370,8 @@ export class WaterSourcesView {
               mainUse: dialog.querySelector('#ws-use').value,
               observationDate: dialog.querySelector('#ws-obs-date').value ? new Date(dialog.querySelector('#ws-obs-date').value).toISOString() : nowIso(),
               responsible: dialog.querySelector('#ws-responsible').value,
+              knownCapacityLiters: dialog.querySelector('#ws-known-capacity')?.value || null,
+              referenceDepthMeters: dialog.querySelector('#ws-ref-depth')?.value || null,
               latitude: dialog.querySelector('#ws-lat').value || null,
               longitude: dialog.querySelector('#ws-lon').value || null,
               notes: dialog.querySelector('#ws-notes').value
@@ -403,10 +438,15 @@ export class WaterSourcesView {
       `,
       footerHtml: `
         <button class="btn btn-outline" id="modal-btn-close">Cerrar</button>
+        <button class="btn btn-outline" id="modal-btn-avail-from-view"><i class="fa-solid fa-file-lines"></i> Ficha de Disponibilidad y Niveles</button>
         <button class="btn btn-primary" id="modal-btn-edit-from-view">Editar Ficha</button>
       `,
       onMount: (dialog) => {
         dialog.querySelector('#modal-btn-close').addEventListener('click', () => modal.close());
+        dialog.querySelector('#modal-btn-avail-from-view').addEventListener('click', () => {
+          modal.close();
+          this.router.navigate('water-availability', { sourceId: id, openSheet: true });
+        });
         dialog.querySelector('#modal-btn-edit-from-view').addEventListener('click', () => {
           modal.close();
           this.openFormModal(id);

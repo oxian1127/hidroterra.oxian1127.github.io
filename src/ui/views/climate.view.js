@@ -5,10 +5,12 @@
 
 import { PluviometersService } from '../../application/pluviometers.service.js';
 import { WaterSourcesService } from '../../application/water-sources.service.js';
+import { WaterAvailabilityService } from '../../application/water-availability.service.js';
 import { SitesService } from '../../application/sites.service.js';
 import { ParcelsService } from '../../application/parcels.service.js';
 import { RainfallService } from '../../application/rainfall.service.js';
 import { ObservationsService } from '../../application/observations.service.js';
+import { cropRepository } from '../../infrastructure/database/repositories/crop.repository.js';
 
 import { WEATHER_CONFIG } from '../../modules/climate/config/weatherConfig.js';
 import { validateWeatherCoordinates } from '../../modules/climate/utils/weatherValidators.js';
@@ -69,13 +71,15 @@ export class ClimateView {
     `;
 
     // 1. Cargar entidades territoriales reales existentes en HIDROTERRA
-    const [pluvs, sources, sites, parcels, rainRecords, observations] = await Promise.all([
+    const [pluvs, sources, sites, parcels, rainRecords, observations, waterMeasurements, crops] = await Promise.all([
       PluviometersService.getAll(),
       WaterSourcesService.getAll({ onlyActive: true }),
       SitesService.getAll(),
       ParcelsService.getAll(),
       RainfallService.getAll(),
-      ObservationsService.getAll({ category: 'condicion_suelo' })
+      ObservationsService.getAll({ category: 'condicion_suelo' }),
+      WaterAvailabilityService.getAllMeasurements(),
+      cropRepository.getAll()
     ]);
 
     this.pluviometers = pluvs.filter(p => p.latitude !== null && p.longitude !== null);
@@ -84,6 +88,8 @@ export class ClimateView {
     this.parcels = parcels.filter(pr => pr.latitude !== null && pr.longitude !== null);
     this.rainfallRecords = rainRecords;
     this.soilObservations = observations;
+    this.waterMeasurements = waterMeasurements;
+    this.crops = crops;
 
     this.mapSection.buildRealPoints({
       pluviometers: this.pluviometers,
@@ -541,16 +547,33 @@ export class ClimateView {
       if (siteMatch) siteName = `${siteMatch.name} (${siteMatch.municipality})`;
     }
 
+    // Última medición de disponibilidad si la entidad es una fuente hídrica
+    let latestSourceMeasurement = null;
+    if (this.selectedLocation?.entityType === 'water_source' && this.selectedLocation?.entityId) {
+      latestSourceMeasurement = (this.waterMeasurements || []).find(m => m.sourceId === this.selectedLocation.entityId) || null;
+    }
+
+    // Cultivos vinculados si la entidad es una parcela o comunidad
+    let relatedCrops = [];
+    if (this.selectedLocation?.entityType === 'parcel' && this.selectedLocation?.entityId) {
+      relatedCrops = (this.crops || []).filter(c => c.parcelId === this.selectedLocation.entityId);
+    } else if (this.selectedLocation?.entityType === 'site' && this.selectedLocation?.entityId) {
+      const parcelIdsInSite = new Set((this.parcels || []).filter(p => p.siteId === this.selectedLocation.entityId).map(p => p.id));
+      relatedCrops = (this.crops || []).filter(c => parcelIdsInSite.has(c.parcelId));
+    }
+
     dashboardOutlet.innerHTML = `
       <!-- 4.1 Panel Meteorológico Principal -->
       ${renderCurrentWeatherPanel(this.weatherRecord, this.connectionStatus, this.weatherError)}
 
-      <!-- 5. Ficha de Integración con Pluviómetros y Fuentes Hídricas -->
+      <!-- 5. Ficha de Integración con Pluviómetros, Fuentes Hídricas, Disponibilidad y Cultivos -->
       ${renderEntityIntegrationCard({
         selectedEntity: this.selectedLocation,
         siteName,
         precipComparison,
-        indicators
+        indicators,
+        latestSourceMeasurement,
+        relatedCrops
       })}
 
       <!-- 6. Motor de Análisis Agroclimático y 5.3 Monitoreo de Humedad del Suelo -->

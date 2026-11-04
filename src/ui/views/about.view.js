@@ -136,15 +136,25 @@ export class AboutView {
           </div>
           <div class="card-body" style="font-size: var(--font-size-sm); line-height: 1.65; color: var(--color-neutral-700);">
             <p style="margin-bottom: var(--spacing-3);">
-              <strong>${escapeHtml(APP_CONFIG.name)} (PAnA V2 AGUA)</strong> es una Aplicación Web Progresiva (PWA) de código modular que funciona directamente en el navegador del dispositivo sin requerir servidores externos ni suscripciones en la nube para su operación diaria.
+              <strong>${escapeHtml(APP_CONFIG.name)}</strong> es una Aplicación Web Progresiva (PWA) de código modular que funciona directamente en el navegador del dispositivo sin requerir servidores externos ni suscripciones en la nube para su operación diaria.
             </p>
             <div style="display: flex; flex-direction: column; gap: var(--spacing-3);">
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-hard-drive" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">Base de Datos Local Persistente (IndexedDB)</strong>
+                  <strong style="color: var(--color-neutral-900);">Base de Datos Local Persistente (IndexedDB v3)</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Toda la información se guarda de forma segura en el almacenamiento interno del navegador mediante 7 almacenes relacionales con reglas de integridad.
+                    Toda la información se guarda de forma segura en el almacenamiento interno del navegador mediante almacenes relacionales para fuentes, mediciones hídricas, alertas, pluviómetros, lluvias, sitios, parcelas, cultivos, observaciones y cola de sincronización.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+                <i class="fa-solid fa-water" style="color: var(--color-blue-700); font-size: 1.2rem; margin-top: 2px;"></i>
+                <div>
+                  <strong style="color: var(--color-neutral-900);">Monitoreo de Disponibilidad, Calculadoras y Alertas Hídricas</strong>
+                  <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                    Seguimiento periódico de niveles y volúmenes disponibles por fuente (diferenciando volumen observado y estimado), calculadoras de captación pluvial (<code>V = P × A × C</code>), geometrías de almacenamiento, balance hídrico, autonomía y alertas tempranas configurables.
                   </p>
                 </div>
               </div>
@@ -154,7 +164,7 @@ export class AboutView {
                 <div>
                   <strong style="color: var(--color-neutral-900);">Georreferenciación GPS Nativa y Mapas Interactivos</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Captura coordenadas WGS84 usando el chip GPS del dispositivo incluso sin datos móviles y valida que estén dentro del polígono de Montes de María.
+                    Captura coordenadas WGS84 usando el chip GPS del dispositivo incluso sin datos móviles, valida que estén dentro de Montes de María y representa en el mapa el estado de disponibilidad por colores.
                   </p>
                 </div>
               </div>
@@ -162,9 +172,19 @@ export class AboutView {
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">HIDROTERRA CLIMA (Open-Meteo + Caché Offline)</strong>
+                  <strong style="color: var(--color-neutral-900);">HIDROTERRA CLIMA y Vinculación Clima – Agua</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Pronóstico horario (24 h) y diario (7 días), evapotranspiración FAO ET₀, alertas agroclimáticas y contraste entre lluvia real medida en pluviómetro y modelo numérico.
+                    Pronóstico horario (24 h) y diario (7 días), evapotranspiración FAO ET₀, alertas agroclimáticas, contraste entre lluvia real medida y modelo numérico, y cruce con el potencial de recarga de fuentes hídricas.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+                <i class="fa-solid fa-mobile-screen-button" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
+                <div>
+                  <strong style="color: var(--color-neutral-900);">Interfaz Adaptable con Puntos Suspensivos y Lectura Táctil</strong>
+                  <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                    Optimización visual para teléfonos y escritorio: los textos largos en selectores, cajas de texto o botones se ajustan con <code>...</code> y muestran su contenido íntegro al pasar el mouse (PC) o al presionarlos (teléfono).
                   </p>
                 </div>
               </div>
@@ -172,9 +192,9 @@ export class AboutView {
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-shield-halved" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">Intercambio de Datos e Integridad</strong>
+                  <strong style="color: var(--color-neutral-900);">Intercambio de Datos e Integridad (9 Reportes + JSON v3)</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Exportación a Excel (CSV UTF-8) y respaldos completos en JSON con asistente de combinación o restauración para consolidar datos de varios monitores.
+                    Exportación a Excel (CSV UTF-8), formato imprimible y respaldos completos en JSON con asistente de combinación o restauración para consolidar datos de múltiples monitores.
                   </p>
                 </div>
               </div>
@@ -202,7 +222,7 @@ export class AboutView {
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="dashboard">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Resumen ejecutivo con indicadores en tiempo real (fuentes activas, pluviómetros, acumulado mensual en mm), gráfico de precipitación diaria, mini-mapa y últimas lecturas.
+                Resumen ejecutivo con indicadores en tiempo real (fuentes activas, pluviómetros, acumulado mensual en mm, estado hídrico territorial, volumen total estimado disponible y alertas activas), acciones rápidas, gráficos y mini-mapa.
               </p>
             </div>
 
@@ -222,13 +242,43 @@ export class AboutView {
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-sources">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Inventario detallado de pozos, arroyos, ríos, manantiales, jagüeyes, reservorios y acueductos veredales, incluyendo su estado observado, usos principales y coordenadas.
+                Inventario detallado de pozos, arroyos, ríos, manantiales, jagüeyes, reservorios, tanques y puntos de captación pluvial, incluyendo capacidad en litros, profundidad de referencia, fotografía y acceso directo a su Ficha de Disponibilidad.
+              </p>
+            </div>
+
+            <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-blue-700);">
+              <div class="d-flex justify-between align-center w-100">
+                <strong><i class="fa-solid fa-water" style="color: var(--color-blue-700);"></i> 4. Disponibilidad Hídrica</strong>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-availability">Abrir</button>
+              </div>
+              <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                Registro periódico de mediciones de nivel (m, cm, L, m³, %, L/s), clasificación automática diferenciada por tipo de fuente (alta, moderada, baja, crítica), comparador entre fechas, gráficos de evolución y Ficha Técnica de Disponibilidad.
+              </p>
+            </div>
+
+            <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-green-700);">
+              <div class="d-flex justify-between align-center w-100">
+                <strong><i class="fa-solid fa-calculator" style="color: var(--color-green-700);"></i> 5. Herramientas y Calculadoras Hídricas</strong>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-tools">Abrir</button>
+              </div>
+              <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                Cuatro calculadoras técnicas reutilizables con carga de datos de campo: Captación de agua lluvia en techos (<code>V = P × A × C</code>), Capacidad geométrica de tanques y reservorios, Balance hídrico simplificado y Autonomía hídrica en días de reserva.
+              </p>
+            </div>
+
+            <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-warning);">
+              <div class="d-flex justify-between align-center w-100">
+                <strong><i class="fa-solid fa-bell" style="color: var(--color-warning);"></i> 6. Alertas Hídricas</strong>
+                <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-alerts">Abrir</button>
+              </div>
+              <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                Sistema de alertas tempranas basado en datos reales (fuentes críticas, descenso de nivel, déficit pluviométrico, pronóstico de lluvias intensas y fuentes sin medición reciente) con umbrales configurables y gestión de resolución.
               </p>
             </div>
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-showers-heavy" style="color: var(--color-green-700);"></i> 4. Pluviómetros</strong>
+                <strong><i class="fa-solid fa-cloud-showers-heavy" style="color: var(--color-green-700);"></i> 7. Pluviómetros</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="pluviometers">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -238,7 +288,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-rain" style="color: var(--color-blue-700);"></i> 5. Registro de Lluvias</strong>
+                <strong><i class="fa-solid fa-cloud-rain" style="color: var(--color-blue-700);"></i> 8. Registro de Lluvias</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="rainfall">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -248,27 +298,27 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-blue-700);">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> 6. Clima y Meteorología (HIDROTERRA CLIMA)</strong>
+                <strong><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> 9. Clima y Meteorología (HIDROTERRA CLIMA)</strong>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">Abrir Clima</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Sistema de monitoreo meteorológico y análisis agroclimático: condiciones actuales (Open-Meteo), pronóstico 24 h y 7 días, evapotranspiración FAO ET₀, alertas preventivas, mapa climático interactivo y comparación entre lluvia observada en pluviómetros y precipitación pronosticada.
+                Monitoreo meteorológico y análisis agroclimático: condiciones actuales (Open-Meteo), pronóstico 24 h y 7 días, evapotranspiración FAO ET₀, vinculación Clima – Agua (recarga potencial en m³) y comparación entre lluvia observada y pronosticada.
               </p>
             </div>
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-map-location-dot" style="color: var(--color-green-700);"></i> 7. Mapa Territorial</strong>
+                <strong><i class="fa-solid fa-map-location-dot" style="color: var(--color-green-700);"></i> 10. Mapa Territorial</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="map">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Visor cartográfico interactivo con activación/desactivación de capas (fuentes de agua, pluviómetros, comunidades y parcelas) y fichas emergentes al hacer clic en cada punto.
+                Visor cartográfico interactivo con activación/desactivación de capas, filtro por estado de disponibilidad hídrica, marcadores coloreados según nivel (alta, moderada, baja, crítica) y fichas emergentes detalladas.
               </p>
             </div>
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-seedling" style="color: var(--color-green-700);"></i> 8. Parcelas y Cultivos</strong>
+                <strong><i class="fa-solid fa-seedling" style="color: var(--color-green-700);"></i> 11. Parcelas y Cultivos</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="parcels">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -278,7 +328,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--color-blue-700);"></i> 9. Observaciones, Reportes y Respaldos</strong>
+                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--color-blue-700);"></i> 12. Observaciones, Reportes y Respaldos</strong>
                 <div class="d-flex gap-2">
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Notas</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
@@ -286,7 +336,7 @@ export class AboutView {
                 </div>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Bitácora de observaciones de campo, generador de 6 informes exportables a CSV/JSON/Impresión y centro de configuración, modo oscuro y copias de seguridad.
+                Bitácora de observaciones de campo, generador de 9 informes técnicos exportables a CSV/JSON/Impresión y centro de configuración, modo oscuro y copias de seguridad.
               </p>
             </div>
           </div>
@@ -301,7 +351,7 @@ export class AboutView {
         <div class="card-header">
           <div>
             <h3 class="card-title"><i class="fa-solid fa-list-check" style="color: var(--color-green-700); margin-right: 6px;"></i> Manual de Uso Paso a Paso</h3>
-            <p class="card-subtitle">Siga este flujo recomendado para registrar, consultar y respaldar la información hídrica sin errores</p>
+            <p class="card-subtitle">Siga este flujo recomendado para registrar, monitorear, calcular y respaldar la información hídrica sin errores</p>
           </div>
         </div>
         <div class="card-body">
@@ -323,114 +373,152 @@ export class AboutView {
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
                 <li>En el menú izquierdo, seleccione <strong>Sitios y Comunidades</strong> y pulse el botón <strong>«+ Nueva Comunidad / Sitio»</strong>.</li>
-                <li>Escriba el nombre de la vereda o sector (ej. <em>Vereda La Cansona</em>), el municipio (ej. <em>El Carmen de Bolívar</em>) y el departamento.</li>
+                <li>Escriba el nombre de la vereda o sector (ej. <em>Vereda La Cansona</em>), el municipio (ej. <em>El Carmen de Bolívar</em>), la población estimada y el departamento.</li>
                 <li>Si se encuentra en el sitio, pulse <strong>«Obtener ubicación actual»</strong> para capturar las coordenadas GPS automáticamente, o escríbalas en grados decimales y presione <strong>Guardar</strong>.</li>
               </ol>
             </div>
 
             <!-- PASO 2 -->
-            <div class="coords-picker-box" style="margin-bottom: 0;">
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-blue-700);">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
                   <span class="badge badge-info" style="margin-right: 6px;">Paso 2</span>
-                  Registrar los Pluviómetros de la Red Comunitaria
+                  Inventariar Fuentes de Agua con Capacidad y Profundidad de Referencia
                 </h4>
-                <button class="btn btn-outline btn-sm btn-nav-module" data-route="pluviometers">
-                  <i class="fa-solid fa-arrow-right"></i> Ir a Pluviómetros
+                <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-sources">
+                  <i class="fa-solid fa-faucet-drip"></i> Ir a Fuentes de Agua
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
-                Cada equipo instalado en una finca, escuela o predio comunitario debe tener su ficha técnica:
+                Registre cada pozo, jagüey, reservorio, tanque comunitario, manantial o arroyo indicando sus parámetros de diseño para habilitar el cálculo automático de disponibilidad:
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li>Ingrese a <strong>Pluviómetros</strong> y haga clic en <strong>«Añadir Pluviómetro»</strong>.</li>
-                <li>Asigne un <strong>Código único</strong> fácil de identificar (ej. <code>PLUV-CARMEN-01</code>) y un nombre descriptivo (ej. <em>Pluviómetro Finca La Esperanza</em>).</li>
-                <li>Seleccione el tipo de equipo (manual graduado, comunitario, estación meteorológica o artesanal), la comunidad asociada y el nombre del monitor responsable.</li>
-                <li>Registre las coordenadas GPS y la altitud (msnm). En la tabla podrá usar el buscador superior para filtrar por código, nombre, estado o comunidad.</li>
+                <li>Ingrese a <strong>Fuentes de Agua</strong> y haga clic en <strong>«Registrar Fuente de Agua»</strong> (<i class="fa-solid fa-faucet-drip"></i>).</li>
+                <li>Asigne código, nombre, tipo de fuente, comunidad asociada, usos principales (consumo humano, agropecuario, riego) y coordenadas GPS.</li>
+                <li>Complete la <strong>Capacidad estimada en litros (L)</strong> y la <strong>Profundidad máxima o nivel de referencia (m)</strong> cuando se conozcan, y adjunte fotografía si dispone de ella.</li>
               </ol>
             </div>
 
             <!-- PASO 3 -->
-            <div class="coords-picker-box" style="margin-bottom: 0;">
-              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
-                <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-info" style="margin-right: 6px;">Paso 3</span>
-                  Capturar Mediciones de Lluvia en Milímetros (mm)
-                </h4>
-                <button class="btn btn-outline btn-sm btn-nav-module" data-route="rainfall">
-                  <i class="fa-solid fa-arrow-right"></i> Ir a Registro de Lluvias
-                </button>
-              </div>
-              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
-                Cuando realice la lectura del pluviómetro (idealmente a la misma hora cada mañana después de un día de lluvia):
-              </p>
-              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li>Puede entrar desde <strong>Registro de Lluvias &rarr; «Registrar Nueva Medición»</strong>, o pulsar el botón azul de lluvia (<i class="fa-solid fa-cloud-rain"></i>) junto al pluviómetro.</li>
-                <li>Seleccione el pluviómetro correspondiente e ingrese la cantidad medida en <strong>milímetros (mm)</strong> (valores mayores o iguales a <code>0</code>, acepta decimales como <code>14.5</code>).</li>
-                <li>Verifique la <strong>Fecha y Hora de Medición</strong> (cuándo se tomó la lectura en campo) y el tipo de medición (acumulado 24h, evento puntual, etc.).</li>
-                <li>El sistema verificará automáticamente que no exista un registro duplicado cercano en el tiempo y actualizará al instante las tarjetas de acumulado y el gráfico diario/mensual.</li>
-              </ol>
-            </div>
-
-            <!-- PASO 4: HIDROTERRA CLIMA -->
             <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-blue-700);">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-info" style="margin-right: 6px;">Paso 4</span>
-                  Consultar el Pronóstico y Análisis Agroclimático (HIDROTERRA CLIMA)
+                  <span class="badge badge-info" style="margin-right: 6px;">Paso 3</span>
+                  Monitorear Disponibilidad Hídrica, Comparar Fechas y Consultar Fichas Técnicas
                 </h4>
-                <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">
-                  <i class="fa-solid fa-cloud-sun-rain"></i> Ir a Clima y Meteorología
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-availability">
+                  <i class="fa-solid fa-water"></i> Ir a Disponibilidad Hídrica
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
-                Utilice el módulo <strong>Clima y Meteorología</strong> para combinar sus registros locales con información meteorológica actualizada de Open-Meteo:
+                Realice el seguimiento periódico del estado real de cada infraestructura hídrica:
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li><strong>Selección de Ubicación:</strong> Elija en los desplegables superiores un <strong>Pluviómetro registrado</strong>, una <strong>Fuente hídrica</strong>, una <strong>Comunidad o Parcela</strong>, haga clic directamente en cualquier punto del <strong>Mapa Climático</strong> o escriba coordenadas decimales manuales.</li>
-                <li><strong>Panel Meteorológico e Indicadores Agroclimáticos:</strong> Revise la temperatura actual, sensación térmica, humedad relativa, viento, presión, <strong>Evapotranspiración de referencia (FAO ET₀)</strong> y el conteo de días consecutivos sin lluvia pronosticada.</li>
-                <li><strong>Alertas Agroclimáticas Orientativas:</strong> Verifique si existen avisos preventivos por <em>posible periodo seco</em>, <em>probabilidad de lluvia próxima</em>, <em>temperatura diurna elevada</em> o <em>necesidad de seguimiento hídrico</em>.</li>
-                <li><strong>Pronóstico 24 Horas y 7 Días:</strong> Alterne entre la vista horaria (próximas 24 h) y la vista de 7 días. Haga clic sobre cualquiera de las tarjetas de los 7 días para inspeccionar su tabla horaria detallada.</li>
-                <li><strong>Comparación de Precipitaciones:</strong> En el apartado de análisis de lluvias, compare siempre por separado: <strong>(1) Lluvia observada y medida en su pluviómetro</strong>, <strong>(2) Precipitación estimada para las próximas 24 h</strong> y <strong>(3) Precipitación pronosticada para los próximos 7 días</strong>. Todas las consultas quedan guardadas en la caché local (<code>weather_cache</code>) para revisarlas incluso cuando salga a campo sin Internet.</li>
+                <li>Pulse <strong>«Registrar Medición»</strong> (<i class="fa-solid fa-ruler-vertical"></i>), elija la fuente hídrica, la fecha/hora y el <strong>Método de medición</strong> (medición manual de nivel, regla limnimétrica, cinta o sonda de profundidad, medición volumétrica o estimación técnica).</li>
+                <li>Ingrese el valor medido y su unidad (<code>m</code>, <code>cm</code>, <code>L</code>, <code>m³</code>, <code>%</code> o <code>L/s</code>). El sistema distingue entre <strong>valores observados directamente</strong> y <strong>volúmenes estimados por cálculo</strong> a partir de la capacidad o profundidad de la fuente.</li>
+                <li>Consulte la clasificación automática según el tipo de fuente (<strong>Alta</strong>, <strong>Moderada</strong>, <strong>Baja</strong>, <strong>Crítica</strong> o <strong>Sin datos</strong>), el gráfico de evolución histórica y el <strong>Comparador entre dos fechas</strong>.</li>
+                <li>Haga clic en el botón de ficha (<i class="fa-solid fa-file-lines"></i>) de cualquier fuente para abrir su <strong>Ficha Técnica de Disponibilidad</strong> con todos sus indicadores, historial, fotografías y observaciones.</li>
+              </ol>
+            </div>
+
+            <!-- PASO 4 -->
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-green-700);">
+              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <h4 style="margin: 0; color: var(--color-neutral-900);">
+                  <span class="badge badge-success" style="margin-right: 6px;">Paso 4</span>
+                  Utilizar las 4 Calculadoras de Herramientas Hídricas
+                </h4>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-tools">
+                  <i class="fa-solid fa-calculator"></i> Ir a Herramientas Hídricas
+                </button>
+              </div>
+              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
+                Apoye la planificación comunitaria y el diseño predial con cuatro calculadoras técnicas conectadas a los registros reales del territorio:
+              </p>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li><strong>1. Captación de Agua Lluvia (<code>V = P × A × C</code>):</strong> Cargue la precipitación observada en un pluviómetro o ingrese los mm de lluvia, el área del techo en m² y el tipo de cubierta (zinc, teja de barro, concreto, geomembrana) para obtener el volumen captable en litros y m³ y los tanques equivalentes.</li>
+                <li><strong>2. Almacenamiento por Geometría:</strong> Calcule la capacidad total y el volumen actual según el tirante de agua para tanques cilíndricos, tanques rectangulares o jagüeyes trapezoidales con talud.</li>
+                <li><strong>3. Balance Hídrico Simplificado:</strong> Compare las entradas (captación pluvial + volumen almacenado + aportes) frente a las salidas (consumo doméstico, pecuario, riego y pérdidas por evaporación/infiltración) para identificar superávit o déficit hídrico.</li>
+                <li><strong>4. Autonomía Hídrica:</strong> Seleccione una fuente real para cargar su volumen actual y estime cuántos días de reserva tiene la comunidad según el número de habitantes, cabezas de ganado y hectáreas de riego, más un escenario de ahorro del 20 %.</li>
               </ol>
             </div>
 
             <!-- PASO 5 -->
-            <div class="coords-picker-box" style="margin-bottom: 0;">
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-warning);">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-success" style="margin-right: 6px;">Paso 5</span>
-                  Inventariar Fuentes de Agua, Parcelas y Observaciones de Campo
+                  <span class="badge badge-warning" style="margin-right: 6px;">Paso 5</span>
+                  Gestionar el Sistema de Alertas Hídricas y Configurar Umbrales
                 </h4>
-                <div class="d-flex gap-2">
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-sources">Fuentes</button>
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="parcels">Parcelas</button>
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Observaciones</button>
-                </div>
+                <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-alerts">
+                  <i class="fa-solid fa-bell"></i> Ir a Alertas Hídricas
+                </button>
               </div>
-              <ul style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li><strong>Fuentes de Agua:</strong> Registre pozos, arroyos, manantiales o jagüeyes indicando su disponibilidad actual (disponible, nivel bajo, seco en verano, contaminada, etc.) y su uso (consumo humano, riego, ganadería).</li>
-                <li><strong>Parcelas y Cultivos:</strong> En la pestaña <em>Parcelas</em> registre los predios y luego use el botón <strong>«Sembrar cultivo»</strong> (<i class="fa-solid fa-seedling"></i>) para asociar cultivos de ñame, yuca, maíz u otros.</li>
-                <li><strong>Observaciones Hídricas:</strong> Anote eventos cualitativos importantes (inicio de sequía, creciente de arroyo, humedad del suelo o mantenimiento de equipos) vinculándolos a una comunidad, fuente o pluviómetro.</li>
-              </ul>
+              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
+                Identifique oportunamente riesgos de desabastecimiento o eventos hidrometeorológicos extremos:
+              </p>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li>En <strong>Alertas Hídricas</strong> pulse <strong>«Reevaluar Datos»</strong> para analizar todas las fuentes, pluviómetros y pronósticos en caché.</li>
+                <li>Revise las 5 reglas automáticas: <em>Fuente en estado crítico/bajo</em>, <em>Descenso brusco de nivel</em>, <em>Déficit de lluvias</em>, <em>Pronóstico de lluvias intensas</em> y <em>Fuente sin mediciones recientes</em>.</li>
+                <li>Use <strong>«Configurar Umbrales»</strong> para adaptar los porcentajes y días límite a las condiciones locales de su zona, pulse <strong>«Ver Ficha de Disponibilidad»</strong> (<i class="fa-solid fa-file-lines"></i>) para inspeccionar la fuente afectada o marque la alerta como <strong>Atendida</strong> registrando la acción tomada.</li>
+              </ol>
             </div>
 
             <!-- PASO 6 -->
             <div class="coords-picker-box" style="margin-bottom: 0;">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-warning" style="margin-right: 6px;">Paso 6</span>
-                  Consultar el Mapa, Exportar Reportes y Realizar Respaldos JSON
+                  <span class="badge badge-info" style="margin-right: 6px;">Paso 6</span>
+                  Registrar Pluviómetros y Capturar Mediciones de Lluvia en Milímetros (mm)
                 </h4>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Ir a Reportes</button>
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="settings">Ir a Respaldos</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="pluviometers">Pluviómetros</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="rainfall">Registro de Lluvias</button>
                 </div>
               </div>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li><strong>Mapa Territorial:</strong> Active o desactive las casillas superiores para ver en el mapa las fuentes, pluviómetros, comunidades y parcelas. Haga clic sobre cualquier marcador para ver su resumen.</li>
-                <li><strong>Reportes y Exportación:</strong> Elija entre los 6 tipos de informe, filtre por fechas o comunidad y presione <strong>«Descargar CSV»</strong> (para abrir en Excel) o <strong>«Imprimir Reporte»</strong> (para guardar en PDF o papel).</li>
-                <li><strong>Copia de Seguridad (Fundamental):</strong> Al terminar su jornada de registro, pulse el botón <strong>«Respaldo JSON»</strong> en la barra superior derecha o desde <strong>Respaldo y Datos</strong>. Guarde ese archivo <code>.json</code> en una memoria USB, carpeta segura o envíelo al coordinador técnico.</li>
+                <li>En <strong>Pluviómetros &rarr; «Añadir Pluviómetro»</strong>, asigne un código único (ej. <code>PLUV-CARMEN-01</code>), nombre, tipo de equipo, comunidad asociada, altitud (msnm) y monitor responsable.</li>
+                <li>En <strong>Registro de Lluvias &rarr; «Registrar Nueva Medición»</strong>, seleccione el pluviómetro e ingrese la lámina medida en <strong>milímetros (mm)</strong> junto con la fecha y hora de lectura.</li>
+                <li>El sistema valida duplicados automáticamente y actualiza al instante las tarjetas de acumulado y los gráficos diarios y mensuales.</li>
+              </ol>
+            </div>
+
+            <!-- PASO 7: HIDROTERRA CLIMA -->
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-blue-700);">
+              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <h4 style="margin: 0; color: var(--color-neutral-900);">
+                  <span class="badge badge-info" style="margin-right: 6px;">Paso 7</span>
+                  Consultar Pronóstico Agroclimático y Vinculación Clima – Agua
+                </h4>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">
+                  <i class="fa-solid fa-cloud-sun-rain"></i> Ir a Clima y Meteorología
+                </button>
+              </div>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li><strong>Selección de Ubicación:</strong> Elija un Pluviómetro, Fuente hídrica, Comunidad o Parcela, o seleccione un punto en el Mapa Climático.</li>
+                <li><strong>Condiciones, Pronóstico 24 h / 7 Días y ET₀:</strong> Consulte temperatura, humedad, viento, presión, evapotranspiración FAO ET₀ y días secos consecutivos.</li>
+                <li><strong>Vinculación Clima – Disponibilidad Hídrica:</strong> Revise la tarjeta de impacto hídrico que cruza la lluvia pronosticada a 7 días con las fuentes cercanas para estimar el potencial de recarga pluvial en m³ y priorizar el seguimiento de fuentes en estado crítico o bajo.</li>
+                <li><strong>Comparación de Precipitaciones:</strong> Compare siempre por separado la lluvia física observada en sus pluviómetros frente a la precipitación pronosticada para 24 h y 7 días.</li>
+              </ol>
+            </div>
+
+            <!-- PASO 8 -->
+            <div class="coords-picker-box" style="margin-bottom: 0;">
+              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <h4 style="margin: 0; color: var(--color-neutral-900);">
+                  <span class="badge badge-warning" style="margin-right: 6px;">Paso 8</span>
+                  Explorar el Mapa por Disponibilidad, Exportar los 9 Reportes y Respaldar en JSON
+                </h4>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="map">Mapa</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="settings">Respaldos</button>
+                </div>
+              </div>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li><strong>Mapa Territorial:</strong> Active o desactive capas y utilice el filtro de <strong>Estado de Disponibilidad Hídrica</strong> para localizar en el mapa las fuentes con disponibilidad alta (verde), moderada (azul), baja (ámbar) o crítica (rojo), y abra su Ficha de Disponibilidad desde el marcador.</li>
+                <li><strong>Reportes y Exportación:</strong> Genere cualquiera de los <strong>9 informes técnicos</strong> (incluyendo <em>Estado de Disponibilidad Hídrica de Fuentes</em>, <em>Historial de Mediciones de Nivel y Volumen</em> y <em>Balance Pluviométrico vs Disponibilidad</em>) y descárguelos en <strong>CSV (Excel)</strong>, <strong>JSON</strong> o <strong>Impresión / PDF</strong>.</li>
+                <li><strong>Copia de Seguridad (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> en la barra superior o desde <strong>Respaldo y Datos</strong> para conservar su archivo <code>.json</code> en un lugar seguro.</li>
               </ol>
             </div>
 
@@ -453,55 +541,64 @@ export class AboutView {
           <div class="card-body" style="display: flex; flex-direction: column; gap: var(--spacing-4); font-size: var(--font-size-sm); line-height: 1.6;">
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                1. ¿Necesito tener conexión a Internet para registrar lluvias o fuentes en la vereda?
+                1. ¿Necesito tener conexión a Internet para registrar lluvias, mediciones de nivel o usar las calculadoras?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                No. Una vez que haya abierto la aplicación por primera vez, el sistema guarda todos sus programas internamente (Service Worker) y almacena los registros en el dispositivo. Verá el indicador <em>«Sin Conexión (Offline)»</em> en el encabezado y podrá seguir trabajando con total normalidad.
+                No. Una vez abierta la aplicación por primera vez, el Service Worker guarda todos sus módulos y calculadoras internamente, y almacena los registros en IndexedDB dentro del dispositivo. Verá el indicador <em>«Sin Conexión (Offline)»</em> en el encabezado y podrá trabajar con total normalidad.
               </p>
             </div>
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                2. ¿Por qué el sistema no me deja eliminar un pluviómetro?
+                2. ¿Por qué los umbrales de disponibilidad hídrica cambian entre un pozo, un jagüey y un tanque?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                Por regla de integridad histórica: si un pluviómetro ya tiene mediciones de lluvia asociadas, el sistema impide borrarlo para no dejar huérfanas las lecturas históricas. Si el equipo se dañó o ya no se usa, edítelo y cambie su estado a <strong>«Retirado»</strong> o <strong>«Inactivo»</strong>.
+                Porque cada infraestructura se comporta hidrológicamente de forma distinta: un jagüey o reservorio a cielo abierto sufre mayor evaporación e infiltración (por lo que se considera crítico por debajo del 25 %–30 %), mientras que un tanque cerrado conserva mejor su volumen (crítico bajo el 20 %) y un pozo se evalúa según su columna de agua útil sobre la profundidad de referencia.
               </p>
             </div>
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                3. ¿Cómo uno los datos recolectados en varios teléfonos o computadores?
+                3. ¿Cuál es la diferencia entre el volumen observado y el volumen estimado en Disponibilidad Hídrica?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                En cada teléfono exporte el <strong>Respaldo JSON</strong>. Luego, en el computador principal vaya a <strong>Respaldo y Datos &rarr; Seleccionar Archivo JSON</strong>, cargue cada archivo y elija la opción <strong>«Combinar y Actualizar (Recomendado)»</strong>. El sistema sumará los registros nuevos sin borrar los que ya estaban.
+                El <strong>volumen observado</strong> es el que el monitor mide directamente en litros o m³ (por ejemplo, en un tanque graduado). El <strong>volumen estimado</strong> lo calcula automáticamente el sistema cuando usted ingresa una lectura de nivel (en metros o centímetros) o porcentaje y la fuente cuenta con su capacidad máxima y profundidad de referencia registradas.
               </p>
             </div>
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                4. ¿Qué ocurre si borro el historial y los datos de navegación del navegador?
+                4. ¿Cómo puedo leer el texto completo cuando un botón, selector o tarjeta muestra puntos suspensivos (...)?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                Como la base de datos vive dentro del navegador (IndexedDB), borrar los «Datos de sitios» eliminará los registros locales si no tiene una copia externa. Por eso la aplicación muestra un aviso preventivo si pasan más de ${APP_CONFIG.storage.backupWarningDays} días sin exportar un Respaldo JSON.
+                Para mantener todas las vistas ordenadas sin que los textos largos desborden las cajas, el sistema recorta el excedente con puntos suspensivos (<code>...</code>). Si está en <strong>computador (PC)</strong>, simplemente pase el cursor (mouse) por encima del elemento; si está en un <strong>teléfono o tableta</strong>, mantenga presionado un instante el botón o selector para que aparezca un globo flotante con el texto completo sin activar el botón por accidente.
               </p>
             </div>
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                5. ¿Cómo funciona HIDROTERRA CLIMA cuando salgo a campo sin conexión a Internet?
+                5. ¿Por qué el sistema no me deja eliminar un pluviómetro o una fuente con registros?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                Cada vez que usted consulta el pronóstico de un pluviómetro, fuente de agua o comunidad con conexión, el sistema guarda automáticamente esa consulta en el almacén local <code>weather_cache</code>. Si luego abre el módulo sin Internet, recuperará la última consulta guardada indicando la fecha y hora exacta en que fue descargada.
+                Por regla de integridad histórica: si un pluviómetro o fuente hídrica ya tiene mediciones asociadas, se protege para no perder la serie histórica. Si dejó de utilizarse, edite su ficha y cambie su estado operativo a <strong>«Retirado»</strong> o <strong>«Inactivo»</strong>.
               </p>
             </div>
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                6. ¿Por qué el módulo de Clima separa la lluvia observada de la lluvia estimada por el modelo?
+                6. ¿Cómo uno los datos recolectados en varios teléfonos o computadores?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                Porque las predicciones de los modelos meteorológicos (Open-Meteo) son estimaciones satelitales/numéricas para un cuadrante geográfico, mientras que la lectura del pluviómetro es el dato físico real ocurrido en la finca o vereda. Nunca debe reemplazarse una lectura real de pluviómetro por una predicción.
+                En cada teléfono exporte el <strong>Respaldo JSON</strong>. Luego, en el computador principal vaya a <strong>Respaldo y Datos &rarr; Seleccionar Archivo JSON</strong>, cargue cada archivo y elija la opción <strong>«Combinar y Actualizar (Recomendado)»</strong>. El sistema integrará todas las fuentes, mediciones de disponibilidad, lluvias y alertas sin borrar los registros existentes.
+              </p>
+            </div>
+
+            <div>
+              <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
+                7. ¿Cómo funciona HIDROTERRA CLIMA cuando salgo a campo sin conexión a Internet?
+              </strong>
+              <p style="margin: 0; color: var(--color-neutral-600);">
+                Cada consulta meteorológica realizada con conexión se guarda automáticamente en el almacén local <code>weather_cache</code>. En modo offline el sistema recupera el último pronóstico descargado indicando su fecha y hora exacta, y separa siempre la lluvia observada en pluviómetros de las estimaciones numéricas de Open-Meteo.
               </p>
             </div>
           </div>
@@ -518,9 +615,19 @@ export class AboutView {
             <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
               <i class="fa-solid fa-clock" style="color: var(--color-blue-700); font-size: 1.15rem; margin-top: 2px;"></i>
               <div>
-                <strong>Lectura a hora fija (7:00 a. m.)</strong>
+                <strong>Lectura pluviométrica a hora fija (7:00 a. m.)</strong>
                 <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
                   Procure leer el pluviómetro todos los días a la misma hora (estándar meteorológico: 7:00 a. m.) y vaciar el recipiente inmediatamente después de tomar el dato.
+                </p>
+              </div>
+            </div>
+
+            <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+              <i class="fa-solid fa-ruler-vertical" style="color: var(--color-blue-700); font-size: 1.15rem; margin-top: 2px;"></i>
+              <div>
+                <strong>Punto fijo de referencia al medir niveles de agua</strong>
+                <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                  En pozos, jagüeyes y reservorios utilice siempre el mismo brocal o regla limnimétrica como referencia para que el historial y las variaciones porcentuales sean comparables entre fechas.
                 </p>
               </div>
             </div>
@@ -531,6 +638,16 @@ export class AboutView {
                 <strong>Captura de coordenadas a cielo despejado</strong>
                 <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
                   Al usar el botón <em>«Obtener ubicación actual»</em>, sitúese al aire libre junto al pluviómetro o fuente de agua y espere unos segundos para obtener la mejor precisión GPS.
+                </p>
+              </div>
+            </div>
+
+            <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+              <i class="fa-solid fa-hand-pointer" style="color: var(--color-blue-700); font-size: 1.15rem; margin-top: 2px;"></i>
+              <div>
+                <strong>Lectura de textos largos en pantallas pequeñas</strong>
+                <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                  Si usa un teléfono en campo y ve un botón o lista desplegable con <code>...</code>, mantenga presionado el elemento durante medio segundo para desplegar la etiqueta completa en pantalla.
                 </p>
               </div>
             </div>
