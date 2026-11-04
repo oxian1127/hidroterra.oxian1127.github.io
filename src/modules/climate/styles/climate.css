@@ -1,0 +1,357 @@
+/**
+ * Estilos para el módulo HIDROTERRA CLIMA
+ * Coherente con la identidad visual de HIDROTERRA y adaptable a Modo Claro / Oscuro y Móvil
+ */
+
+/* Selector de ubicación superior */
+.climate-selector-bar {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.85rem;
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.climate-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--spacing-3);
+  align-items: end;
+}
+
+.climate-manual-coords-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  align-items: flex-end;
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px dashed var(--color-neutral-200);
+}
+
+/* Panel meteorológico principal */
+.climate-hero-card {
+  border-top: 4px solid var(--color-blue-700);
+}
+
+.climate-inline-notice {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-xs);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.climate-current-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 2fr;
+  gap: var(--spacing-5);
+  align-items: center;
+}
+
+.climate-main-temp-box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: linear-gradient(135deg, var(--color-blue-50) 0%, var(--color-green-50) 100%);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.85rem;
+}
+
+.climate-condition-icon {
+  font-size: 3.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
+}
+
+.climate-temp-value {
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: var(--color-neutral-900);
+  line-height: 1.05;
+}
+
+.climate-condition-label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-neutral-800);
+  margin-top: 4px;
+}
+
+.climate-apparent-temp {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-600);
+  margin-top: 2px;
+}
+
+.climate-variables-subgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.climate-stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-md);
+}
+
+.climate-stat-icon {
+  font-size: 1.35rem;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-white);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.climate-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--color-neutral-500);
+}
+
+.climate-stat-val {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-900);
+}
+
+/* Tira interactiva de 7 días de pronóstico */
+.climate-days-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: var(--spacing-2);
+}
+
+.climate-day-card {
+  background-color: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.75rem;
+  padding: var(--spacing-3) var(--spacing-2);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.climate-day-card:hover {
+  border-color: var(--color-blue-600);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.climate-day-card.selected {
+  background-color: var(--color-blue-50);
+  border: 2px solid var(--color-blue-700);
+  box-shadow: var(--shadow-md);
+}
+
+.climate-day-title {
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-900);
+}
+
+.climate-day-subdate {
+  font-size: 0.68rem;
+  color: var(--color-neutral-500);
+}
+
+.climate-day-icon {
+  font-size: 1.75rem;
+  margin: 4px 0;
+}
+
+.climate-day-cond {
+  font-size: 0.7rem;
+  color: var(--color-neutral-700);
+  min-height: 2.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.climate-day-temps {
+  display: flex;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.climate-day-temps .temp-max {
+  color: var(--color-danger);
+}
+
+.climate-day-temps .temp-min {
+  color: var(--color-blue-700);
+}
+
+.climate-day-metrics {
+  display: flex;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: var(--color-neutral-600);
+}
+
+.climate-day-et0 {
+  font-size: 0.68rem;
+  color: var(--color-green-700);
+  background-color: var(--color-white);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-neutral-200);
+  margin-top: 2px;
+}
+
+.climate-row-selected {
+  background-color: var(--color-blue-50) !important;
+}
+
+/* Leyenda de diferenciación de precipitaciones (Observada vs Estimada vs Pronosticada) */
+.climate-precip-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.climate-legend-box {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background-color: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-left-width: 4px;
+}
+
+.climate-legend-box.observed {
+  border-left-color: #15803d;
+}
+
+.climate-legend-box.estimated {
+  border-left-color: #0284c7;
+}
+
+.climate-legend-box.forecasted {
+  border-left-color: #4f46e5;
+}
+
+/* Tarjetas de Alertas Agroclimáticas */
+.climate-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.climate-alert-card {
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  background-color: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-left: 4px solid var(--color-info);
+}
+
+.climate-alert-card.level-atencion {
+  border-left-color: #f59e0b;
+}
+
+.climate-alert-card.level-seguimiento {
+  border-left-color: #d97706;
+  background-color: rgba(254, 243, 199, 0.25);
+}
+
+[data-theme="dark"] .climate-alert-card.level-seguimiento {
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.climate-alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.climate-alert-icon {
+  font-size: 1.15rem;
+  color: var(--color-warning);
+}
+
+.climate-alert-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-600);
+  margin-bottom: var(--spacing-2);
+}
+
+.climate-alert-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-800);
+  margin-bottom: var(--spacing-2);
+}
+
+.climate-alert-recommendation {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-700);
+  background-color: var(--color-white);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-neutral-200);
+}
+
+/* Lienzo del Mapa Climático */
+.climate-map-canvas {
+  width: 100%;
+  height: 430px;
+  position: relative;
+  background-color: #e5e3df;
+}
+
+[data-theme="dark"] .climate-map-canvas {
+  background-color: #121926;
+}
+
+/* Adaptabilidad en pantallas pequeñas (Teléfonos y Tabletas) */
+@media (max-width: 768px) {
+  .climate-current-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+
+  .climate-days-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .climate-map-canvas {
+    height: 330px;
+  }
+
+  .climate-manual-coords-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .climate-manual-coords-row > div,
+  .climate-manual-coords-row > .btn {
+    width: 100%;
+  }
+}
+

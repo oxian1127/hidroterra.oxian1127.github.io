@@ -6,6 +6,7 @@ import { DashboardView } from './ui/views/dashboard.view.js';
 import { WaterSourcesView } from './ui/views/water-sources.view.js';
 import { PluviometersView } from './ui/views/pluviometers.view.js';
 import { RainfallView } from './ui/views/rainfall.view.js';
+import { ClimateView } from './ui/views/climate.view.js';
 import { MapView } from './ui/views/map.view.js';
 import { SitesView } from './ui/views/sites.view.js';
 import { ParcelsView } from './ui/views/parcels.view.js';
@@ -28,6 +29,7 @@ export class Router {
       'water-sources': WaterSourcesView,
       'pluviometers': PluviometersView,
       'rainfall': RainfallView,
+      'climate': ClimateView,
       'map': MapView,
       'sites': SitesView,
       'parcels': ParcelsView,

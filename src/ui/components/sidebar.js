@@ -36,6 +36,7 @@ export class Sidebar {
       water_drop: '<i class="fa-solid fa-faucet-drip"></i>',
       ruler: '<i class="fa-solid fa-cloud-showers-heavy"></i>',
       rain: '<i class="fa-solid fa-cloud-rain"></i>',
+      climate: '<i class="fa-solid fa-cloud-sun-rain"></i>',
       map: '<i class="fa-solid fa-map-location-dot"></i>',
       location: '<i class="fa-solid fa-mountain-sun"></i>',
       agriculture: '<i class="fa-solid fa-seedling"></i>',

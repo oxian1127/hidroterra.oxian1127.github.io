@@ -28,6 +28,12 @@ export const MODULES_CONFIG = [
     description: 'Captura de precipitaciones en mm, acumulados y gráficos'
   },
   {
+    id: 'climate',
+    label: 'Clima y Meteorología',
+    icon: 'climate',
+    description: 'Monitoreo meteorológico en tiempo real, pronóstico 7 días y análisis agroclimático'
+  },
+  {
     id: 'map',
     label: 'Mapa Territorial',
     icon: 'map',

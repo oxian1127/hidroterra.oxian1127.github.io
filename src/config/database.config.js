@@ -4,7 +4,7 @@
 
 export const DB_CONFIG = {
   name: 'pana_v2_agua_db',
-  version: 1,
+  version: 2,
 
   stores: {
     water_sources: {
@@ -87,6 +87,16 @@ export const DB_CONFIG = {
       name: 'system_meta',
       keyPath: 'key',
       indexes: []
+    },
+
+    weather_cache: {
+      name: 'weather_cache',
+      keyPath: 'id',
+      indexes: [
+        { name: 'coordKey', keyPath: 'coordKey', unique: true },
+        { name: 'fetchedAt', keyPath: 'fetchedAt', unique: false },
+        { name: 'entityId', keyPath: 'entityId', unique: false }
+      ]
     }
   }
 };

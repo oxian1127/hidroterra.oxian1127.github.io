@@ -127,6 +127,7 @@ export class PluviometersView {
             <div class="table-actions">
               <button class="btn btn-outline btn-sm btn-view-pluv" data-id="${item.id}" title="Ver ficha y mediciones"><i class="fa-solid fa-eye"></i></button>
               <button class="btn btn-blue btn-sm btn-add-rain-pluv" data-id="${item.id}" title="Registrar lluvia en este equipo"><i class="fa-solid fa-cloud-rain"></i></button>
+              <button class="btn btn-outline btn-sm btn-climate-pluv" data-id="${item.id}" title="Consultar clima y pronóstico en este pluviómetro"><i class="fa-solid fa-cloud-sun-rain"></i></button>
               <button class="btn btn-outline btn-sm btn-edit-pluv" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-outline btn-sm btn-delete-pluv" data-id="${item.id}" title="Eliminar / Retirar"><i class="fa-solid fa-trash"></i></button>
             </div>
@@ -148,6 +149,12 @@ export class PluviometersView {
     container.querySelectorAll('.btn-add-rain-pluv').forEach(btn => {
       btn.addEventListener('click', () => {
         this.router.navigate('rainfall', { openModal: true, pluviometerId: btn.dataset.id });
+      });
+    });
+
+    container.querySelectorAll('.btn-climate-pluv').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.router.navigate('climate', { pluviometerId: btn.dataset.id });
       });
     });
 

@@ -160,6 +160,16 @@ export class AboutView {
               </div>
 
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+                <i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700); font-size: 1.2rem; margin-top: 2px;"></i>
+                <div>
+                  <strong style="color: var(--color-neutral-900);">HIDROTERRA CLIMA (Open-Meteo + Caché Offline)</strong>
+                  <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                    Pronóstico horario (24 h) y diario (7 días), evapotranspiración FAO ET₀, alertas agroclimáticas y contraste entre lluvia real medida en pluviómetro y modelo numérico.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-shield-halved" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
                   <strong style="color: var(--color-neutral-900);">Intercambio de Datos e Integridad</strong>
@@ -236,9 +246,19 @@ export class AboutView {
               </p>
             </div>
 
+            <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-blue-700);">
+              <div class="d-flex justify-between align-center w-100">
+                <strong><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> 6. Clima y Meteorología (HIDROTERRA CLIMA)</strong>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">Abrir Clima</button>
+              </div>
+              <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                Sistema de monitoreo meteorológico y análisis agroclimático: condiciones actuales (Open-Meteo), pronóstico 24 h y 7 días, evapotranspiración FAO ET₀, alertas preventivas, mapa climático interactivo y comparación entre lluvia observada en pluviómetros y precipitación pronosticada.
+              </p>
+            </div>
+
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-map-location-dot" style="color: var(--color-green-700);"></i> 6. Mapa Territorial</strong>
+                <strong><i class="fa-solid fa-map-location-dot" style="color: var(--color-green-700);"></i> 7. Mapa Territorial</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="map">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -248,7 +268,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-seedling" style="color: var(--color-green-700);"></i> 7. Parcelas y Cultivos</strong>
+                <strong><i class="fa-solid fa-seedling" style="color: var(--color-green-700);"></i> 8. Parcelas y Cultivos</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="parcels">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -258,7 +278,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--color-blue-700);"></i> 8. Observaciones, Reportes y Respaldos</strong>
+                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--color-blue-700);"></i> 9. Observaciones, Reportes y Respaldos</strong>
                 <div class="d-flex gap-2">
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Notas</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
@@ -352,11 +372,34 @@ export class AboutView {
               </ol>
             </div>
 
-            <!-- PASO 4 -->
+            <!-- PASO 4: HIDROTERRA CLIMA -->
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-blue-700);">
+              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <h4 style="margin: 0; color: var(--color-neutral-900);">
+                  <span class="badge badge-info" style="margin-right: 6px;">Paso 4</span>
+                  Consultar el Pronóstico y Análisis Agroclimático (HIDROTERRA CLIMA)
+                </h4>
+                <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">
+                  <i class="fa-solid fa-cloud-sun-rain"></i> Ir a Clima y Meteorología
+                </button>
+              </div>
+              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
+                Utilice el módulo <strong>Clima y Meteorología</strong> para combinar sus registros locales con información meteorológica actualizada de Open-Meteo:
+              </p>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li><strong>Selección de Ubicación:</strong> Elija en los desplegables superiores un <strong>Pluviómetro registrado</strong>, una <strong>Fuente hídrica</strong>, una <strong>Comunidad o Parcela</strong>, haga clic directamente en cualquier punto del <strong>Mapa Climático</strong> o escriba coordenadas decimales manuales.</li>
+                <li><strong>Panel Meteorológico e Indicadores Agroclimáticos:</strong> Revise la temperatura actual, sensación térmica, humedad relativa, viento, presión, <strong>Evapotranspiración de referencia (FAO ET₀)</strong> y el conteo de días consecutivos sin lluvia pronosticada.</li>
+                <li><strong>Alertas Agroclimáticas Orientativas:</strong> Verifique si existen avisos preventivos por <em>posible periodo seco</em>, <em>probabilidad de lluvia próxima</em>, <em>temperatura diurna elevada</em> o <em>necesidad de seguimiento hídrico</em>.</li>
+                <li><strong>Pronóstico 24 Horas y 7 Días:</strong> Alterne entre la vista horaria (próximas 24 h) y la vista de 7 días. Haga clic sobre cualquiera de las tarjetas de los 7 días para inspeccionar su tabla horaria detallada.</li>
+                <li><strong>Comparación de Precipitaciones:</strong> En el apartado de análisis de lluvias, compare siempre por separado: <strong>(1) Lluvia observada y medida en su pluviómetro</strong>, <strong>(2) Precipitación estimada para las próximas 24 h</strong> y <strong>(3) Precipitación pronosticada para los próximos 7 días</strong>. Todas las consultas quedan guardadas en la caché local (<code>weather_cache</code>) para revisarlas incluso cuando salga a campo sin Internet.</li>
+              </ol>
+            </div>
+
+            <!-- PASO 5 -->
             <div class="coords-picker-box" style="margin-bottom: 0;">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-success" style="margin-right: 6px;">Paso 4</span>
+                  <span class="badge badge-success" style="margin-right: 6px;">Paso 5</span>
                   Inventariar Fuentes de Agua, Parcelas y Observaciones de Campo
                 </h4>
                 <div class="d-flex gap-2">
@@ -372,11 +415,11 @@ export class AboutView {
               </ul>
             </div>
 
-            <!-- PASO 5 -->
+            <!-- PASO 6 -->
             <div class="coords-picker-box" style="margin-bottom: 0;">
               <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <h4 style="margin: 0; color: var(--color-neutral-900);">
-                  <span class="badge badge-warning" style="margin-right: 6px;">Paso 5</span>
+                  <span class="badge badge-warning" style="margin-right: 6px;">Paso 6</span>
                   Consultar el Mapa, Exportar Reportes y Realizar Respaldos JSON
                 </h4>
                 <div class="d-flex gap-2">
@@ -441,6 +484,24 @@ export class AboutView {
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
                 Como la base de datos vive dentro del navegador (IndexedDB), borrar los «Datos de sitios» eliminará los registros locales si no tiene una copia externa. Por eso la aplicación muestra un aviso preventivo si pasan más de ${APP_CONFIG.storage.backupWarningDays} días sin exportar un Respaldo JSON.
+              </p>
+            </div>
+
+            <div>
+              <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
+                5. ¿Cómo funciona HIDROTERRA CLIMA cuando salgo a campo sin conexión a Internet?
+              </strong>
+              <p style="margin: 0; color: var(--color-neutral-600);">
+                Cada vez que usted consulta el pronóstico de un pluviómetro, fuente de agua o comunidad con conexión, el sistema guarda automáticamente esa consulta en el almacén local <code>weather_cache</code>. Si luego abre el módulo sin Internet, recuperará la última consulta guardada indicando la fecha y hora exacta en que fue descargada.
+              </p>
+            </div>
+
+            <div>
+              <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
+                6. ¿Por qué el módulo de Clima separa la lluvia observada de la lluvia estimada por el modelo?
+              </strong>
+              <p style="margin: 0; color: var(--color-neutral-600);">
+                Porque las predicciones de los modelos meteorológicos (Open-Meteo) son estimaciones satelitales/numéricas para un cuadrante geográfico, mientras que la lectura del pluviómetro es el dato físico real ocurrido en la finca o vereda. Nunca debe reemplazarse una lectura real de pluviómetro por una predicción.
               </p>
             </div>
           </div>

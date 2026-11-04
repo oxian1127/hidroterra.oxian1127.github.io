@@ -124,6 +124,7 @@ export class WaterSourcesView {
           render: (item) => `
             <div class="table-actions">
               <button class="btn btn-outline btn-sm btn-view-source" data-id="${item.id}" title="Ver detalles"><i class="fa-solid fa-eye"></i></button>
+              <button class="btn btn-outline btn-sm btn-climate-source" data-id="${item.id}" title="Consultar clima y pronóstico en esta fuente"><i class="fa-solid fa-cloud-sun-rain"></i></button>
               <button class="btn btn-outline btn-sm btn-edit-source" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-outline btn-sm btn-toggle-source" data-id="${item.id}" title="${item.active !== false ? 'Desactivar fuente' : 'Activar fuente'}">
                 ${item.active !== false ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>'}
@@ -142,6 +143,12 @@ export class WaterSourcesView {
   _bindTableActionButtons(container) {
     container.querySelectorAll('.btn-view-source').forEach(btn => {
       btn.addEventListener('click', () => this.openDetailsModal(btn.dataset.id));
+    });
+
+    container.querySelectorAll('.btn-climate-source').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.router.navigate('climate', { waterSourceId: btn.dataset.id });
+      });
     });
 
     container.querySelectorAll('.btn-edit-source').forEach(btn => {
