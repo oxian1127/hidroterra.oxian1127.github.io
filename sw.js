@@ -3,7 +3,7 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v1.3.0';
+const CACHE_NAME = 'hidroterra-cache-v1.4.0';
 
 const PRECACHE_ASSETS = [
   './',
@@ -32,6 +32,7 @@ const PRECACHE_ASSETS = [
   './src/styles/dashboard.css',
   './src/styles/maps.css',
   './src/styles/responsive.css',
+  './src/styles/bootstrap-theme.css',
   './src/main.js',
   './src/app.js',
   './src/router.js',
