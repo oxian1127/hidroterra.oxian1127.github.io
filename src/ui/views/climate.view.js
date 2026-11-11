@@ -107,12 +107,12 @@ export class ClimateView {
         <!-- Encabezado de la Vista -->
         <div class="view-header d-flex justify-between align-center mb-4">
           <div>
-            <h2><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> HIDROTERRA CLIMA — Monitoreo Meteorológico y Análisis Agroclimático</h2>
+            <h2>HIDROTERRA CLIMA — Monitoreo Meteorológico y Análisis Agroclimático</h2>
             <p class="text-muted">Condiciones meteorológicas actuales, pronóstico horario y de 7 días, evapotranspiración FAO ET₀ y balance de lluvias en Montes de María.</p>
           </div>
           <div class="d-flex gap-2">
             <button type="button" class="btn btn-primary" id="btn-climate-refresh">
-              <span><i class="fa-solid fa-arrows-rotate"></i> Actualizar Pronóstico</span>
+              <span>Actualizar Pronóstico</span>
             </button>
           </div>
         </div>
@@ -233,7 +233,7 @@ export class ClimateView {
         <div class="d-flex justify-between align-center mb-3" style="flex-wrap: wrap; gap: 8px;">
           <div>
             <strong style="font-size: var(--font-size-sm); color: var(--color-neutral-900);">
-              <i class="fa-solid fa-compass" style="color: var(--color-green-700);"></i> Consulta Meteorológica por Ubicación Territorial
+              Consulta Meteorológica por Ubicación Territorial
             </strong>
             <span class="text-muted" style="font-size: var(--font-size-xs); margin-left: 6px;">
               Seleccione un punto registrado en HIDROTERRA, elija en el mapa inferior o ingrese coordenadas manuales
@@ -245,7 +245,7 @@ export class ClimateView {
           <!-- Alternativa 1A: Seleccionar Pluviómetro Registrado -->
           <div class="form-group" style="margin: 0;">
             <label class="form-label" for="climate-select-pluv">
-              <i class="fa-solid fa-cloud-showers-heavy" style="color: var(--color-green-700);"></i> 1. Pluviómetro Registrado:
+              1. Pluviómetro Registrado:
             </label>
             <select class="form-control form-select" id="climate-select-pluv">
               <option value="">— Seleccionar pluviómetro (${this.pluviometers.length}) —</option>
@@ -260,7 +260,7 @@ export class ClimateView {
           <!-- Alternativa 1B: Seleccionar Fuente Hídrica Registrada -->
           <div class="form-group" style="margin: 0;">
             <label class="form-label" for="climate-select-source">
-              <i class="fa-solid fa-faucet-drip" style="color: var(--color-blue-700);"></i> 2. Fuente Hídrica Registrada:
+              2. Fuente Hídrica Registrada:
             </label>
             <select class="form-control form-select" id="climate-select-source">
               <option value="">— Seleccionar fuente de agua (${this.waterSources.length}) —</option>
@@ -275,7 +275,7 @@ export class ClimateView {
           <!-- Alternativa 2: Seleccionar Comunidad o Unidad Productiva (Parcela) -->
           <div class="form-group" style="margin: 0;">
             <label class="form-label" for="climate-select-community">
-              <i class="fa-solid fa-mountain-sun" style="color: var(--color-earth-700);"></i> 3. Comunidad o Parcela Productiva:
+              3. Comunidad o Parcela Productiva:
             </label>
             <select class="form-control form-select" id="climate-select-community">
               <option value="">— Seleccionar comunidad o parcela (${this.sites.length + this.parcels.length}) —</option>
@@ -319,7 +319,7 @@ export class ClimateView {
                    placeholder="Ej: Vereda San Isidro / Punto de consulta" value="${escapeHtml(this.selectedLocation?.name || '')}" />
           </div>
           <button type="submit" class="btn btn-blue">
-            <i class="fa-solid fa-magnifying-glass-location"></i> Consultar Coordenadas
+            Consultar Coordenadas
           </button>
         </form>
       </div>
@@ -478,7 +478,7 @@ export class ClimateView {
 
     if (refreshBtn) {
       refreshBtn.disabled = true;
-      refreshBtn.innerHTML = '<span><i class="fa-solid fa-spinner fa-spin"></i> Consultando...</span>';
+      refreshBtn.innerHTML = '<span>Consultando...</span>';
     }
 
     if (dashboardOutlet && !this.weatherRecord) {
@@ -499,7 +499,7 @@ export class ClimateView {
 
     if (refreshBtn) {
       refreshBtn.disabled = false;
-      refreshBtn.innerHTML = '<span><i class="fa-solid fa-arrows-rotate"></i> Actualizar Pronóstico</span>';
+      refreshBtn.innerHTML = '<span>Actualizar Pronóstico</span>';
     }
 
     if (forceRefresh && status === 'live') {

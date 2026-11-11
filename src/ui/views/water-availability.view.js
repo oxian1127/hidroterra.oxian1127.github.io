@@ -68,15 +68,15 @@ export class WaterAvailabilityView {
         <!-- Encabezado de la Vista -->
         <div class="view-header d-flex justify-between align-center mb-4">
           <div>
-            <h2><i class="fa-solid fa-water" style="color: var(--color-blue-700);"></i> Monitoreo de Disponibilidad Hídrica</h2>
+            <h2>Monitoreo de Disponibilidad Hídrica</h2>
             <p class="text-muted">Seguimiento periódico de niveles, volúmenes observados o estimados, tendencias y clasificación técnica por fuente hídrica.</p>
           </div>
           <div class="d-flex gap-2" style="flex-wrap: wrap;">
             <button class="btn btn-outline" id="btn-goto-water-tools">
-              <span><i class="fa-solid fa-calculator"></i> Calculadoras Hídricas</span>
+              <span>Calculadoras Hídricas</span>
             </button>
             <button class="btn btn-primary" id="btn-new-water-measurement">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Registrar Medición Hídrica</span>
+              <span>Registrar Medición Hídrica</span>
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ export class WaterAvailabilityView {
         <div class="card mb-4">
           <div class="card-header">
             <div>
-              <h3 class="card-title"><i class="fa-solid fa-faucet-drip" style="color: var(--color-blue-600);"></i> Estado Actual por Fuente e Infraestructura</h3>
+              <h3 class="card-title">Estado Actual por Fuente e Infraestructura</h3>
               <p class="card-subtitle">Clasificación diferenciada según el tipo de fuente (pozo, jagüey, reservorio, tanque, manantial, arroyo)</p>
             </div>
           </div>
@@ -230,9 +230,9 @@ export class WaterAvailabilityView {
           label: 'Acciones',
           render: (item) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-sheet-source" data-source-id="${item.sourceId}" title="Ver ficha técnica de la fuente"><i class="fa-solid fa-file-lines"></i></button>
-              <button class="btn btn-outline btn-sm btn-edit-measurement" data-id="${item.id}" title="Editar medición"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-outline btn-sm btn-delete-measurement" data-id="${item.id}" title="Eliminar medición"><i class="fa-solid fa-trash"></i></button>
+              <button class="btn btn-outline btn-sm btn-sheet-source" data-source-id="${item.sourceId}" title="Ver ficha técnica de la fuente">Ficha</button>
+              <button class="btn btn-outline btn-sm btn-edit-measurement" data-id="${item.id}" title="Editar medición">Editar</button>
+              <button class="btn btn-outline btn-sm btn-delete-measurement" data-id="${item.id}" title="Eliminar medición">Eliminar</button>
             </div>
           `
         }
@@ -361,7 +361,7 @@ export class WaterAvailabilityView {
                 </div>
                 <h4 style="margin: 0 0 4px; font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</h4>
                 <p class="text-muted" style="font-size: 0.8rem; margin: 0 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(s.siteName)} (${escapeHtml(s.municipality)})">
-                  <i class="fa-solid fa-location-dot"></i> ${escapeHtml(s.siteName)} (${escapeHtml(s.municipality)})
+                  ${escapeHtml(s.siteName)} (${escapeHtml(s.municipality)})
                 </p>
 
                 ${latest ? `
@@ -378,17 +378,17 @@ export class WaterAvailabilityView {
                   </div>
                 ` : `
                   <div style="background: var(--color-neutral-50); padding: 10px; border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-neutral-600);">
-                    <i class="fa-solid fa-circle-info"></i> <strong>Sin información suficiente:</strong> Esta fuente aún no registra mediciones periódicas de nivel o volumen.
+                    <strong>Sin información suficiente:</strong> Esta fuente aún no registra mediciones periódicas de nivel o volumen.
                   </div>
                 `}
               </div>
 
               <div class="d-flex justify-between align-center gap-2" style="padding-top: 8px; border-top: 1px solid var(--color-neutral-200);">
                 <button class="btn btn-outline btn-sm btn-open-tech-sheet" data-source-id="${s.id}">
-                  <i class="fa-solid fa-file-lines"></i> Ficha Técnica (${s.measurementsCount})
+                  Ficha Técnica (${s.measurementsCount})
                 </button>
                 <button class="btn btn-primary btn-sm btn-add-source-measurement" data-source-id="${s.id}">
-                  <i class="fa-solid fa-plus"></i> Medir Nivel
+                  Medir Nivel
                 </button>
               </div>
             </div>
@@ -812,7 +812,7 @@ export class WaterAvailabilityView {
         <!-- Diferenciación clara: Volumen Observado vs Volumen Estimado -->
         <div style="background: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); padding: var(--spacing-3); border-radius: var(--radius-md); margin-bottom: var(--spacing-3);">
           <strong style="font-size: 0.85rem; display: block; margin-bottom: 8px;">
-            <i class="fa-solid fa-scale-unbalanced-flip" style="color: var(--color-blue-700);"></i> Diferenciación de Volumen (Observado vs Estimado por Cálculo)
+            Diferenciación de Volumen (Observado vs Estimado por Cálculo)
           </strong>
           <div class="form-grid-2">
             <div class="form-group" style="margin-bottom: 0;">
@@ -998,22 +998,22 @@ export class WaterAvailabilityView {
             </div>
           </div>
           <p style="font-size: 0.85rem; margin: 0 0 4px;"><strong>Diagnóstico técnico:</strong> ${escapeHtml(classification.reason)}</p>
-          <p class="text-muted" style="font-size: 0.78rem; margin: 0;"><i class="fa-solid fa-sliders"></i> ${escapeHtml(infraConfig.technicalCriteria)}</p>
+          <p class="text-muted" style="font-size: 0.78rem; margin: 0;">${escapeHtml(infraConfig.technicalCriteria)}</p>
         </div>
 
         <!-- Información General y Capacidad -->
         <div class="form-grid-2 mb-4">
           <div style="border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); padding: var(--spacing-3);">
-            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--color-green-700);"><i class="fa-solid fa-circle-info"></i> Información General y Ubicación</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--color-green-700);">Información General y Ubicación</h4>
             <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Comunidad / Sitio:</strong> ${site ? `${escapeHtml(site.name)} (${escapeHtml(site.municipality)})` : 'Sin comunidad asignada'}</p>
-            <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Coordenadas:</strong> ${formatCoordinates(source.latitude, source.longitude)}</p>
+            <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Coordenadas (copia habilitada):</strong> <span data-allow-copy="true" class="allow-copy">${formatCoordinates(source.latitude, source.longitude)}</span></p>
             <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Uso Principal:</strong> ${escapeHtml(WATER_SOURCE_USES[source.mainUse] || source.mainUse)}</p>
             <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Capacidad Conocida:</strong> ${source.knownCapacityLiters != null && Number.isFinite(Number(source.knownCapacityLiters)) ? `${Number(source.knownCapacityLiters).toLocaleString('es-CO')} L (${(Number(source.knownCapacityLiters) / 1000).toFixed(2)} m³)` : 'No registrada'}</p>
             <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Profundidad de Referencia:</strong> ${source.referenceDepthMeters != null && Number.isFinite(Number(source.referenceDepthMeters)) ? `${source.referenceDepthMeters} m` : 'No registrada'}</p>
           </div>
 
           <div style="border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); padding: var(--spacing-3);">
-            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--color-blue-700);"><i class="fa-solid fa-gauge-high"></i> Última Medición y Tendencia</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--color-blue-700);">Última Medición y Tendencia</h4>
             ${latestMeasurement ? `
               <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Fecha:</strong> ${formatDateTime(latestMeasurement.measuredAt)}</p>
               <p style="font-size: 0.85rem; margin: 4px 0;"><strong>Nivel / Valor:</strong> <strong>${latestMeasurement.waterLevel} ${escapeHtml(latestMeasurement.unit)}</strong> (${escapeHtml(WATER_MEASUREMENT_METHODS[latestMeasurement.measurementMethod] || latestMeasurement.measurementMethod)})</p>
@@ -1035,7 +1035,7 @@ export class WaterAvailabilityView {
 
         <!-- Evolución Histórica (Gráfica en Ficha) -->
         <div style="border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); padding: var(--spacing-3); margin-bottom: var(--spacing-4);">
-          <h4 style="font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-chart-line"></i> Evolución Histórica (${measurements.length} mediciones)</h4>
+          <h4 style="font-size: 0.9rem; margin-bottom: 8px;">Evolución Histórica (${measurements.length} mediciones)</h4>
           ${measurements.length > 0 ? `
             <div style="height: 200px;">
               <canvas id="sheet-history-chart"></canvas>
@@ -1046,7 +1046,7 @@ export class WaterAvailabilityView {
         <!-- Fotografías y Observaciones Relacionadas -->
         <div class="form-grid-2">
           <div>
-            <h4 style="font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-camera"></i> Registro Fotográfico (${photos.length})</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 8px;">Registro Fotográfico (${photos.length})</h4>
             ${photos.length > 0 ? `
               <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 ${photos.map(ph => `
@@ -1061,7 +1061,7 @@ export class WaterAvailabilityView {
           </div>
 
           <div>
-            <h4 style="font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-clipboard-list"></i> Observaciones Relacionadas (${relatedObservations.length})</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 8px;">Observaciones Relacionadas (${relatedObservations.length})</h4>
             ${relatedObservations.length > 0 ? `
               <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
                 ${relatedObservations.map(obs => `
@@ -1083,8 +1083,8 @@ export class WaterAvailabilityView {
       contentHtml,
       footerHtml: `
         <button class="btn btn-outline" id="btn-sheet-close">Cerrar</button>
-        <button class="btn btn-outline" id="btn-sheet-climate"><i class="fa-solid fa-cloud-sun-rain"></i> Ver Clima en Punto</button>
-        <button class="btn btn-primary" id="btn-sheet-new-meas"><i class="fa-solid fa-plus"></i> Registrar Medición</button>
+        <button class="btn btn-outline" id="btn-sheet-climate">Ver Clima en Punto</button>
+        <button class="btn btn-primary" id="btn-sheet-new-meas">Registrar Medición</button>
       `,
       onMount: (dialog) => {
         dialog.querySelector('#btn-sheet-close').addEventListener('click', () => modal.close());

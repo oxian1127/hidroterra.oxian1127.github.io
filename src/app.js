@@ -10,6 +10,7 @@ import { events } from './core/events.js';
 import { logger } from './core/logger.js';
 import { APP_CONFIG } from './config/app.config.js';
 import { ThemeService } from './core/theme.js';
+import { notification } from './ui/components/notification.js';
 
 export class App {
   constructor(rootContainer) {
@@ -49,6 +50,9 @@ export class App {
 
     // 6. Optimizar desbordamiento de texto y puntos suspensivos (...) en comboboxes y textboxes
     this._setupControlEllipsisOptimization();
+
+    // 6.1 Configurar protección de contenido (bloqueo de clic derecho, selección y copia salvo áreas controladas)
+    this._setupContentProtection();
 
     // 7. Registrar Service Worker para PWA Offline
     this._registerServiceWorker();
@@ -434,6 +438,119 @@ export class App {
 
     observer.observe(document.body, { childList: true, subtree: true });
     scheduleApply();
+  }
+
+  /**
+   * Configura protección global de interfaz:
+   * - Bloquea el menú contextual (clic derecho) en toda la plataforma.
+   * - Evita seleccionar o arrastrar contenido de las páginas fuera de campos de formulario o zonas controladas.
+   * - Restringe las acciones de copiar/cortar exclusivamente a inputs, textareas y elementos con [data-allow-copy="true"] o .allow-copy.
+   * - Permite copiar con un clic los códigos e identificadores habilitados con [data-allow-copy="true"].
+   */
+  _setupContentProtection() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+    let lastCopyWarnTime = 0;
+
+    const isAllowedCopyOrSelectTarget = (target) => {
+      if (!target || typeof target.closest !== 'function') return false;
+      if (target.closest('input, textarea, [contenteditable="true"], [data-allow-copy="true"], .allow-copy')) {
+        return true;
+      }
+      const selection = window.getSelection ? window.getSelection() : null;
+      if (selection && selection.anchorNode) {
+        const anchorEl = selection.anchorNode.nodeType === 1
+          ? selection.anchorNode
+          : selection.anchorNode.parentElement;
+        if (anchorEl && anchorEl.closest('input, textarea, [contenteditable="true"], [data-allow-copy="true"], .allow-copy')) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // 1. Bloquear clic derecho (menú contextual) en toda la aplicación
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    }, true);
+
+    // 2. Bloquear inicio de selección de texto salvo en zonas controladas y campos editables
+    document.addEventListener('selectstart', (e) => {
+      if (!isAllowedCopyOrSelectTarget(e.target)) {
+        e.preventDefault();
+      }
+    }, true);
+
+    // 3. Bloquear arrastre de elementos e imágenes
+    document.addEventListener('dragstart', (e) => {
+      if (!isAllowedCopyOrSelectTarget(e.target)) {
+        e.preventDefault();
+      }
+    }, true);
+
+    // 4. Controlar eventos de copia y corte (solo autorizados en campos de formulario y áreas [data-allow-copy="true"])
+    const handleClipboardGuard = (e) => {
+      if (!isAllowedCopyOrSelectTarget(e.target)) {
+        e.preventDefault();
+        const now = Date.now();
+        if (now - lastCopyWarnTime > 3500) {
+          lastCopyWarnTime = now;
+          notification.info(
+            'Copia controlada activa',
+            'Solo se permite copiar códigos, coordenadas, resultados de calculadoras o campos de formulario.'
+          );
+        }
+      }
+    };
+
+    document.addEventListener('copy', handleClipboardGuard, true);
+    document.addEventListener('cut', handleClipboardGuard, true);
+
+    // 5. Bloquear combinaciones de teclado no autorizadas (Ctrl+C, Ctrl+X, Ctrl+A fuera de zonas permitidas, y Ctrl+U / Ctrl+S)
+    document.addEventListener('keydown', (e) => {
+      const key = (e.key || '').toLowerCase();
+      const ctrlOrCmd = e.ctrlKey || e.metaKey;
+      if (!ctrlOrCmd) return;
+
+      if (key === 'u' || key === 's') {
+        e.preventDefault();
+        return;
+      }
+
+      if ((key === 'c' || key === 'x' || key === 'a') && !isAllowedCopyOrSelectTarget(e.target)) {
+        e.preventDefault();
+        if (key === 'c' || key === 'x') {
+          const now = Date.now();
+          if (now - lastCopyWarnTime > 3500) {
+            lastCopyWarnTime = now;
+            notification.info(
+              'Copia controlada activa',
+              'Haga clic sobre un código, coordenada o cuadro de resultados autorizado para copiar su contenido.'
+            );
+          }
+        }
+      }
+    }, true);
+
+    // 6. Facilitar copia rápida controlada al hacer clic sobre códigos o coordenadas marcados con [data-allow-copy="true"]
+    document.addEventListener('click', async (e) => {
+      const copyableTag = e.target && typeof e.target.closest === 'function'
+        ? e.target.closest('code[data-allow-copy="true"], td[data-allow-copy="true"], div[data-allow-copy="true"]:not(.card-body)')
+        : null;
+      if (!copyableTag) return;
+
+      const textToCopy = (copyableTag.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!textToCopy) return;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(textToCopy);
+          notification.success('Dato copiado al portapapeles', `Se copió: "${textToCopy}"`);
+        }
+      } catch (_err) {
+        // Si el navegador requiere selección manual, ya está habilitada mediante user-select: text
+      }
+    });
   }
 
   async _refreshStorageAndBackupStatus() {

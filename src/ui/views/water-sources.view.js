@@ -43,7 +43,7 @@ export class WaterSourcesView {
           <p class="text-muted">Registro y estado observado de pozos, arroyos, ríos, manantiales y reservorios en Montes de María.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-source">
-          <span><i class="fa-solid fa-faucet-drip"></i> Nueva Fuente de Agua</span>
+          <span>Nueva Fuente de Agua</span>
         </button>
       </div>
 
@@ -114,23 +114,23 @@ export class WaterSourcesView {
   _setupTable(container) {
     this.dataTable = new DataTable({
       columns: [
-        { key: 'code', label: 'Código' },
+        { key: 'code', label: 'Código', render: (item) => `<code data-allow-copy="true" class="allow-copy" title="Código habilitado para copia">${escapeHtml(item.code)}</code>` },
         { key: 'name', label: 'Nombre de la Fuente' },
         { key: 'typeLabel', label: 'Tipo' },
         { key: 'siteName', label: 'Comunidad / Sitio' },
         { key: 'statusBadge', label: 'Estado', render: (item) => item.statusBadge },
-        { key: 'coordsDisplay', label: 'Coordenadas' },
+        { key: 'coordsDisplay', label: 'Coordenadas', render: (item) => `<span data-allow-copy="true" class="allow-copy" title="Coordenadas habilitadas para copia">${escapeHtml(item.coordsDisplay)}</span>` },
         {
           key: 'actions',
           label: 'Acciones',
           render: (item) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-view-source" data-id="${item.id}" title="Ver detalles"><i class="fa-solid fa-eye"></i></button>
-              <button class="btn btn-outline btn-sm btn-avail-source" data-id="${item.id}" title="Ficha de disponibilidad y mediciones de nivel"><i class="fa-solid fa-file-lines"></i></button>
-              <button class="btn btn-outline btn-sm btn-climate-source" data-id="${item.id}" title="Consultar clima y pronóstico en esta fuente"><i class="fa-solid fa-cloud-sun-rain"></i></button>
-              <button class="btn btn-outline btn-sm btn-edit-source" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-outline btn-sm btn-view-source" data-id="${item.id}" title="Ver detalles">Detalle</button>
+              <button class="btn btn-outline btn-sm btn-avail-source" data-id="${item.id}" title="Ficha de disponibilidad y mediciones de nivel">Ficha</button>
+              <button class="btn btn-outline btn-sm btn-climate-source" data-id="${item.id}" title="Consultar clima y pronóstico en esta fuente">Clima</button>
+              <button class="btn btn-outline btn-sm btn-edit-source" data-id="${item.id}" title="Editar">Editar</button>
               <button class="btn btn-outline btn-sm btn-toggle-source" data-id="${item.id}" title="${item.active !== false ? 'Desactivar fuente' : 'Activar fuente'}">
-                ${item.active !== false ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>'}
+                ${item.active !== false ? 'Desactivar' : 'Activar'}
               </button>
             </div>
           `
@@ -424,8 +424,8 @@ export class WaterSourcesView {
           </div>
 
           <div class="coords-picker-box mb-4">
-            <strong>Georreferenciación:</strong>
-            <p>${formatCoordinates(source.latitude, source.longitude)}</p>
+            <strong>Georreferenciación (copia habilitada):</strong>
+            <p data-allow-copy="true" class="allow-copy">${formatCoordinates(source.latitude, source.longitude)}</p>
           </div>
 
           <div>
@@ -438,7 +438,7 @@ export class WaterSourcesView {
       `,
       footerHtml: `
         <button class="btn btn-outline" id="modal-btn-close">Cerrar</button>
-        <button class="btn btn-outline" id="modal-btn-avail-from-view"><i class="fa-solid fa-file-lines"></i> Ficha de Disponibilidad y Niveles</button>
+        <button class="btn btn-outline" id="modal-btn-avail-from-view">Ficha de Disponibilidad y Niveles</button>
         <button class="btn btn-primary" id="modal-btn-edit-from-view">Editar Ficha</button>
       `,
       onMount: (dialog) => {

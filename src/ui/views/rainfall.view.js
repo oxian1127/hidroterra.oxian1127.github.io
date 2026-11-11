@@ -51,7 +51,7 @@ export class RainfallView {
           <p class="text-muted">Captura de lecturas en milímetros (mm), acumulados diarios, mensuales y control de mediciones.</p>
         </div>
         <button class="btn btn-blue" id="btn-create-rain">
-          <span><i class="fa-solid fa-plus"></i> Registrar Nueva Medición</span>
+          <span>Registrar Nueva Medición</span>
         </button>
       </div>
 
@@ -197,8 +197,8 @@ export class RainfallView {
           label: 'Acciones',
           render: (item) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-edit-rain" data-id="${item.id}" title="Editar medición"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button class="btn btn-outline btn-sm btn-delete-rain" data-id="${item.id}" title="Eliminar medición"><i class="fa-solid fa-trash-can"></i></button>
+              <button class="btn btn-outline btn-sm btn-edit-rain" data-id="${item.id}" title="Editar medición">Editar</button>
+              <button class="btn btn-outline btn-sm btn-delete-rain" data-id="${item.id}" title="Eliminar medición">Eliminar</button>
             </div>
           `
         }

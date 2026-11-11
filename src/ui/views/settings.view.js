@@ -187,7 +187,7 @@ export class SettingsView {
                   Genera un archivo <code>hidroterra-respaldo-AAAA-MM-DD.json</code> con la totalidad de fuentes, mediciones hídricas, pluviómetros, lluvias, alertas y notas del territorio.
                 </p>
                 <button class="btn btn-primary" id="btn-settings-export-json">
-                  <span><i class="fa-solid fa-download"></i> Descargar Respaldo JSON</span>
+                  <span>Descargar Respaldo JSON</span>
                 </button>
               </div>
 
@@ -199,7 +199,7 @@ export class SettingsView {
                 </p>
                 <input type="file" id="input-import-json-file" accept=".json,application/json" style="display: none;" />
                 <button class="btn btn-outline" id="btn-settings-trigger-import">
-                  <span><i class="fa-solid fa-upload"></i> Seleccionar Archivo JSON...</span>
+                  <span>Seleccionar Archivo JSON...</span>
                 </button>
               </div>
             </div>
@@ -219,7 +219,7 @@ export class SettingsView {
               Permite cargar un conjunto de comunidades reales de Montes de María (El Carmen de Bolívar, San Jacinto, San Juan Nepomuceno, Ovejas, Chalán), fuentes hídricas de muestra, pluviómetros y mediciones de lluvia.
             </p>
             <button class="btn btn-outline" id="btn-load-sample-dataset">
-              <span><i class="fa-solid fa-wheat-awn"></i> Cargar Datos de Prueba de Montes de María</span>
+              <span>Cargar Datos de Prueba de Montes de María</span>
             </button>
           </div>
         </div>
@@ -263,7 +263,7 @@ export class SettingsView {
               Si necesita reiniciar el sistema para una nueva temporada o prueba desde cero, puede vaciar todos los registros locales de IndexedDB. Asegúrese de haber exportado un respaldo antes.
             </p>
             <button class="btn btn-danger" id="btn-clear-database-all">
-              <span><i class="fa-solid fa-trash-can"></i> Vaciar Todos los Registros Locales</span>
+              <span>Vaciar Todos los Registros Locales</span>
             </button>
           </div>
         </div>
@@ -348,7 +348,7 @@ export class SettingsView {
 
         if (confirmed) {
           loadSampleBtn.disabled = true;
-          loadSampleBtn.innerHTML = '<span><i class="fa-solid fa-spinner fa-spin"></i> Cargando datos de muestra...</span>';
+          loadSampleBtn.innerHTML = '<span>Cargando datos de muestra...</span>';
 
           try {
             let sampleData = null;
@@ -367,7 +367,7 @@ export class SettingsView {
           } catch (err) {
             notification.error('Error al cargar muestra', err.message);
             loadSampleBtn.disabled = false;
-            loadSampleBtn.innerHTML = '<span><i class="fa-solid fa-wheat-awn"></i> Cargar Datos de Prueba de Montes de María</span>';
+            loadSampleBtn.innerHTML = '<span>Cargar Datos de Prueba de Montes de María</span>';
           }
         }
       });
@@ -457,7 +457,7 @@ export class SettingsView {
       contentHtml,
       footerHtml: `
         <button class="btn btn-outline" id="btn-modal-import-cancel">Cancelar</button>
-        <button class="btn btn-primary" id="btn-modal-import-confirm"><i class="fa-solid fa-check"></i> Ejecutar Importación</button>
+        <button class="btn btn-primary" id="btn-modal-import-confirm">Ejecutar Importación</button>
       `,
       onMount: (dialog) => {
         dialog.querySelector('#btn-modal-import-cancel').addEventListener('click', () => modal.close());

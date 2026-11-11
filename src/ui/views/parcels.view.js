@@ -41,7 +41,7 @@ export class ParcelsView {
           <p class="text-muted">Registro de predios y cultivos territoriales para relacionar la demanda productiva con las lluvias.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-parcel-crop">
-          <span id="btn-create-label"><i class="fa-solid fa-plus"></i> Nueva Parcela</span>
+          <span id="btn-create-label">Nueva Parcela</span>
         </button>
       </div>
 
@@ -78,21 +78,21 @@ export class ParcelsView {
 
       this.dataTable = new DataTable({
         columns: [
-          { key: 'code', label: 'Código' },
+          { key: 'code', label: 'Código', render: (p) => `<code data-allow-copy="true" class="allow-copy" title="Código habilitado para copia">${escapeHtml(p.code)}</code>` },
           { key: 'name', label: 'Nombre de Parcela' },
           { key: 'siteName', label: 'Comunidad / Vereda' },
           { key: 'responsible', label: 'Productor / Responsable', render: (p) => escapeHtml(p.responsible || '—') },
           { key: 'areaDisplay', label: 'Área' },
           { key: 'statusBadge', label: 'Estado', render: (p) => p.statusBadge },
-          { key: 'coordsDisplay', label: 'Coordenadas' },
+          { key: 'coordsDisplay', label: 'Coordenadas', render: (p) => `<span data-allow-copy="true" class="allow-copy" title="Coordenadas habilitadas para copia">${escapeHtml(p.coordsDisplay)}</span>` },
           {
             key: 'actions',
             label: 'Acciones',
             render: (p) => `
               <div class="table-actions">
-                <button class="btn btn-blue btn-sm btn-add-crop" data-id="${p.id}" title="Sembrar cultivo"><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-seedling"></i></button>
-                <button class="btn btn-outline btn-sm btn-edit-parcel" data-id="${p.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button class="btn btn-outline btn-sm btn-delete-parcel" data-id="${p.id}" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                <button class="btn btn-blue btn-sm btn-add-crop" data-id="${p.id}" title="Sembrar cultivo">Sembrar</button>
+                <button class="btn btn-outline btn-sm btn-edit-parcel" data-id="${p.id}" title="Editar">Editar</button>
+                <button class="btn btn-outline btn-sm btn-delete-parcel" data-id="${p.id}" title="Eliminar">Eliminar</button>
               </div>
             `
           }
@@ -131,8 +131,8 @@ export class ParcelsView {
             label: 'Acciones',
             render: (c) => `
               <div class="table-actions">
-                <button class="btn btn-outline btn-sm btn-edit-crop" data-id="${c.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button class="btn btn-outline btn-sm btn-delete-crop" data-id="${c.id}" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                <button class="btn btn-outline btn-sm btn-edit-crop" data-id="${c.id}" title="Editar">Editar</button>
+                <button class="btn btn-outline btn-sm btn-delete-crop" data-id="${c.id}" title="Eliminar">Eliminar</button>
               </div>
             `
           }
@@ -227,7 +227,7 @@ export class ParcelsView {
         this.activeTab = 'parcels';
         tabParcels.classList.add('active');
         if (tabCrops) tabCrops.classList.remove('active');
-        if (createLabel) createLabel.innerHTML = '<i class="fa-solid fa-plus"></i> Nueva Parcela';
+        if (createLabel) createLabel.textContent = 'Nueva Parcela';
         this._loadData();
       });
     }
@@ -237,7 +237,7 @@ export class ParcelsView {
         this.activeTab = 'crops';
         tabCrops.classList.add('active');
         if (tabParcels) tabParcels.classList.remove('active');
-        if (createLabel) createLabel.innerHTML = '<i class="fa-solid fa-plus"></i> Nuevo Cultivo';
+        if (createLabel) createLabel.textContent = 'Nuevo Cultivo';
         this._loadData();
       });
     }

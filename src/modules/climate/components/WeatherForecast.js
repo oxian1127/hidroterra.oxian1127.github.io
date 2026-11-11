@@ -51,10 +51,10 @@ export class WeatherForecastSection {
           </div>
           <div class="nav-tabs" style="margin: 0; border: none;">
             <button type="button" class="nav-tab-btn ${this.viewMode === 'daily' ? 'active' : ''}" id="btn-fc-mode-daily">
-              <i class="fa-solid fa-calendar-days"></i> Pronóstico 7 Días
+              Pronóstico 7 Días
             </button>
             <button type="button" class="nav-tab-btn ${this.viewMode === 'hourly' ? 'active' : ''}" id="btn-fc-mode-hourly">
-              <i class="fa-regular fa-clock"></i> Pronóstico 24 Horas
+              Pronóstico 24 Horas
             </button>
           </div>
         </div>
@@ -213,7 +213,7 @@ export class WeatherForecastSection {
                   <td data-label="Evapotranspiración (ET₀)">${formatMm(d.et0SumMm)}</td>
                   <td data-label="Detalle">
                     <button type="button" class="btn btn-outline btn-sm btn-select-forecast-day" data-date="${escapeHtml(d.date)}">
-                      <i class="fa-solid fa-magnifying-glass-chart"></i> Ver horas
+                      Ver horas
                     </button>
                   </td>
                 </tr>

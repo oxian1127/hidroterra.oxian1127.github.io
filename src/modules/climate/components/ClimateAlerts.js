@@ -19,7 +19,7 @@ export function renderClimateAlertsPanel(alerts = []) {
     <div class="card mb-4">
       <div class="card-header">
         <div>
-          <h3 class="card-title"><i class="fa-solid fa-bell" style="color: var(--color-warning);"></i> Avisos y Alertas Agroclimáticas Orientativas</h3>
+          <h3 class="card-title">Avisos y Alertas Agroclimáticas Orientativas</h3>
           <p class="card-subtitle">Indicadores generados automáticamente a partir de los umbrales de pronóstico configurados</p>
         </div>
         <span class="badge badge-neutral">${alerts.length} ${alerts.length === 1 ? 'aviso activo' : 'avisos activos'}</span>
@@ -31,7 +31,6 @@ export function renderClimateAlertsPanel(alerts = []) {
             <div class="climate-alert-card level-${escapeHtml(alert.attentionLevel)}">
               <div class="climate-alert-header">
                 <div class="d-flex align-center gap-2" style="flex-wrap: wrap;">
-                  <span class="climate-alert-icon"><i class="fa-solid ${escapeHtml(alert.icon || 'fa-circle-info')}"></i></span>
                   <h4 style="margin: 0; font-size: var(--font-size-base); color: var(--color-neutral-900);">
                     ${escapeHtml(alert.type)}
                   </h4>
@@ -42,15 +41,15 @@ export function renderClimateAlertsPanel(alerts = []) {
               </div>
 
               <div class="climate-alert-meta">
-                <span><i class="fa-solid fa-location-dot"></i> <strong>Ubicación:</strong> ${escapeHtml(alert.location)}</span>
-                <span><i class="fa-regular fa-clock"></i> <strong>Generado:</strong> ${formatDateTime(alert.generatedAt)}</span>
-                <span><i class="fa-solid fa-sliders"></i> <strong>Variables origen:</strong> <code>${escapeHtml(alert.triggerVariables)}</code></span>
+                <span><strong>Ubicación:</strong> ${escapeHtml(alert.location)}</span>
+                <span><strong>Generado:</strong> ${formatDateTime(alert.generatedAt)}</span>
+                <span><strong>Variables origen:</strong> <code>${escapeHtml(alert.triggerVariables)}</code></span>
               </div>
 
               <p class="climate-alert-desc">${escapeHtml(alert.description)}</p>
 
               <div class="climate-alert-recommendation">
-                <strong><i class="fa-solid fa-lightbulb"></i> Recomendación orientativa:</strong>
+                <strong>Recomendación orientativa:</strong>
                 <span>${escapeHtml(alert.recommendation)}</span>
               </div>
             </div>

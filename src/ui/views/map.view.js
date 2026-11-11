@@ -59,35 +59,35 @@ export class MapView {
               <strong>Control de Capas:</strong>
               <label>
                 <input type="checkbox" id="layer-chk-sources" checked />
-                <span><i class="fa-solid fa-water" style="color: #0077b6;"></i> Fuentes, Reservorios y Tanques (${waterSources.length})</span>
+                <span>Fuentes, Reservorios y Tanques (${waterSources.length})</span>
               </label>
               <label>
                 <input type="checkbox" id="layer-chk-pluvs" checked />
-                <span><i class="fa-solid fa-cloud-showers-heavy" style="color: #1b4332;"></i> Pluviómetros (${pluviometers.length})</span>
+                <span>Pluviómetros (${pluviometers.length})</span>
               </label>
               <label>
                 <input type="checkbox" id="layer-chk-sites" checked />
-                <span><i class="fa-solid fa-house-chimney" style="color: #b08968;"></i> Comunidades (${sites.length})</span>
+                <span>Comunidades (${sites.length})</span>
               </label>
               <label>
                 <input type="checkbox" id="layer-chk-parcels" checked />
-                <span><i class="fa-solid fa-seedling" style="color: #2d6a4f;"></i> Parcelas (${parcels.length})</span>
+                <span>Parcelas (${parcels.length})</span>
               </label>
             </div>
 
             <div class="d-flex align-center gap-2">
               <button class="btn btn-outline btn-sm" id="btn-map-fit-all" title="Ajustar vista a todos los elementos filtrados">
-                <span><i class="fa-solid fa-crosshairs"></i> Encuadrar Todo</span>
+                <span>Encuadrar Todo</span>
               </button>
               <button class="btn btn-outline btn-sm" id="btn-map-center-default" title="Centrar en Montes de María">
-                <span><i class="fa-solid fa-location-dot"></i> Montes de María</span>
+                <span>Montes de María</span>
               </button>
             </div>
           </div>
 
           <!-- Filtros Territoriales y de Disponibilidad (Sección 6) -->
           <div class="d-flex align-center gap-2" style="flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--color-neutral-200);">
-            <strong style="font-size: 0.8rem;"><i class="fa-solid fa-filter"></i> Filtros:</strong>
+            <strong style="font-size: 0.8rem;">Filtros:</strong>
 
             <select class="form-control form-select" id="map-filter-infra" style="width: auto; min-width: 185px; font-size: 0.82rem; padding: 4px 8px;">
               <option value="all">Todos los tipos de infraestructura</option>
@@ -128,7 +128,7 @@ export class MapView {
         <div class="card" style="margin-top: var(--spacing-3);">
           <div class="card-body" style="padding: var(--spacing-3) var(--spacing-4); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--spacing-3); font-size: 0.8rem;">
             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
-              <strong><i class="fa-solid fa-map"></i> Leyenda Cartográfica:</strong>
+              <strong>Leyenda Cartográfica:</strong>
               <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#0077b6;margin-right:4px;"></span>Fuente Disponible / Alta</span>
               <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e9c46a;margin-right:4px;"></span>Disponibilidad Moderada</span>
               <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e07a5f;margin-right:4px;"></span>Disponibilidad Baja / Limitada</span>

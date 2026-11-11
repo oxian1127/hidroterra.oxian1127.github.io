@@ -43,7 +43,7 @@ export class PluviometersView {
           <p class="text-muted">Registro de equipos, fichas técnicas de instalación y coordenadas georreferenciadas en Montes de María.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-pluv">
-          <span><i class="fa-solid fa-cloud-rain"></i> Añadir Pluviómetro</span>
+          <span>Añadir Pluviómetro</span>
         </button>
       </div>
 
@@ -114,22 +114,22 @@ export class PluviometersView {
   _setupTable(container) {
     this.dataTable = new DataTable({
       columns: [
-        { key: 'code', label: 'Código' },
+        { key: 'code', label: 'Código', render: (item) => `<code data-allow-copy="true" class="allow-copy" title="Código habilitado para copia">${escapeHtml(item.code)}</code>` },
         { key: 'name', label: 'Nombre Identificador' },
         { key: 'typeLabel', label: 'Tipo de Equipo' },
         { key: 'siteName', label: 'Comunidad / Sitio' },
         { key: 'statusBadge', label: 'Estado', render: (item) => item.statusBadge },
-        { key: 'coordsDisplay', label: 'Coordenadas' },
+        { key: 'coordsDisplay', label: 'Coordenadas', render: (item) => `<span data-allow-copy="true" class="allow-copy" title="Coordenadas habilitadas para copia">${escapeHtml(item.coordsDisplay)}</span>` },
         {
           key: 'actions',
           label: 'Acciones',
           render: (item) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-view-pluv" data-id="${item.id}" title="Ver ficha y mediciones"><i class="fa-solid fa-eye"></i></button>
-              <button class="btn btn-blue btn-sm btn-add-rain-pluv" data-id="${item.id}" title="Registrar lluvia en este equipo"><i class="fa-solid fa-cloud-rain"></i></button>
-              <button class="btn btn-outline btn-sm btn-climate-pluv" data-id="${item.id}" title="Consultar clima y pronóstico en este pluviómetro"><i class="fa-solid fa-cloud-sun-rain"></i></button>
-              <button class="btn btn-outline btn-sm btn-edit-pluv" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-outline btn-sm btn-delete-pluv" data-id="${item.id}" title="Eliminar / Retirar"><i class="fa-solid fa-trash"></i></button>
+              <button class="btn btn-outline btn-sm btn-view-pluv" data-id="${item.id}" title="Ver ficha y mediciones">Ficha</button>
+              <button class="btn btn-blue btn-sm btn-add-rain-pluv" data-id="${item.id}" title="Registrar lluvia en este equipo">Lluvia</button>
+              <button class="btn btn-outline btn-sm btn-climate-pluv" data-id="${item.id}" title="Consultar clima y pronóstico en este pluviómetro">Clima</button>
+              <button class="btn btn-outline btn-sm btn-edit-pluv" data-id="${item.id}" title="Editar">Editar</button>
+              <button class="btn btn-outline btn-sm btn-delete-pluv" data-id="${item.id}" title="Eliminar / Retirar">Eliminar</button>
             </div>
           `
         }
@@ -403,8 +403,8 @@ export class PluviometersView {
           </div>
 
           <div class="coords-picker-box mb-4">
-            <strong>Georreferenciación:</strong>
-            <p>${formatCoordinates(pluv.latitude, pluv.longitude)}</p>
+            <strong>Georreferenciación (copia habilitada):</strong>
+            <p data-allow-copy="true" class="allow-copy">${formatCoordinates(pluv.latitude, pluv.longitude)}</p>
           </div>
 
           <div class="card mb-4">
@@ -413,7 +413,7 @@ export class PluviometersView {
                 <h4 style="margin: 0;">Historial de Mediciones (${measurements.length} lecturas)</h4>
                 <small class="text-muted">Total acumulado registrado: ${Math.round(totalMm * 10) / 10} mm</small>
               </div>
-              <button class="btn btn-blue btn-sm" id="btn-modal-add-rain">+ Nueva Medición</button>
+              <button class="btn btn-blue btn-sm" id="btn-modal-add-rain">Nueva Medición</button>
             </div>
             <div class="card-body" style="padding: 0; max-height: 220px; overflow-y: auto;">
               ${measurements.length > 0 ? `

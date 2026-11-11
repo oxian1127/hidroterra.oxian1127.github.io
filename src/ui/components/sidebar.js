@@ -31,24 +31,6 @@ export class Sidebar {
   }
 
   render() {
-    const iconSymbols = {
-      dashboard: '<i class="fa-solid fa-gauge"></i>',
-      water_drop: '<i class="fa-solid fa-faucet-drip"></i>',
-      water_level: '<i class="fa-solid fa-water"></i>',
-      calculator: '<i class="fa-solid fa-calculator"></i>',
-      alerts: '<i class="fa-solid fa-bell"></i>',
-      ruler: '<i class="fa-solid fa-cloud-showers-heavy"></i>',
-      rain: '<i class="fa-solid fa-cloud-rain"></i>',
-      climate: '<i class="fa-solid fa-cloud-sun-rain"></i>',
-      map: '<i class="fa-solid fa-map-location-dot"></i>',
-      location: '<i class="fa-solid fa-mountain-sun"></i>',
-      agriculture: '<i class="fa-solid fa-seedling"></i>',
-      notes: '<i class="fa-solid fa-clipboard-list"></i>',
-      bar_chart: '<i class="fa-solid fa-chart-column"></i>',
-      settings: '<i class="fa-solid fa-gear"></i>',
-      info: '<i class="fa-solid fa-circle-info"></i>'
-    };
-
     return `
       <aside class="app-sidebar" id="app-sidebar">
         <div class="sidebar-header">
@@ -65,7 +47,6 @@ export class Sidebar {
             <a class="nav-item ${this.activeRoute === mod.id ? 'active' : ''}" 
                data-route="${mod.id}" 
                title="${mod.description}">
-              <span class="nav-icon">${iconSymbols[mod.icon] || '<i class="fa-solid fa-folder"></i>'}</span>
               <span>${mod.label}</span>
             </a>
           `).join('')}

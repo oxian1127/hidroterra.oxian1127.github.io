@@ -72,7 +72,7 @@ export function renderAgroclimaticIndicators(indicators, soilObservations = []) 
     <div class="card mb-4">
       <div class="card-header">
         <div>
-          <h3 class="card-title"><i class="fa-solid fa-layer-group" style="color: var(--color-earth-700);"></i> Seguimiento de Humedad del Suelo: Campo vs. Estimación Meteorológica</h3>
+          <h3 class="card-title">Seguimiento de Humedad del Suelo: Campo vs. Estimación Meteorológica</h3>
           <p class="card-subtitle">Distinción estricta entre registros directos en terreno y estimaciones volumétricas del modelo numérico</p>
         </div>
         <span class="badge badge-neutral">Verificación Agroclimática</span>
@@ -83,7 +83,7 @@ export function renderAgroclimaticIndicators(indicators, soilObservations = []) 
           <div class="coords-picker-box" style="margin-bottom: 0;">
             <div class="d-flex justify-between align-center mb-2">
               <strong style="font-size: var(--font-size-sm); color: var(--color-blue-800);">
-                <i class="fa-solid fa-satellite"></i> Humedad Estimada por Modelo Meteorológico
+                Humedad Estimada por Modelo Meteorológico
               </strong>
               <span class="badge badge-info">Estimación de Modelo</span>
             </div>
@@ -91,7 +91,7 @@ export function renderAgroclimaticIndicators(indicators, soilObservations = []) 
               <strong>Valor superficial estimado (0–9 cm):</strong> ${escapeHtml(formatSoilMoisture(humidity.estimatedSoilMoistureM3))}
             </p>
             <p class="text-muted" style="font-size: var(--font-size-xs); margin: 0;">
-              <i class="fa-solid fa-circle-info"></i> <em>Nota técnica:</em> Este valor corresponde a una simulación numérica de cuadrícula satelital/atmosférica (Open-Meteo) y <strong>no sustituye una medición instrumental de sensor en finca</strong>.
+              <em>Nota técnica:</em> Este valor corresponde a una simulación numérica de cuadrícula satelital/atmosférica (Open-Meteo) y <strong>no sustituye una medición instrumental de sensor en finca</strong>.
             </p>
           </div>
 
@@ -99,7 +99,7 @@ export function renderAgroclimaticIndicators(indicators, soilObservations = []) 
           <div class="coords-picker-box" style="margin-bottom: 0;">
             <div class="d-flex justify-between align-center mb-2">
               <strong style="font-size: var(--font-size-sm); color: var(--color-green-800);">
-                <i class="fa-solid fa-seedling"></i> Registros de Suelo en Campo / Sensores (HIDROTERRA)
+                Registros de Suelo en Campo / Sensores (HIDROTERRA)
               </strong>
               <span class="badge badge-success">Observación Real en Campo</span>
             </div>

@@ -25,27 +25,27 @@ export function renderWeatherConnectionBadge(status) {
   if (status === 'live') {
     return `
       <span class="badge badge-success" title="Datos recién consultados desde el servicio Open-Meteo">
-        <span class="status-dot online"></span> <i class="fa-solid fa-satellite-dish"></i> Actualizado desde la API (Open-Meteo)
+        <span class="status-dot online"></span> Actualizado desde la API (Open-Meteo)
       </span>
     `;
   }
   if (status === 'cache') {
     return `
       <span class="badge badge-info" title="Datos recuperados de la caché local del dispositivo dentro de la ventana de vigencia">
-        <span class="status-dot online"></span> <i class="fa-solid fa-hard-drive"></i> Recuperado de caché local (Vigente)
+        <span class="status-dot online"></span> Recuperado de caché local (Vigente)
       </span>
     `;
   }
   if (status === 'offline_cache') {
     return `
       <span class="badge badge-warning" title="Sin conexión con la API. Mostrando la última consulta guardada en IndexedDB">
-        <span class="status-dot offline"></span> <i class="fa-solid fa-database"></i> Recuperado de caché local (Sin conexión)
+        <span class="status-dot offline"></span> Recuperado de caché local (Sin conexión)
       </span>
     `;
   }
   return `
     <span class="badge badge-danger">
-      <i class="fa-solid fa-triangle-exclamation"></i> Datos meteorológicos no disponibles
+      Datos meteorológicos no disponibles
     </span>
   `;
 }
@@ -59,14 +59,13 @@ export function renderCurrentWeatherPanel(weatherRecord, status, errorMsg = null
       <div class="card mb-4">
         <div class="card-header">
           <div>
-            <h3 class="card-title"><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> Panel Meteorológico Principal</h3>
+            <h3 class="card-title">Panel Meteorológico Principal</h3>
             <p class="card-subtitle">Estado del tiempo en la ubicación seleccionada</p>
           </div>
           ${renderWeatherConnectionBadge('unavailable')}
         </div>
         <div class="card-body">
           <div class="empty-state" style="margin: 0;">
-            <div class="empty-state-icon"><i class="fa-solid fa-cloud-Showers-heavy"></i></div>
             <h4 class="empty-state-title">Información meteorológica no disponible</h4>
             <p class="empty-state-text">
               ${escapeHtml(errorMsg || 'No fue posible obtener datos de la API Open-Meteo ni existen consultas previas guardadas en la caché local para estas coordenadas.')}
@@ -86,17 +85,17 @@ export function renderCurrentWeatherPanel(weatherRecord, status, errorMsg = null
         <div>
           <div class="d-flex align-center gap-2" style="flex-wrap: wrap; margin-bottom: 4px;">
             <span class="badge badge-info">
-              <i class="fa-solid fa-location-dot"></i> ${escapeHtml(getEntityTypeLabel(location.entityType))}
+              ${escapeHtml(getEntityTypeLabel(location.entityType))}
             </span>
             ${location.municipality ? `<span class="badge badge-neutral">${escapeHtml(location.municipality)}</span>` : ''}
-            ${metadata?.elevation !== null && metadata?.elevation !== undefined ? `<span class="badge badge-neutral"><i class="fa-solid fa-mountain"></i> ${Math.round(metadata.elevation)} msnm</span>` : ''}
+            ${metadata?.elevation !== null && metadata?.elevation !== undefined ? `<span class="badge badge-neutral">${Math.round(metadata.elevation)} msnm</span>` : ''}
           </div>
           <h3 class="card-title" style="font-size: var(--font-size-lg);">
             ${escapeHtml(location.name)}
           </h3>
           <p class="card-subtitle">
-            <i class="fa-solid fa-compass"></i> Coordenadas: <strong>${formatCoordinates(location.latitude, location.longitude)}</strong>
-            &nbsp;|&nbsp; <i class="fa-regular fa-clock"></i> Última actualización: <strong>${formatDateTime(fetchedAt)}</strong>
+            Coordenadas: <strong>${formatCoordinates(location.latitude, location.longitude)}</strong>
+            &nbsp;|&nbsp; Última actualización: <strong>${formatDateTime(fetchedAt)}</strong>
           </p>
         </div>
 

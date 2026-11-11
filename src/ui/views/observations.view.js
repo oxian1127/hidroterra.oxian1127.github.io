@@ -52,7 +52,7 @@ export class ObservationsView {
           <p class="text-muted">Registro cualitativo de disponibilidad de agua, sequía, estado de fuentes y suelos en Montes de María.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-obs">
-          <span><i class="fa-solid fa-plus"></i> Nueva Observación</span>
+          <span>Nueva Observación</span>
         </button>
       </div>
 
@@ -124,8 +124,8 @@ export class ObservationsView {
           label: 'Acciones',
           render: (o) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-edit-obs" data-id="${o.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button class="btn btn-outline btn-sm btn-delete-obs" data-id="${o.id}" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button class="btn btn-outline btn-sm btn-edit-obs" data-id="${o.id}" title="Editar">Editar</button>
+              <button class="btn btn-outline btn-sm btn-delete-obs" data-id="${o.id}" title="Eliminar">Eliminar</button>
             </div>
           `
         }

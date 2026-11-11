@@ -32,21 +32,21 @@ export class DashboardView {
       <div class="dashboard-view">
         <!-- Acciones Rápidas y Accesos a Módulos -->
         <div class="quick-actions-bar">
-          <span class="quick-actions-title"><i class="fa-solid fa-bolt"></i> Acciones Rápidas:</span>
+          <span class="quick-actions-title">Acciones Rápidas:</span>
           <button class="btn btn-blue" id="qa-btn-add-rain">
-            <span><i class="fa-solid fa-cloud-rain"></i> Registrar Lluvia</span>
+            <span>Registrar Lluvia</span>
           </button>
           <button class="btn btn-primary" id="qa-btn-add-water-meas">
-            <span><i class="fa-solid fa-ruler-vertical"></i> Medir Nivel de Fuente</span>
+            <span>Medir Nivel de Fuente</span>
           </button>
           <button class="btn btn-outline" id="qa-btn-water-tools">
-            <span><i class="fa-solid fa-calculator"></i> Calculadoras Hídricas</span>
+            <span>Calculadoras Hídricas</span>
           </button>
           <button class="btn btn-outline" id="qa-btn-add-source">
-            <span><i class="fa-solid fa-faucet-drip"></i> Registrar Fuente</span>
+            <span>Registrar Fuente</span>
           </button>
           <button class="btn btn-outline" id="qa-btn-alerts">
-            <span><i class="fa-solid fa-bell"></i> Alertas (${counts.activeAlertsCount})</span>
+            <span>Alertas (${counts.activeAlertsCount})</span>
           </button>
         </div>
 

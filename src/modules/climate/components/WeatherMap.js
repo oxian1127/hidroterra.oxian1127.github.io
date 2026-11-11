@@ -130,18 +130,18 @@ export class WeatherMapSection {
               Todos los puntos (${this.points.length})
             </button>
             <button type="button" class="btn btn-sm ${this.currentFilter === 'pluviometers' ? 'btn-primary' : 'btn-outline'} btn-climate-map-filter" data-filter="pluviometers">
-              <i class="fa-solid fa-cloud-showers-heavy"></i> Pluviómetros (${pluvCount})
+              Pluviómetros (${pluvCount})
             </button>
             <button type="button" class="btn btn-sm ${this.currentFilter === 'water_sources' ? 'btn-primary' : 'btn-outline'} btn-climate-map-filter" data-filter="water_sources">
-              <i class="fa-solid fa-droplet"></i> Fuentes Hídricas (${sourceCount})
+              Fuentes Hídricas (${sourceCount})
             </button>
             <button type="button" class="btn btn-sm ${this.currentFilter === 'other' ? 'btn-primary' : 'btn-outline'} btn-climate-map-filter" data-filter="other">
-              <i class="fa-solid fa-mountain-sun"></i> Comunidades y Parcelas (${otherCount})
+              Comunidades y Parcelas (${otherCount})
             </button>
           </div>
 
           <button type="button" class="btn btn-outline btn-sm" id="btn-climate-map-fit">
-            <i class="fa-solid fa-expand"></i> Encuadrar Puntos
+            Encuadrar Puntos
           </button>
         </div>
 
@@ -159,10 +159,10 @@ export class WeatherMapSection {
               </div>
               <div class="d-flex gap-2" style="flex-wrap: wrap;">
                 <button type="button" class="btn btn-primary btn-sm btn-climate-goto-module" data-route="pluviometers">
-                  <i class="fa-solid fa-plus"></i> Registrar Pluviómetro
+                  Registrar Pluviómetro
                 </button>
                 <button type="button" class="btn btn-outline btn-sm btn-climate-goto-module" data-route="water-sources">
-                  <i class="fa-solid fa-droplet"></i> Registrar Fuente Hídrica
+                  Registrar Fuente Hídrica
                 </button>
               </div>
             </div>
@@ -398,7 +398,7 @@ export class WeatherMapSection {
         </div>
       </div>
       <button type="button" class="btn btn-primary btn-sm popup-action-btn btn-popup-load-full-weather" style="margin-top: 8px;">
-        <i class="fa-solid fa-chart-line"></i> Cargar en Panel Principal
+        Cargar en Panel Principal
       </button>
     `;
 

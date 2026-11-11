@@ -53,13 +53,13 @@ export class ReportsView {
         </div>
         <div class="d-flex gap-2">
           <button class="btn btn-outline" id="btn-export-report-csv">
-            <span><i class="fa-solid fa-file-csv"></i> Descargar CSV</span>
+            <span>Descargar CSV</span>
           </button>
           <button class="btn btn-outline" id="btn-export-report-json">
-            <span><i class="fa-solid fa-file-code"></i> Descargar JSON</span>
+            <span>Descargar JSON</span>
           </button>
           <button class="btn btn-primary" id="btn-print-report">
-            <span><i class="fa-solid fa-print"></i> Imprimir Reporte</span>
+            <span>Imprimir Reporte</span>
           </button>
         </div>
       </div>

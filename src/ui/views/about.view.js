@@ -28,10 +28,10 @@ export class AboutView {
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-outline btn-sm" id="btn-about-print" title="Imprimir manual de uso">
-              <span><i class="fa-solid fa-print"></i> Imprimir Guía</span>
+              <span>Imprimir Guía</span>
             </button>
             <button class="btn btn-primary btn-sm" id="btn-about-go-dashboard">
-              <span><i class="fa-solid fa-gauge"></i> Ir al Panel</span>
+              <span>Ir al Panel</span>
             </button>
           </div>
         </div>
@@ -66,13 +66,13 @@ export class AboutView {
         <!-- Pestañas de Navegación Interna -->
         <div class="nav-tabs" role="tablist">
           <button class="nav-tab-btn ${this.activeTab === 'project' ? 'active' : ''}" data-tab="project" role="tab">
-            <i class="fa-solid fa-circle-info"></i> Información del Proyecto y Plataforma
+            Información del Proyecto y Plataforma
           </button>
           <button class="nav-tab-btn ${this.activeTab === 'manual' ? 'active' : ''}" data-tab="manual" role="tab">
-            <i class="fa-solid fa-book-open"></i> Manual de Uso Paso a Paso
+            Manual de Uso Paso a Paso
           </button>
           <button class="nav-tab-btn ${this.activeTab === 'faq' ? 'active' : ''}" data-tab="faq" role="tab">
-            <i class="fa-solid fa-circle-question"></i> Preguntas Frecuentes y Consejos de Campo
+            Preguntas Frecuentes y Consejos de Campo
           </button>
         </div>
 
@@ -211,14 +211,14 @@ export class AboutView {
             <p class="card-subtitle">Conozca qué hace cada sección del menú lateral y acceda directamente a ella</p>
           </div>
           <button class="btn btn-primary btn-sm" id="btn-switch-to-manual">
-            <span><i class="fa-solid fa-book-open"></i> Ver Manual Paso a Paso</span>
+            <span>Ver Manual Paso a Paso</span>
           </button>
         </div>
         <div class="card-body">
           <div class="form-grid-2">
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-gauge" style="color: var(--color-green-700);"></i> 1. Inicio / Panel de Control</strong>
+                <strong>1. Inicio / Panel de Control</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="dashboard">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -228,7 +228,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-mountain-sun" style="color: var(--color-earth-700);"></i> 2. Sitios y Comunidades</strong>
+                <strong>2. Sitios y Comunidades</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="sites">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -238,7 +238,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-faucet-drip" style="color: var(--color-blue-700);"></i> 3. Fuentes de Agua</strong>
+                <strong>3. Fuentes de Agua</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-sources">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -248,7 +248,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-blue-700);">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-water" style="color: var(--color-blue-700);"></i> 4. Disponibilidad Hídrica</strong>
+                <strong>4. Disponibilidad Hídrica</strong>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-availability">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -258,7 +258,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-green-700);">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-calculator" style="color: var(--color-green-700);"></i> 5. Herramientas y Calculadoras Hídricas</strong>
+                <strong>5. Herramientas y Calculadoras Hídricas</strong>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-tools">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -268,7 +268,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-warning);">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-bell" style="color: var(--color-warning);"></i> 6. Alertas Hídricas</strong>
+                <strong>6. Alertas Hídricas</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-alerts">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -278,7 +278,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-showers-heavy" style="color: var(--color-green-700);"></i> 7. Pluviómetros</strong>
+                <strong>7. Pluviómetros</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="pluviometers">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -288,7 +288,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-rain" style="color: var(--color-blue-700);"></i> 8. Registro de Lluvias</strong>
+                <strong>8. Registro de Lluvias</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="rainfall">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -298,7 +298,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px; border-left: 3px solid var(--color-blue-700);">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-cloud-sun-rain" style="color: var(--color-blue-700);"></i> 9. Clima y Meteorología (HIDROTERRA CLIMA)</strong>
+                <strong>9. Clima y Meteorología (HIDROTERRA CLIMA)</strong>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">Abrir Clima</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -308,7 +308,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-map-location-dot" style="color: var(--color-green-700);"></i> 10. Mapa Territorial</strong>
+                <strong>10. Mapa Territorial</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="map">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -318,7 +318,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-seedling" style="color: var(--color-green-700);"></i> 11. Parcelas y Cultivos</strong>
+                <strong>11. Parcelas y Cultivos</strong>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="parcels">Abrir</button>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -328,7 +328,7 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--color-blue-700);"></i> 12. Observaciones, Reportes y Respaldos</strong>
+                <strong>12. Observaciones, Reportes y Respaldos</strong>
                 <div class="d-flex gap-2">
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Notas</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
@@ -365,7 +365,7 @@ export class AboutView {
                   Registrar las Comunidades o Sitios Territoriales
                 </h4>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="sites">
-                  <i class="fa-solid fa-arrow-right"></i> Ir a Sitios y Comunidades
+                  Ir a Sitios y Comunidades
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
@@ -386,14 +386,14 @@ export class AboutView {
                   Inventariar Fuentes de Agua con Capacidad y Profundidad de Referencia
                 </h4>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-sources">
-                  <i class="fa-solid fa-faucet-drip"></i> Ir a Fuentes de Agua
+                  Ir a Fuentes de Agua
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
                 Registre cada pozo, jagüey, reservorio, tanque comunitario, manantial o arroyo indicando sus parámetros de diseño para habilitar el cálculo automático de disponibilidad:
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li>Ingrese a <strong>Fuentes de Agua</strong> y haga clic en <strong>«Registrar Fuente de Agua»</strong> (<i class="fa-solid fa-faucet-drip"></i>).</li>
+                <li>Ingrese a <strong>Fuentes de Agua</strong> y haga clic en <strong>«Registrar Fuente de Agua»</strong>.</li>
                 <li>Asigne código, nombre, tipo de fuente, comunidad asociada, usos principales (consumo humano, agropecuario, riego) y coordenadas GPS.</li>
                 <li>Complete la <strong>Capacidad estimada en litros (L)</strong> y la <strong>Profundidad máxima o nivel de referencia (m)</strong> cuando se conozcan, y adjunte fotografía si dispone de ella.</li>
               </ol>
@@ -407,17 +407,17 @@ export class AboutView {
                   Monitorear Disponibilidad Hídrica, Comparar Fechas y Consultar Fichas Técnicas
                 </h4>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-availability">
-                  <i class="fa-solid fa-water"></i> Ir a Disponibilidad Hídrica
+                  Ir a Disponibilidad Hídrica
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
                 Realice el seguimiento periódico del estado real de cada infraestructura hídrica:
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li>Pulse <strong>«Registrar Medición»</strong> (<i class="fa-solid fa-ruler-vertical"></i>), elija la fuente hídrica, la fecha/hora y el <strong>Método de medición</strong> (medición manual de nivel, regla limnimétrica, cinta o sonda de profundidad, medición volumétrica o estimación técnica).</li>
+                <li>Pulse <strong>«Registrar Medición»</strong>, elija la fuente hídrica, la fecha/hora y el <strong>Método de medición</strong> (medición manual de nivel, regla limnimétrica, cinta o sonda de profundidad, medición volumétrica o estimación técnica).</li>
                 <li>Ingrese el valor medido y su unidad (<code>m</code>, <code>cm</code>, <code>L</code>, <code>m³</code>, <code>%</code> o <code>L/s</code>). El sistema distingue entre <strong>valores observados directamente</strong> y <strong>volúmenes estimados por cálculo</strong> a partir de la capacidad o profundidad de la fuente.</li>
                 <li>Consulte la clasificación automática según el tipo de fuente (<strong>Alta</strong>, <strong>Moderada</strong>, <strong>Baja</strong>, <strong>Crítica</strong> o <strong>Sin datos</strong>), el gráfico de evolución histórica y el <strong>Comparador entre dos fechas</strong>.</li>
-                <li>Haga clic en el botón de ficha (<i class="fa-solid fa-file-lines"></i>) de cualquier fuente para abrir su <strong>Ficha Técnica de Disponibilidad</strong> con todos sus indicadores, historial, fotografías y observaciones.</li>
+                <li>Haga clic en el botón <strong>«Ficha Técnica»</strong> de cualquier fuente para abrir su <strong>Ficha Técnica de Disponibilidad</strong> con todos sus indicadores, historial, fotografías y observaciones.</li>
               </ol>
             </div>
 
@@ -429,7 +429,7 @@ export class AboutView {
                   Utilizar las 4 Calculadoras de Herramientas Hídricas
                 </h4>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="water-tools">
-                  <i class="fa-solid fa-calculator"></i> Ir a Herramientas Hídricas
+                  Ir a Herramientas Hídricas
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
@@ -451,16 +451,16 @@ export class AboutView {
                   Gestionar el Sistema de Alertas Hídricas y Configurar Umbrales
                 </h4>
                 <button class="btn btn-outline btn-sm btn-nav-module" data-route="water-alerts">
-                  <i class="fa-solid fa-bell"></i> Ir a Alertas Hídricas
+                  Ir a Alertas Hídricas
                 </button>
               </div>
               <p style="font-size: var(--font-size-sm); color: var(--color-neutral-700); margin-bottom: 8px; line-height: 1.55;">
                 Identifique oportunamente riesgos de desabastecimiento o eventos hidrometeorológicos extremos:
               </p>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
-                <li>En <strong>Alertas Hídricas</strong> pulse <strong>«Reevaluar Datos»</strong> para analizar todas las fuentes, pluviómetros y pronósticos en caché.</li>
+                <li>En <strong>Alertas Hídricas</strong> pulse <strong>«Reevaluar Alertas»</strong> para analizar todas las fuentes, pluviómetros y pronósticos en caché.</li>
                 <li>Revise las 5 reglas automáticas: <em>Fuente en estado crítico/bajo</em>, <em>Descenso brusco de nivel</em>, <em>Déficit de lluvias</em>, <em>Pronóstico de lluvias intensas</em> y <em>Fuente sin mediciones recientes</em>.</li>
-                <li>Use <strong>«Configurar Umbrales»</strong> para adaptar los porcentajes y días límite a las condiciones locales de su zona, pulse <strong>«Ver Ficha de Disponibilidad»</strong> (<i class="fa-solid fa-file-lines"></i>) para inspeccionar la fuente afectada o marque la alerta como <strong>Atendida</strong> registrando la acción tomada.</li>
+                <li>Use <strong>«Configurar Umbrales y Reglas»</strong> para adaptar los porcentajes y días límite a las condiciones locales de su zona, pulse <strong>«Ver Ficha de Disponibilidad»</strong> para inspeccionar la fuente afectada o marque la alerta como <strong>Atendida</strong> registrando la acción tomada.</li>
               </ol>
             </div>
 
@@ -491,7 +491,7 @@ export class AboutView {
                   Consultar Pronóstico Agroclimático y Vinculación Clima – Agua
                 </h4>
                 <button class="btn btn-primary btn-sm btn-nav-module" data-route="climate">
-                  <i class="fa-solid fa-cloud-sun-rain"></i> Ir a Clima y Meteorología
+                  Ir a Clima y Meteorología
                 </button>
               </div>
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">

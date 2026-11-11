@@ -66,7 +66,7 @@ export class Header {
       <header class="app-header">
         <div class="header-left">
           <button class="menu-toggle-btn" id="btn-toggle-sidebar" aria-label="Abrir menú de navegación">
-            <i class="fa-solid fa-bars"></i>
+            <span>Menú</span>
           </button>
           <div class="header-title-wrapper">
             <h2 id="header-page-title">${escapeHtml(this.currentTitle)}</h2>
@@ -79,7 +79,7 @@ export class Header {
           <button class="btn-theme-toggle" id="btn-header-theme" 
                   title="${isDark ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}" 
                   aria-label="Cambiar tema de color">
-            <i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}"></i>
+            <span>${isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
           </button>
 
           <div class="connectivity-badge ${this.isOnline ? 'online' : 'offline'}" id="header-conn-badge" title="${this.isOnline ? 'Estado: Conectado' : 'Estado: Sin Conexión (Offline)'}">
@@ -88,7 +88,7 @@ export class Header {
           </div>
 
           <button class="btn btn-outline btn-sm" id="btn-header-backup" title="Exportar copia de seguridad en JSON">
-            <i class="fa-solid fa-floppy-disk"></i> <span class="header-label-text">Respaldo JSON</span>
+            <span class="header-label-text">Respaldo JSON</span>
           </button>
         </div>
       </header>
@@ -132,7 +132,7 @@ export class Header {
     events.on('theme:changed', ({ isDark }) => {
       const btn = document.querySelector('#btn-header-theme');
       if (btn) {
-        btn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}"></i>`;
+        btn.innerHTML = `<span>${isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>`;
         btn.title = isDark ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
       }
     });

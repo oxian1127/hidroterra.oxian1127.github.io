@@ -39,15 +39,15 @@ export class WaterAlertsView {
       <div class="water-alerts-view">
         <div class="view-header d-flex justify-between align-center mb-4">
           <div>
-            <h2><i class="fa-solid fa-bell" style="color: var(--color-warning);"></i> Sistema de Alertas Hídricas Territoriales</h2>
+            <h2>Sistema de Alertas Hídricas Territoriales</h2>
             <p class="text-muted">Monitoreo automático basado en reglas configurables sobre disponibilidad de fuentes, variaciones de nivel y precipitaciones reales.</p>
           </div>
           <div class="d-flex gap-2" style="flex-wrap: wrap;">
             <button class="btn btn-outline" id="btn-alerts-config-rules">
-              <span><i class="fa-solid fa-sliders"></i> Configurar Umbrales y Reglas</span>
+              <span>Configurar Umbrales y Reglas</span>
             </button>
             <button class="btn btn-primary" id="btn-alerts-refresh">
-              <span><i class="fa-solid fa-arrows-rotate"></i> Reevaluar Alertas</span>
+              <span>Reevaluar Alertas</span>
             </button>
           </div>
         </div>
@@ -177,12 +177,12 @@ export class WaterAlertsView {
                   <div class="d-flex align-center gap-2" style="flex-wrap: wrap;">
                     ${renderStatusBadge(alert.priority)}
                     <strong>${escapeHtml(WATER_ALERT_TYPES[alert.type] || alert.type)}</strong>
-                    <code style="font-size: 0.72rem; color: var(--color-neutral-500);">ID: ${escapeHtml(alert.id.slice(0, 8))}</code>
+                    <code style="font-size: 0.72rem; color: var(--color-neutral-500);" data-allow-copy="true" class="allow-copy" title="Clic para copiar identificador">ID: ${escapeHtml(alert.id.slice(0, 8))}</code>
                   </div>
                   <div class="d-flex align-center gap-2">
                     ${renderStatusBadge(alert.status)}
                     <span class="text-muted" style="font-size: 0.78rem;">
-                      <i class="fa-regular fa-clock"></i> Generada: ${formatDateTime(alert.generatedAt)}
+                      Generada: ${formatDateTime(alert.generatedAt)}
                     </span>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export class WaterAlertsView {
                   <div><strong>Regla que la originó:</strong> ${escapeHtml(alert.ruleDescription)}</div>
                   ${isResolved && alert.resolvedAt ? `
                     <div style="color: var(--color-green-700); margin-top: 4px;">
-                      <i class="fa-solid fa-check"></i> <strong>Atendida el ${formatDateTime(alert.resolvedAt)}:</strong> ${escapeHtml(alert.resolutionNotes || 'Resuelta')}
+                      <strong>Atendida el ${formatDateTime(alert.resolvedAt)}:</strong> ${escapeHtml(alert.resolutionNotes || 'Resuelta')}
                     </div>
                   ` : ''}
                 </div>
@@ -203,12 +203,12 @@ export class WaterAlertsView {
                   <div>
                     ${alert.relatedEntityType === 'water_source' && alert.relatedEntityId ? `
                       <button class="btn btn-outline btn-sm btn-alert-goto-source" data-source-id="${alert.relatedEntityId}">
-                        <i class="fa-solid fa-file-lines"></i> Ver Ficha de Disponibilidad
+                        Ver Ficha de Disponibilidad
                       </button>
                     ` : ''}
                     ${alert.relatedEntityType === 'pluviometer' && alert.relatedEntityId ? `
                       <button class="btn btn-outline btn-sm btn-alert-goto-pluv" data-pluv-id="${alert.relatedEntityId}">
-                        <i class="fa-solid fa-cloud-rain"></i> Ver Pluviómetro
+                        Ver Pluviómetro
                       </button>
                     ` : ''}
                   </div>
@@ -216,11 +216,11 @@ export class WaterAlertsView {
                   <div>
                     ${!isResolved ? `
                       <button class="btn btn-primary btn-sm btn-resolve-alert" data-id="${alert.id}">
-                        <i class="fa-solid fa-check"></i> Marcar como Atendida
+                        Marcar como Atendida
                       </button>
                     ` : `
                       <button class="btn btn-outline btn-sm btn-reopen-alert" data-id="${alert.id}">
-                        <i class="fa-solid fa-rotate-left"></i> Reabrir Alerta
+                        Reabrir Alerta
                       </button>
                     `}
                   </div>
@@ -270,7 +270,7 @@ export class WaterAlertsView {
       `,
       footerHtml: `
         <button class="btn btn-outline" id="btn-res-cancel">Cancelar</button>
-        <button class="btn btn-primary" id="btn-res-confirm"><i class="fa-solid fa-check"></i> Confirmar Atención</button>
+        <button class="btn btn-primary" id="btn-res-confirm">Confirmar Atención</button>
       `,
       onMount: (dialog) => {
         dialog.querySelector('#btn-res-cancel').addEventListener('click', () => modal.close());

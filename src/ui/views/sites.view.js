@@ -30,7 +30,7 @@ export class SitesView {
           <p class="text-muted">Centros poblados, corregimientos, veredas y sectores territoriales de Montes de María.</p>
         </div>
         <button class="btn btn-primary" id="btn-create-site">
-          <span><i class="fa-solid fa-plus"></i> Nueva Comunidad / Sitio</span>
+          <span>Nueva Comunidad / Sitio</span>
         </button>
       </div>
 
@@ -76,14 +76,14 @@ export class SitesView {
         { key: 'name', label: 'Comunidad / Vereda' },
         { key: 'municipality', label: 'Municipio' },
         { key: 'department', label: 'Departamento' },
-        { key: 'coordsDisplay', label: 'Coordenadas' },
+        { key: 'coordsDisplay', label: 'Coordenadas', render: (item) => `<span data-allow-copy="true" class="allow-copy" title="Coordenadas habilitadas para copia">${escapeHtml(item.coordsDisplay)}</span>` },
         {
           key: 'actions',
           label: 'Acciones',
           render: (item) => `
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm btn-edit-site" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button class="btn btn-outline btn-sm btn-delete-site" data-id="${item.id}" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button class="btn btn-outline btn-sm btn-edit-site" data-id="${item.id}" title="Editar">Editar</button>
+              <button class="btn btn-outline btn-sm btn-delete-site" data-id="${item.id}" title="Eliminar">Eliminar</button>
             </div>
           `
         }

@@ -57,7 +57,7 @@ export function renderCoordinatesPicker({ latId = 'latitude', lonId = 'longitude
       <div class="coords-picker-header">
         <span class="coords-picker-title"><i class="fa-solid fa-location-dot" style="color: var(--color-green-700);"></i> Georreferenciación (Coordenadas)</span>
         <button type="button" class="btn btn-outline btn-sm" id="btn-get-gps-location">
-          <span><i class="fa-solid fa-location-crosshairs"></i> Obtener ubicación actual</span>
+          <span>Obtener ubicación actual</span>
         </button>
       </div>
 
@@ -126,7 +126,7 @@ export function bindCoordinatesPickerEvents(container, { latId = 'latitude', lon
   if (btn) {
     btn.addEventListener('click', async () => {
       btn.disabled = true;
-      btn.innerHTML = '<span><i class="fa-solid fa-spinner fa-spin"></i> Consultando sensor GPS...</span>';
+      btn.innerHTML = '<span>Consultando sensor GPS...</span>';
       feedback.innerHTML = '<span class="text-muted">Esperando fijación de señal satelital/red...</span>';
 
       try {
@@ -144,7 +144,7 @@ export function bindCoordinatesPickerEvents(container, { latId = 'latitude', lon
         feedback.innerHTML = `<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(err.message)}</span>`;
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span><i class="fa-solid fa-location-crosshairs"></i> Obtener ubicación actual</span>';
+        btn.innerHTML = '<span>Obtener ubicación actual</span>';
       }
     });
   }

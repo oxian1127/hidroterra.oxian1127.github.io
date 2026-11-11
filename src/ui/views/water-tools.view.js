@@ -34,7 +34,7 @@ export class WaterToolsView {
       <div class="water-tools-view">
         <div class="view-header mb-4" style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-3);">
           <div>
-            <h2><i class="fa-solid fa-calculator" style="color: var(--color-green-700);"></i> Herramientas y Calculadoras Hídricas</h2>
+            <h2>Herramientas y Calculadoras Hídricas</h2>
             <p class="text-muted" style="margin-bottom: 0;">Cálculos técnicos de cosecha de agua lluvia, dimensionamiento de almacenamiento, balance hídrico simplificado y autonomía comunitaria.</p>
           </div>
           <button class="btn btn-outline" id="btn-tools-goto-availability">
@@ -47,16 +47,16 @@ export class WaterToolsView {
           <div class="card-body" style="padding: var(--spacing-3);">
             <div class="d-flex gap-2" style="flex-wrap: wrap;">
               <button class="btn ${this.activeTab === 'rainwater' ? 'btn-primary' : 'btn-outline'} tool-tab-btn" data-tab="rainwater">
-                <i class="fa-solid fa-cloud-showers-water"></i> 1. Captación de Agua Lluvia
+                1. Captación de Agua Lluvia
               </button>
               <button class="btn ${this.activeTab === 'storage' ? 'btn-primary' : 'btn-outline'} tool-tab-btn" data-tab="storage">
-                <i class="fa-solid fa-database"></i> 2. Calculadora de Almacenamiento
+                2. Calculadora de Almacenamiento
               </button>
               <button class="btn ${this.activeTab === 'balance' ? 'btn-primary' : 'btn-outline'} tool-tab-btn" data-tab="balance">
-                <i class="fa-solid fa-scale-balanced"></i> 3. Balance Hídrico Simplificado
+                3. Balance Hídrico Simplificado
               </button>
               <button class="btn ${this.activeTab === 'autonomy' ? 'btn-primary' : 'btn-outline'} tool-tab-btn" data-tab="autonomy">
-                <i class="fa-solid fa-hourglass-half"></i> 4. Autonomía Hídrica
+                4. Autonomía Hídrica
               </button>
             </div>
           </div>
@@ -180,7 +180,7 @@ export class WaterToolsView {
               </div>
 
               <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-calculator"></i> Calcular Volumen de Captación
+                Calcular Volumen de Captación
               </button>
             </form>
           </div>
@@ -190,10 +190,10 @@ export class WaterToolsView {
           <div class="card-header">
             <div>
               <h3 class="card-title">Resultados de Captación Pluvial</h3>
-              <p class="card-subtitle">Diferenciación entre captación teórica bruta y captación real aprovechable</p>
+              <p class="card-subtitle">Diferenciación entre captación teórica bruta y captación real aprovechable (área habilitada para copia)</p>
             </div>
           </div>
-          <div class="card-body" id="rw-results-box"></div>
+          <div class="card-body allow-copy" data-allow-copy="true" id="rw-results-box"></div>
         </div>
       </div>
     `;
@@ -362,7 +362,7 @@ export class WaterToolsView {
               </div>
 
               <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-calculator"></i> Calcular Capacidad y Llenado
+                Calcular Capacidad y Llenado
               </button>
             </form>
           </div>
@@ -372,10 +372,10 @@ export class WaterToolsView {
           <div class="card-header">
             <div>
               <h3 class="card-title">Capacidad Total, Volumen Disponible y Faltante</h3>
-              <p class="card-subtitle">Resultados en litros (L), metros cúbicos (m³) y porcentaje de llenado</p>
+              <p class="card-subtitle">Resultados en litros (L), metros cúbicos (m³) y porcentaje de llenado (área habilitada para copia)</p>
             </div>
           </div>
-          <div class="card-body" id="st-results-box"></div>
+          <div class="card-body allow-copy" data-allow-copy="true" id="st-results-box"></div>
         </div>
       </div>
     `;
@@ -614,7 +614,7 @@ export class WaterToolsView {
               </div>
 
               <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-scale-balanced"></i> Calcular Balance Hídrico
+                Calcular Balance Hídrico
               </button>
             </form>
           </div>
@@ -627,7 +627,7 @@ export class WaterToolsView {
               <p class="card-subtitle">Relación entre entradas pluviales/externas, consumo y almacenamiento resultante</p>
             </div>
           </div>
-          <div class="card-body" id="wb-results-box"></div>
+          <div class="card-body allow-copy" id="wb-results-box" data-allow-copy="true"></div>
         </div>
       </div>
     `;
@@ -772,7 +772,7 @@ export class WaterToolsView {
               </div>
 
               <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-hourglass-half"></i> Calcular Días de Autonomía
+                Calcular Días de Autonomía
               </button>
             </form>
           </div>
@@ -785,7 +785,7 @@ export class WaterToolsView {
               <p class="card-subtitle">Proyección bajo consumo constante sin recarga adicional</p>
             </div>
           </div>
-          <div class="card-body" id="au-results-box"></div>
+          <div class="card-body allow-copy" id="au-results-box" data-allow-copy="true"></div>
         </div>
       </div>
     `;

@@ -11,6 +11,113 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color var(--transition-normal), color var(--transition-normal);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Protección global de selección de contenido en páginas */
+*,
+*::before,
+*::after {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+img,
+a,
+svg,
+canvas {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Excepciones controladas: campos de edición y zonas explícitamente habilitadas para copia */
+input,
+textarea,
+[contenteditable="true"],
+[data-allow-copy="true"],
+[data-allow-copy="true"] *,
+.allow-copy,
+.allow-copy * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+[data-allow-copy="true"],
+.allow-copy {
+  cursor: text;
+}
+
+.copy-controlled-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-neutral-100);
+  border: 1px dashed var(--color-neutral-300);
+  font-family: var(--font-family-mono);
+  font-size: 0.82em;
+  color: var(--color-neutral-800);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.copy-controlled-badge:hover {
+  background-color: var(--color-green-100);
+  border-color: var(--color-green-600);
+}
+
+/* Ocultar íconos en botones, menú lateral y textos de todos los módulos para mantener una estética limpia y profesional */
+button i,
+.btn i,
+.nav-tab-btn i,
+.tool-tab-btn i,
+.popup-action-btn i,
+.nav-item i,
+.nav-icon,
+.metric-icon-box,
+.empty-state-icon,
+.toast-icon,
+.climate-stat-icon,
+.climate-condition-icon,
+.climate-day-icon,
+.climate-alert-icon,
+.view-header i,
+.card-header i,
+.card-title i,
+.card-subtitle i,
+.quick-actions-title i,
+.form-label i,
+.map-layer-toggles i,
+.map-toolbar i,
+.climate-selector-bar i,
+.climate-alert-meta i,
+.climate-alert-recommendation i,
+.climate-inline-notice i,
+.coords-picker-box i,
+.recent-activity-item > i,
+h1 i,
+h2 i,
+h3 i,
+h4 i,
+h5 i,
+h6 i,
+p i,
+strong i,
+td i,
+li i,
+label i,
+span:not(.map-pin-icon) i,
+.badge i {
+  display: none !important;
 }
 
 /* Tipografía de encabezados */

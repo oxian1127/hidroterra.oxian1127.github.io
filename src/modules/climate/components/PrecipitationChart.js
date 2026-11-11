@@ -32,7 +32,7 @@ export class PrecipitationAnalysisSection {
       <div class="card mb-4">
         <div class="card-header">
           <div>
-            <h3 class="card-title"><i class="fa-solid fa-cloud-showers-water" style="color: var(--color-blue-700);"></i> Análisis de Precipitaciones: Observación Real vs. Pronóstico</h3>
+            <h3 class="card-title">Análisis de Precipitaciones: Observación Real vs. Pronóstico</h3>
             <p class="card-subtitle">Alcance comparativo: <strong>${escapeHtml(precipComparison.scopeLabel)}</strong></p>
           </div>
           <span class="badge badge-info">Separación Estricta Observación / Modelo</span>
@@ -43,7 +43,7 @@ export class PrecipitationAnalysisSection {
           <div class="climate-precip-legend-grid mb-4">
             <div class="climate-legend-box observed">
               <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-success"><i class="fa-solid fa-ruler-vertical"></i> 1. Lluvia Observada (Pluviómetro)</span>
+                <span class="badge badge-success">1. Lluvia Observada (Pluviómetro)</span>
                 <strong>${precipComparison.observedLast7dMm} mm (últ. 7d)</strong>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -54,7 +54,7 @@ export class PrecipitationAnalysisSection {
 
             <div class="climate-legend-box estimated">
               <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-info"><i class="fa-solid fa-satellite-dish"></i> 2. Precipitación Estimada (24h)</span>
+                <span class="badge badge-info">2. Precipitación Estimada (24h)</span>
                 <strong>${formatMm(precipComparison.estimatedNext24hMm)}</strong>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -64,7 +64,7 @@ export class PrecipitationAnalysisSection {
 
             <div class="climate-legend-box forecasted">
               <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-neutral" style="background-color: #e0e7ff; color: #3730a3;"><i class="fa-solid fa-calendar-plus"></i> 3. Precipitación Pronosticada (7d)</span>
+                <span class="badge badge-neutral" style="background-color: #e0e7ff; color: #3730a3;">3. Precipitación Pronosticada (7d)</span>
                 <strong>${formatMm(precipComparison.forecasted7dMm)}</strong>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
@@ -77,7 +77,7 @@ export class PrecipitationAnalysisSection {
           <div class="dashboard-visual-grid mb-4">
             <div class="coords-picker-box" style="margin-bottom: 0; background-color: var(--color-white);">
               <h4 style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-2); color: var(--color-neutral-900);">
-                <i class="fa-solid fa-clock" style="color: var(--color-blue-700);"></i> Precipitación Horaria Estimada y Probabilidad (Próximas 24 Horas)
+                Precipitación Horaria Estimada y Probabilidad (Próximas 24 Horas)
               </h4>
               <div class="chart-wrapper">
                 <canvas id="climate-precip-hourly-chart"></canvas>
@@ -86,7 +86,7 @@ export class PrecipitationAnalysisSection {
 
             <div class="coords-picker-box" style="margin-bottom: 0; background-color: var(--color-white);">
               <h4 style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-2); color: var(--color-neutral-900);">
-                <i class="fa-solid fa-chart-column" style="color: var(--color-green-700);"></i> Precipitación Diaria: Observada en Pluviómetro vs. Estimada y Pronosticada
+                Precipitación Diaria: Observada en Pluviómetro vs. Estimada y Pronosticada
               </h4>
               <div class="chart-wrapper">
                 <canvas id="climate-precip-comparison-chart"></canvas>
@@ -96,7 +96,7 @@ export class PrecipitationAnalysisSection {
 
           <!-- Tabla Comparativa Cronológica -->
           <h4 style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-2); color: var(--color-neutral-900);">
-            <i class="fa-solid fa-table"></i> Desglose Comparativo por Fecha (Observación Real vs. Modelo Meteorológico)
+            Desglose Comparativo por Fecha (Observación Real vs. Modelo Meteorológico)
           </h4>
           <div class="table-responsive">
             <table class="data-table data-table-cards table table-hover align-middle mb-0">
