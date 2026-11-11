@@ -179,9 +179,7 @@
 .nav-group-items {
   display: none;
   flex-direction: column;
-  padding: 4px 6px 6px 12px;
-  margin-left: 10px;
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 4px 6px 6px 14px;
 }
 
 .nav-group.open .nav-group-items {
