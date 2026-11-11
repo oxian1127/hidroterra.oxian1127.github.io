@@ -75,14 +75,12 @@ textarea,
   border-color: var(--color-green-600);
 }
 
-/* Ocultar íconos en botones, menú lateral y textos de todos los módulos para mantener una estética limpia y profesional */
-button i,
+/* Ocultar íconos en botones y textos de todos los módulos para mantener una estética limpia y profesional (conservando únicamente los íconos en las opciones del menú lateral) */
+button:not(.nav-group-toggle) i,
 .btn i,
 .nav-tab-btn i,
 .tool-tab-btn i,
 .popup-action-btn i,
-.nav-item i,
-.nav-icon,
 .metric-icon-box,
 .empty-state-icon,
 .toast-icon,
@@ -115,9 +113,17 @@ strong i,
 td i,
 li i,
 label i,
-span:not(.map-pin-icon) i,
+span:not(.map-pin-icon):not(.nav-icon):not(.nav-group-caret) i,
 .badge i {
   display: none !important;
+}
+
+/* Asegurar que los íconos de las opciones del menú lateral sí sean visibles */
+.app-sidebar .nav-icon,
+.app-sidebar .nav-icon i,
+.app-sidebar .nav-group-caret,
+.app-sidebar .nav-group-caret i {
+  display: inline-flex !important;
 }
 
 /* Tipografía de encabezados */

@@ -140,6 +140,7 @@ export class App {
       const padLeft = parseFloat(style.paddingLeft) || 12;
       const padRight = Math.max(parseFloat(style.paddingRight) || 28, 30);
       const availableWidth = clientW - padLeft - padRight - 6;
+      const tooltipEnabled = ThemeService.isOverflowTooltipEnabled();
 
       Array.from(selectEl.options).forEach((opt) => {
         if (!opt.hasAttribute('value')) {
@@ -153,14 +154,22 @@ export class App {
         if (opt.textContent !== fitted) {
           opt.textContent = fitted;
         }
-        opt.title = fullText;
+        if (tooltipEnabled) {
+          opt.title = fullText;
+        } else {
+          opt.removeAttribute('title');
+        }
       });
 
       const selectedOpt = selectEl.options[selectEl.selectedIndex];
       if (selectedOpt) {
         const full = selectedOpt.dataset.fullText || selectedOpt.textContent || '';
         selectEl.dataset.fullText = full;
-        selectEl.title = full;
+        if (tooltipEnabled) {
+          selectEl.title = full;
+        } else {
+          selectEl.removeAttribute('title');
+        }
       }
     };
 
@@ -169,9 +178,14 @@ export class App {
       const ignoredTypes = ['checkbox', 'radio', 'file', 'button', 'submit', 'reset', 'color', 'range', 'hidden'];
       if (ignoredTypes.includes((inputEl.type || 'text').toLowerCase())) return;
       const val = (inputEl.value || inputEl.placeholder || '').trim();
+      const tooltipEnabled = ThemeService.isOverflowTooltipEnabled();
       if (val) {
         inputEl.dataset.fullText = val;
-        inputEl.title = val;
+        if (tooltipEnabled) {
+          inputEl.title = val;
+        } else {
+          inputEl.removeAttribute('title');
+        }
       } else {
         delete inputEl.dataset.fullText;
         inputEl.removeAttribute('title');
@@ -179,17 +193,24 @@ export class App {
     };
 
     const syncTruncatedContainers = () => {
+      const tooltipEnabled = ThemeService.isOverflowTooltipEnabled();
       const candidates = document.querySelectorAll(
         '.btn, .badge, .metric-value, .metric-label, .metric-sub, .card-title, .card-subtitle, .climate-stat-label, .climate-stat-val, .nav-item, .nav-tab-btn, h2, h3, h4, td'
       );
       candidates.forEach((el) => {
         if (!el || el.children.length > 4) return;
+        if (el.hasAttribute('title') && !el.hasAttribute('data-ht-title')) {
+          el.setAttribute('data-ht-title', el.getAttribute('title'));
+        }
+        if (!tooltipEnabled && el.hasAttribute('title')) {
+          el.removeAttribute('title');
+        }
         const innerSpan = el.querySelector('span:not(.nav-icon)');
         const isOverflowing =
           el.scrollWidth > el.clientWidth + 1 ||
           (innerSpan && innerSpan.scrollWidth > innerSpan.clientWidth + 1);
         if (isOverflowing) {
-          const cleanText = (el.getAttribute('title') || el.dataset.fullText || el.textContent || '')
+          const cleanText = (el.getAttribute('data-ht-title') || el.getAttribute('title') || el.dataset.fullText || el.textContent || '')
             .replace(/\s+/g, ' ')
             .trim();
           if (cleanText) {
@@ -331,8 +352,12 @@ export class App {
       }
     };
 
-    // Eventos en PC (al pasar el mouse)
+    // Eventos en PC (al pasar el mouse) — solo si la opción está activada en Configuración
     document.addEventListener('mouseover', (e) => {
+      if (!ThemeService.isOverflowTooltipEnabled()) {
+        if (activeTarget) hideSmartTooltip();
+        return;
+      }
       const info = resolveOverflowInfo(e.target);
       if (info) {
         showSmartTooltip(info.element, info.text, 0);
@@ -347,13 +372,18 @@ export class App {
       }
     }, { passive: true });
 
-    // Eventos en Teléfono / Pantallas Táctiles (al presionar un botón o contenedor)
+    // Eventos en Teléfono / Pantallas Táctiles (al presionar un botón o contenedor) — solo si la opción está activada en Configuración
     document.addEventListener('touchstart', (e) => {
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
       suppressNextClick = false;
+
+      if (!ThemeService.isOverflowTooltipEnabled()) {
+        hideSmartTooltip();
+        return;
+      }
 
       const info = resolveOverflowInfo(e.target);
       if (!info) {
@@ -424,6 +454,13 @@ export class App {
     }, true);
 
     window.addEventListener('resize', scheduleApply, { passive: true });
+
+    events.on('preferences:overflow-tooltip', ({ enabled }) => {
+      if (!enabled) {
+        hideSmartTooltip();
+      }
+      scheduleApply();
+    });
 
     const observer = new MutationObserver((mutations) => {
       let shouldUpdate = false;

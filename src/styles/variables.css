@@ -30,16 +30,16 @@
    Tema Claro (Light Theme - Predeterminado)
    ========================================================================== */
 :root {
-  /* Paleta Verde Rural (Territorio y agro) */
-  --color-green-900: #081c15;
-  --color-green-800: #1b4332;
-  --color-green-700: #2d6a4f;
-  --color-green-600: #40916c;
-  --color-green-500: #52b788;
-  --color-green-400: #74c69d;
-  --color-green-200: #b7e4c7;
-  --color-green-100: #d8f3dc;
-  --color-green-50:  #f2f9f4;
+  /* Paleta Verde Rural Suave (Territorio y agro) */
+  --color-green-900: #22543d;
+  --color-green-800: #2b694d;
+  --color-green-700: #367d5d;
+  --color-green-600: #469671;
+  --color-green-500: #5db38c;
+  --color-green-400: #80cca9;
+  --color-green-200: #c3eed9;
+  --color-green-100: #e2f7ec;
+  --color-green-50:  #f3fbf7;
 
   /* Paleta Azul Hídrico (Agua y lluvia) */
   --color-blue-900: #03045e;

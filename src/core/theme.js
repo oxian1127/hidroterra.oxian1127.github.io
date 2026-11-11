@@ -6,6 +6,7 @@
 import { events } from './events.js';
 
 const THEME_STORAGE_KEY = 'hidroterra_theme';
+const OVERFLOW_TOOLTIP_STORAGE_KEY = 'hidroterra_overflow_tooltip';
 
 export class ThemeService {
   /**
@@ -68,11 +69,43 @@ export class ThemeService {
   }
 
   /**
+   * Indica si la visualización emergente de textos completos (botones/textos con ...) está habilitada.
+   * Por defecto está desactivada (false) para no resultar intrusiva a menos que el usuario la active en Configuración.
+   */
+  static isOverflowTooltipEnabled() {
+    try {
+      return localStorage.getItem(OVERFLOW_TOOLTIP_STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Activa o desactiva la opción de mostrar el texto completo de botones y textos recortados
+   */
+  static setOverflowTooltipEnabled(enabled) {
+    const isEnabled = Boolean(enabled);
+    try {
+      localStorage.setItem(OVERFLOW_TOOLTIP_STORAGE_KEY, isEnabled ? 'true' : 'false');
+    } catch {
+      // Ignorar fallback
+    }
+
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-overflow-tooltip', isEnabled ? 'true' : 'false');
+    }
+
+    events.emit('preferences:overflow-tooltip', { enabled: isEnabled });
+    return isEnabled;
+  }
+
+  /**
    * Inicializa el tema al arranque de la aplicación
    */
   static init() {
     const currentTheme = this.getTheme();
     this.setTheme(currentTheme);
+    this.setOverflowTooltipEnabled(this.isOverflowTooltipEnabled());
 
     // Escuchar cambios de preferencia del sistema si el usuario no ha forzado una elección
     if (typeof window !== 'undefined' && window.matchMedia) {
