@@ -211,13 +211,13 @@ export class MapService {
             ` : ''}
             <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
               <button class="btn btn-sm btn-primary popup-action-btn" data-action="view-tech-sheet" data-id="${source.id}">
-                <i class="fa-solid fa-file-lines"></i> Ficha Técnica de Disponibilidad
+                Ficha Técnica de Disponibilidad
               </button>
               <button class="btn btn-sm btn-outline-primary popup-action-btn" data-action="view-history" data-id="${source.id}">
-                <i class="fa-solid fa-chart-line"></i> Historial de Mediciones (${measCount})
+                Historial de Mediciones (${measCount})
               </button>
               <button class="btn btn-sm btn-outline-primary popup-action-btn" data-action="view-source" data-id="${source.id}">
-                <i class="fa-solid fa-droplet"></i> Ver en Inventario de Fuentes
+                Ver en Inventario de Fuentes
               </button>
             </div>
           </div>
