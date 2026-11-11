@@ -5,6 +5,8 @@
 import { Sidebar } from '../components/sidebar.js';
 import { Header } from '../components/header.js';
 import { JsonExportService } from '../../infrastructure/files/json-export.js';
+import { BackupService } from '../../application/backup.service.js';
+import { modal } from '../components/modal.js';
 import { notification } from '../components/notification.js';
 
 export class AppLayout {
@@ -35,6 +37,18 @@ export class AppLayout {
 
   async handleQuickBackup() {
     try {
+      const storageInfo = await BackupService.getStorageInfo();
+      const totalRecords = storageInfo?.counts?.totalRecords ?? 0;
+
+      const confirmed = await modal.confirm({
+        title: 'Confirmar Exportación de Copia de Seguridad',
+        message: `¿Desea exportar ahora una copia de seguridad completa en formato JSON con los ${totalRecords} registros almacenados en este dispositivo?`,
+        confirmText: 'Sí, Exportar Respaldo JSON',
+        cancelText: 'Cancelar'
+      });
+
+      if (!confirmed) return;
+
       const result = await JsonExportService.exportFullBackup();
       notification.success(
         'Respaldo Exportado',

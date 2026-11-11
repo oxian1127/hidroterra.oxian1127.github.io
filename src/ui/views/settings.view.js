@@ -311,6 +311,18 @@ export class SettingsView {
     if (exportBtn) {
       exportBtn.addEventListener('click', async () => {
         try {
+          const currentInfo = await BackupService.getStorageInfo();
+          const totalRecords = currentInfo?.counts?.totalRecords ?? 0;
+
+          const confirmed = await modal.confirm({
+            title: 'Confirmar Exportación de Copia de Seguridad',
+            message: `¿Desea generar y descargar el archivo de respaldo JSON completo con los ${totalRecords} registros locales del sistema?`,
+            confirmText: 'Sí, Descargar Respaldo JSON',
+            cancelText: 'Cancelar'
+          });
+
+          if (!confirmed) return;
+
           const res = await BackupService.exportBackup();
           notification.success('Respaldo generado', `Descargado "${res.filename}" con éxito.`);
           this.render(container);

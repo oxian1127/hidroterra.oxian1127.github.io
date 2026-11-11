@@ -88,7 +88,7 @@ export class Header {
           </div>
 
           <button class="btn btn-outline btn-sm" id="btn-header-backup" title="Exportar copia de seguridad en JSON">
-            <span class="header-label-text">Respaldo JSON</span>
+            <span>Respaldo JSON</span>
           </button>
         </div>
       </header>
