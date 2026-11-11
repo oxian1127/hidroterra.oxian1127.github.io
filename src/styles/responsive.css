@@ -296,9 +296,16 @@
 
 /* Teléfonos móviles (hasta 640px): Tablas transformadas en Tarjetas legibles sin pérdida de columnas */
 @media (max-width: 640px) {
-  /* Ocultar etiquetas largas del header dejando los iconos accesibles */
-  .header-label-text {
+  /* Ocultar solo el texto largo del indicador de conexión en pantallas muy estrechas, manteniendo visible el texto del botón Respaldo JSON */
+  .connectivity-badge .header-label-text {
     display: none;
+  }
+
+  #btn-header-backup,
+  .btn-theme-toggle,
+  .menu-toggle-btn {
+    padding: 0.35rem 0.55rem;
+    font-size: var(--font-size-xs);
   }
 
   .header-breadcrumb {
