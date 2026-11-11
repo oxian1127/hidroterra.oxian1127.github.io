@@ -328,15 +328,15 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong>12. Observaciones, Reportes y Respaldos</strong>
+                <strong>12. Observaciones, Reportes y Configuración</strong>
                 <div class="d-flex gap-2">
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Notas</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="settings">Datos</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="settings">Configuración</button>
                 </div>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Bitácora de observaciones de campo, generador de 9 informes técnicos exportables a CSV/JSON/Impresión y centro de configuración, modo oscuro y copias de seguridad.
+                Bitácora de observaciones de campo, generador de 9 informes técnicos exportables a CSV/JSON/Impresión y centro de <strong>Configuración y Respaldos</strong> (modo oscuro, globo de texto completo para textos recortados y copias de seguridad JSON).
               </p>
             </div>
           </div>
@@ -518,7 +518,7 @@ export class AboutView {
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
                 <li><strong>Mapa Territorial:</strong> Active o desactive capas y utilice el filtro de <strong>Estado de Disponibilidad Hídrica</strong> para localizar en el mapa las fuentes con disponibilidad alta (verde), moderada (azul), baja (ámbar) o crítica (rojo), y abra su Ficha de Disponibilidad desde el marcador.</li>
                 <li><strong>Reportes y Exportación:</strong> Genere cualquiera de los <strong>9 informes técnicos</strong> (incluyendo <em>Estado de Disponibilidad Hídrica de Fuentes</em>, <em>Historial de Mediciones de Nivel y Volumen</em> y <em>Balance Pluviométrico vs Disponibilidad</em>) y descárguelos en <strong>CSV (Excel)</strong>, <strong>JSON</strong> o <strong>Impresión / PDF</strong>.</li>
-                <li><strong>Copia de Seguridad (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> en la barra superior o desde <strong>Respaldo y Datos</strong> para conservar su archivo <code>.json</code> en un lugar seguro.</li>
+                <li><strong>Copia de Seguridad (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> en la barra superior o desde <strong>Configuración y Respaldos</strong> para conservar su archivo <code>.json</code> en un lugar seguro.</li>
               </ol>
             </div>
 
@@ -589,7 +589,7 @@ export class AboutView {
                 6. ¿Cómo uno los datos recolectados en varios teléfonos o computadores?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                En cada teléfono exporte el <strong>Respaldo JSON</strong>. Luego, en el computador principal vaya a <strong>Respaldo y Datos &rarr; Seleccionar Archivo JSON</strong>, cargue cada archivo y elija la opción <strong>«Combinar y Actualizar (Recomendado)»</strong>. El sistema integrará todas las fuentes, mediciones de disponibilidad, lluvias y alertas sin borrar los registros existentes.
+                En cada teléfono exporte el <strong>Respaldo JSON</strong>. Luego, en el computador principal vaya a <strong>Configuración y Respaldos &rarr; Seleccionar Archivo JSON</strong>, cargue cada archivo y elija la opción <strong>«Combinar y Actualizar (Recomendado)»</strong>. El sistema integrará todas las fuentes, mediciones de disponibilidad, lluvias y alertas sin borrar los registros existentes.
               </p>
             </div>
 

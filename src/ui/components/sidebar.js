@@ -2,7 +2,7 @@
  * Componente: Menú Lateral de Navegación (Sidebar)
  */
 
-import { MODULES_CONFIG } from '../../config/modules.config.js';
+import { MODULES_CONFIG, SIDEBAR_GROUPS_CONFIG } from '../../config/modules.config.js';
 import { APP_CONFIG } from '../../config/app.config.js';
 
 export class Sidebar {
@@ -22,6 +22,17 @@ export class Sidebar {
         el.classList.remove('active');
       }
     });
+
+    const groups = document.querySelectorAll('.nav-group');
+    groups.forEach(groupEl => {
+      const hasActiveChild = Boolean(groupEl.querySelector(`.nav-item[data-route="${route}"]`));
+      const toggleBtn = groupEl.querySelector('.nav-group-toggle');
+      groupEl.classList.toggle('has-active', hasActiveChild);
+      if (hasActiveChild) {
+        groupEl.classList.add('open');
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
   }
 
   setStorageSummary(text) {
@@ -30,7 +41,40 @@ export class Sidebar {
     if (el) el.textContent = text;
   }
 
+  _renderNavItem(mod, isSubItem = false) {
+    const isActive = this.activeRoute === mod.id;
+    return `
+      <a class="nav-item ${isSubItem ? 'nav-subitem' : ''} ${isActive ? 'active' : ''}" 
+         data-route="${mod.id}" 
+         title="${mod.description}">
+        <span class="nav-icon"><i class="${mod.icon}"></i></span>
+        <span class="nav-item-label">${mod.label}</span>
+      </a>
+    `;
+  }
+
   render() {
+    const topLevelModules = MODULES_CONFIG.filter(mod => !mod.group);
+
+    const groupsHtml = SIDEBAR_GROUPS_CONFIG.map(group => {
+      const groupModules = MODULES_CONFIG.filter(mod => mod.group === group.id);
+      const hasActive = groupModules.some(mod => mod.id === this.activeRoute);
+      const isOpen = hasActive;
+
+      return `
+        <div class="nav-group ${isOpen ? 'open' : ''} ${hasActive ? 'has-active' : ''}" data-group-id="${group.id}">
+          <button type="button" class="nav-group-toggle" aria-expanded="${isOpen ? 'true' : 'false'}">
+            <span class="nav-icon"><i class="${group.icon}"></i></span>
+            <span class="nav-group-label">${group.label}</span>
+            <span class="nav-group-caret"><i class="fa-solid fa-chevron-down"></i></span>
+          </button>
+          <div class="nav-group-items">
+            ${groupModules.map(mod => this._renderNavItem(mod, true)).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
     return `
       <aside class="app-sidebar" id="app-sidebar">
         <div class="sidebar-header">
@@ -42,14 +86,9 @@ export class Sidebar {
         </div>
 
         <nav class="sidebar-nav">
-          <div class="nav-section-title">Monitoreo Territorial</div>
-          ${MODULES_CONFIG.map(mod => `
-            <a class="nav-item ${this.activeRoute === mod.id ? 'active' : ''}" 
-               data-route="${mod.id}" 
-               title="${mod.description}">
-              <span>${mod.label}</span>
-            </a>
-          `).join('')}
+          <div class="nav-section-title">Menú Principal</div>
+          ${topLevelModules.map(mod => this._renderNavItem(mod, false)).join('')}
+          ${groupsHtml}
         </nav>
 
         <div class="sidebar-footer">
@@ -66,8 +105,30 @@ export class Sidebar {
 
   bindEvents(container) {
     const navItems = container.querySelectorAll('.nav-item');
+    const groupToggles = container.querySelectorAll('.nav-group-toggle');
     const sidebar = container.querySelector('#app-sidebar');
     const backdrop = container.querySelector('#sidebar-backdrop');
+
+    groupToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const groupEl = toggle.closest('.nav-group');
+        if (!groupEl) return;
+        const willOpen = !groupEl.classList.contains('open');
+
+        // Cerrar otros grupos desplegados para mantener el menú minimalista
+        container.querySelectorAll('.nav-group.open').forEach(otherGroup => {
+          if (otherGroup !== groupEl) {
+            otherGroup.classList.remove('open');
+            const otherBtn = otherGroup.querySelector('.nav-group-toggle');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        groupEl.classList.toggle('open', willOpen);
+        toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+    });
 
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {

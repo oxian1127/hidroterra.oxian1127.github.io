@@ -28,6 +28,7 @@ export class SettingsView {
     const storageInfo = await BackupService.getStorageInfo();
     const syncStatus = FutureSyncService.getStatus();
     const isDark = ThemeService.isDark();
+    const isOverflowTooltipOn = ThemeService.isOverflowTooltipEnabled();
 
     container.innerHTML = `
       <div class="settings-view">
@@ -36,18 +37,19 @@ export class SettingsView {
           <p class="text-muted">Personalización visual, administración de la persistencia local IndexedDB, respaldos JSON y arquitectura territorial.</p>
         </div>
 
-        <!-- Módulo de Configuración de Apariencia y Modo Oscuro -->
+        <!-- Módulo de Configuración de Apariencia y Visualización -->
         <div class="card mb-4" id="card-theme-settings">
           <div class="card-header">
             <div>
-              <h3 class="card-title"><i class="fa-solid fa-circle-half-stroke" style="color: var(--color-green-600); margin-right: 6px;"></i> Apariencia y Visualización</h3>
-              <p class="card-subtitle">Personalice el tema de la interfaz para mejorar la lectura bajo luz solar o en entornos nocturnos</p>
+              <h3 class="card-title">Apariencia y Opciones de Visualización</h3>
+              <p class="card-subtitle">Personalice el tema de la interfaz y el comportamiento de lectura de textos recortados</p>
             </div>
             <span class="badge ${isDark ? 'badge-info' : 'badge-success'}" id="settings-theme-badge">
-              <i class="fa-solid ${isDark ? 'fa-moon' : 'fa-sun'}"></i> ${isDark ? 'Modo Oscuro' : 'Modo Claro'}
+              ${isDark ? 'Modo Oscuro' : 'Modo Claro'}
             </span>
           </div>
           <div class="card-body">
+            <!-- Opción 1: Modo Oscuro -->
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-4);">
               <div style="max-width: 600px;">
                 <h4 style="margin-bottom: 6px; font-size: var(--font-size-base);">Modo Oscuro (Dark Mode)</h4>
@@ -60,9 +62,7 @@ export class SettingsView {
                 <label class="theme-switch" for="settings-theme-toggle" title="Activar o desactivar modo oscuro">
                   <input type="checkbox" id="settings-theme-toggle" ${isDark ? 'checked' : ''} />
                   <span class="theme-slider">
-                    <span class="theme-slider-thumb">
-                      <i class="fa-solid ${isDark ? 'fa-moon' : 'fa-sun'}"></i>
-                    </span>
+                    <span class="theme-slider-thumb"></span>
                   </span>
                 </label>
                 <span id="settings-theme-status-text" style="font-weight: 600; font-size: var(--font-size-sm); color: var(--color-neutral-800);">
@@ -71,12 +71,34 @@ export class SettingsView {
               </div>
             </div>
 
+            <!-- Opción 2: Mostrar texto completo de botones y textos recortados -->
+            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-neutral-200); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-4);">
+              <div style="max-width: 600px;">
+                <h4 style="margin-bottom: 6px; font-size: var(--font-size-base);">Mostrar Texto Completo de Botones y Textos Recortados (...)</h4>
+                <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); margin: 0; line-height: 1.5;">
+                  Actívelo si desea ver un globo emergente con el texto completo al pasar el cursor (PC) o al presionar (móvil) sobre botones, listas desplegables o cajas cuyos textos no caben en pantalla. Por defecto permanece desactivado para no resultar molesto durante la navegación.
+                </p>
+              </div>
+
+              <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="settings-overflow-tooltip-toggle">
+                  <input type="checkbox" id="settings-overflow-tooltip-toggle" ${isOverflowTooltipOn ? 'checked' : ''} />
+                  <span class="theme-slider">
+                    <span class="theme-slider-thumb"></span>
+                  </span>
+                </label>
+                <span id="settings-overflow-tooltip-status" style="font-weight: 600; font-size: var(--font-size-sm); color: var(--color-neutral-800);">
+                  ${isOverflowTooltipOn ? 'Activado' : 'Desactivado'}
+                </span>
+              </div>
+            </div>
+
             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-neutral-200); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-3); font-size: var(--font-size-xs); color: var(--color-neutral-500);">
               <div>
-                <i class="fa-solid fa-font"></i> <strong>Tipografía Activa:</strong> Open Sans (Cargada localmente para funcionamiento 100% offline).
+                <strong>Tipografía Activa:</strong> Open Sans (Cargada localmente para funcionamiento 100% offline).
               </div>
               <div>
-                <i class="fa-solid fa-mobile-screen"></i> También puede alternar el tema rápidamente desde el botón en el encabezado superior.
+                También puede alternar el tema rápidamente desde el botón en el encabezado superior.
               </div>
             </div>
           </div>
@@ -277,11 +299,28 @@ export class SettingsView {
     const themeToggle = container.querySelector('#settings-theme-toggle');
     const themeStatusText = container.querySelector('#settings-theme-status-text');
     const themeBadge = container.querySelector('#settings-theme-badge');
+    const overflowTooltipToggle = container.querySelector('#settings-overflow-tooltip-toggle');
+    const overflowTooltipStatus = container.querySelector('#settings-overflow-tooltip-status');
 
     if (themeToggle) {
       themeToggle.addEventListener('change', () => {
         const newTheme = themeToggle.checked ? 'dark' : 'light';
         ThemeService.setTheme(newTheme);
+      });
+    }
+
+    if (overflowTooltipToggle) {
+      overflowTooltipToggle.addEventListener('change', () => {
+        const enabled = ThemeService.setOverflowTooltipEnabled(overflowTooltipToggle.checked);
+        if (overflowTooltipStatus) {
+          overflowTooltipStatus.textContent = enabled ? 'Activado' : 'Desactivado';
+        }
+        notification.info(
+          enabled ? 'Lectura de textos completos activada' : 'Lectura de textos completos desactivada',
+          enabled
+            ? 'Ahora se mostrará el texto completo al pasar el cursor o presionar elementos con puntos suspensivos (...).'
+            : 'No se mostrarán mensajes emergentes al pasar sobre botones o textos recortados.'
+        );
       });
     }
 
@@ -293,11 +332,7 @@ export class SettingsView {
       }
       if (themeBadge) {
         themeBadge.className = `badge ${isDark ? 'badge-info' : 'badge-success'}`;
-        themeBadge.innerHTML = `<i class="fa-solid ${isDark ? 'fa-moon' : 'fa-sun'}"></i> ${isDark ? 'Modo Oscuro' : 'Modo Claro'}`;
-      }
-      const thumb = container.querySelector('.theme-slider-thumb');
-      if (thumb) {
-        thumb.innerHTML = `<i class="fa-solid ${isDark ? 'fa-moon' : 'fa-sun'}"></i>`;
+        themeBadge.textContent = isDark ? 'Modo Oscuro' : 'Modo Claro';
       }
     };
     events.on('theme:changed', this._themeListener);
