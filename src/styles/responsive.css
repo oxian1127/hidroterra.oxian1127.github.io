@@ -70,6 +70,13 @@
     gap: var(--spacing-2);
   }
 
+  /* Ocultar opciones de Modo Oscuro y Respaldo únicamente en la barra superior de la vista móvil */
+  .app-header #btn-header-theme,
+  .app-header .btn-theme-toggle,
+  .app-header #btn-header-backup {
+    display: none !important;
+  }
+
   .global-alert-banner {
     padding: var(--spacing-3);
     flex-direction: column;
@@ -296,15 +303,8 @@
 
 /* Teléfonos móviles (hasta 640px): Tablas transformadas en Tarjetas legibles sin pérdida de columnas */
 @media (max-width: 640px) {
-  /* Ocultar solo el texto largo del indicador de conexión en pantallas muy estrechas, manteniendo visible el texto del botón Respaldo JSON */
-  .connectivity-badge .header-label-text {
-    display: none;
-  }
-
-  #btn-header-backup,
-  .btn-theme-toggle,
   .menu-toggle-btn {
-    padding: 0.35rem 0.55rem;
+    padding: 0.35rem 0.65rem;
     font-size: var(--font-size-xs);
   }
 
@@ -313,7 +313,8 @@
   }
 
   .connectivity-badge {
-    padding: 0.35rem 0.55rem;
+    padding: 0.35rem 0.6rem;
+    font-size: var(--font-size-xs);
   }
 
   /* Métricas en grilla compacta */
