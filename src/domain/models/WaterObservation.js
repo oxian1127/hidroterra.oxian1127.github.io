@@ -36,6 +36,7 @@ export class WaterObservation {
     this.latitude = data.latitude !== undefined && data.latitude !== '' && data.latitude !== null ? Number(data.latitude) : null;
     this.longitude = data.longitude !== undefined && data.longitude !== '' && data.longitude !== null ? Number(data.longitude) : null;
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -75,6 +76,7 @@ export class WaterObservation {
       latitude: this.latitude,
       longitude: this.longitude,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

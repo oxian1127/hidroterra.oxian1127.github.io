@@ -60,6 +60,7 @@ export class WaterSource {
     this.responsible = (data.responsible || '').trim();
     this.notes = (data.notes || '').trim();
     this.active = data.active !== false; // True por defecto (desactivable de forma lógica)
+    this.organizationId = data.organizationId || null;
     this.syncStatus = data.syncStatus || 'pending';
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
@@ -117,6 +118,7 @@ export class WaterSource {
       responsible: this.responsible,
       notes: this.notes,
       active: this.active,
+      organizationId: this.organizationId,
       syncStatus: this.syncStatus,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt

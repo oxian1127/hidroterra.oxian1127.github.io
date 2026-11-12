@@ -43,6 +43,7 @@ export class WaterAlert {
     this.status = data.status || 'activa';
     this.resolvedAt = data.resolvedAt || null;
     this.resolutionNotes = (data.resolutionNotes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.syncStatus = data.syncStatus || 'pending';
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
@@ -88,6 +89,7 @@ export class WaterAlert {
       status: this.status,
       resolvedAt: this.resolvedAt,
       resolutionNotes: this.resolutionNotes,
+      organizationId: this.organizationId,
       syncStatus: this.syncStatus,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt

@@ -16,6 +16,7 @@ export class Site {
     this.longitude = data.longitude !== undefined && data.longitude !== '' && data.longitude !== null ? Number(data.longitude) : null;
     this.description = (data.description || '').trim();
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -53,6 +54,7 @@ export class Site {
       longitude: this.longitude,
       description: this.description,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

@@ -118,12 +118,19 @@ span:not(.map-pin-icon):not(.nav-icon):not(.nav-group-caret) i,
   display: none !important;
 }
 
-/* Asegurar que los íconos de las opciones del menú lateral sí sean visibles */
-.app-sidebar .nav-icon,
-.app-sidebar .nav-icon i,
+/* Asegurar que únicamente los íconos de las opciones principales del menú lateral sean visibles */
+.app-sidebar .nav-item:not(.nav-subitem) .nav-icon,
+.app-sidebar .nav-item:not(.nav-subitem) .nav-icon i,
+.app-sidebar .nav-group-toggle .nav-icon,
+.app-sidebar .nav-group-toggle .nav-icon i,
 .app-sidebar .nav-group-caret,
 .app-sidebar .nav-group-caret i {
   display: inline-flex !important;
+}
+
+.app-sidebar .nav-subitem .nav-icon,
+.app-sidebar .nav-subitem i {
+  display: none !important;
 }
 
 /* Tipografía de encabezados */

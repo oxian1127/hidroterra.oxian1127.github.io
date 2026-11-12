@@ -25,7 +25,7 @@ export const SIDEBAR_GROUPS_CONFIG = [
     id: 'system',
     label: 'Reportes y Sistema',
     icon: 'fa-solid fa-sliders',
-    items: ['reports', 'settings', 'about']
+    items: ['reports', 'audit', 'settings', 'about']
   }
 ];
 
@@ -35,6 +35,20 @@ export const MODULES_CONFIG = [
     label: 'Inicio / Panel',
     icon: 'fa-solid fa-gauge-high',
     description: 'Indicadores principales, disponibilidad hídrica, alertas y accesos rápidos'
+  },
+  {
+    id: 'superadmin',
+    label: 'Panel Superadministrador',
+    icon: 'fa-solid fa-shield-halved',
+    superAdminOnly: true,
+    description: 'Administración centralizada de organizaciones, usuarios y registros multiorganización'
+  },
+  {
+    id: 'directory',
+    label: 'Directorio de Organizaciones',
+    icon: 'fa-solid fa-building-ngo',
+    publicAccess: true,
+    description: 'Directorio público de organizaciones comunitarias y territoriales de Montes de María'
   },
   {
     id: 'water-sources',
@@ -121,11 +135,18 @@ export const MODULES_CONFIG = [
     description: 'Balances acumulados, disponibilidad territorial, CSV y formatos imprimibles'
   },
   {
+    id: 'audit',
+    label: 'Registro de Auditoría',
+    icon: 'fa-solid fa-clock-rotate-left',
+    group: 'system',
+    description: 'Trazabilidad de eventos, sincronización Firebase y modificaciones administrativas'
+  },
+  {
     id: 'settings',
     label: 'Configuración y Respaldos',
     icon: 'fa-solid fa-gear',
     group: 'system',
-    description: 'Apariencia, opciones de visualización, copias de seguridad JSON y estado del almacenamiento'
+    description: 'Sincronización con Firebase, Mi Perfil, Mi Organización, Seguridad, Usuarios y Respaldos'
   },
   {
     id: 'about',
@@ -133,5 +154,13 @@ export const MODULES_CONFIG = [
     icon: 'fa-solid fa-circle-info',
     group: 'system',
     description: 'Información del proyecto, descripción de la plataforma y manual de uso'
+  },
+  {
+    id: 'login',
+    label: 'Iniciar Sesión',
+    icon: 'fa-solid fa-right-to-bracket',
+    hiddenFromMenu: true,
+    publicAccess: true,
+    description: 'Acceso demostrativo multiorganización a HIDROTERRA'
   }
 ];

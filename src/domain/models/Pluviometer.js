@@ -33,6 +33,7 @@ export class Pluviometer {
     this.responsible = (data.responsible || '').trim();
     this.status = data.status || 'activo';
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -92,6 +93,7 @@ export class Pluviometer {
       responsible: this.responsible,
       status: this.status,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

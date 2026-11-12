@@ -89,6 +89,7 @@ export class WaterMeasurement {
     this.longitude = data.longitude !== undefined && data.longitude !== '' && data.longitude !== null ? Number(data.longitude) : null;
     this.photoDataUrl = data.photoDataUrl || null;
     this.notes = (data.notes || data.observations || '').trim();
+    this.organizationId = data.organizationId || null;
     this.syncStatus = data.syncStatus || 'pending';
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
@@ -191,6 +192,7 @@ export class WaterMeasurement {
       longitude: this.longitude,
       photoDataUrl: this.photoDataUrl,
       notes: this.notes,
+      organizationId: this.organizationId,
       syncStatus: this.syncStatus,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt

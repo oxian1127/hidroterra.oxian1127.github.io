@@ -29,6 +29,7 @@ export class Parcel {
     this.areaUnit = data.areaUnit || 'hectareas';
     this.status = data.status || 'activa';
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -73,6 +74,7 @@ export class Parcel {
       areaUnit: this.areaUnit,
       status: this.status,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

@@ -6,6 +6,10 @@ import { AppLayout } from './ui/layouts/app-layout.js';
 import { Router } from './router.js';
 import { idb } from './infrastructure/database/indexeddb.js';
 import { BackupService } from './application/backup.service.js';
+import { SAMPLE_MONTES_DE_MARIA } from '../data/examples/sample-data.js';
+import { firebaseService } from '../js/firebase-service.js';
+import { sessionService } from './core/session.service.js';
+import { FirebaseSyncService } from './application/firebase-sync.service.js';
 import { events } from './core/events.js';
 import { logger } from './core/logger.js';
 import { APP_CONFIG } from './config/app.config.js';
@@ -34,12 +38,22 @@ export class App {
     const viewOutlet = this.root.querySelector('#app-view-outlet');
     this.router = new Router(viewOutlet, this.layout);
 
-    // 3. Inicializar Base de Datos Local IndexedDB
+    // 3. Inicializar Base de Datos Local IndexedDB y verificar registros territoriales base
     try {
       await idb.init();
       logger.info('Persistencia IndexedDB lista y verificada.');
+      await this._ensureBaseLocalDataset();
     } catch (dbErr) {
       logger.error('Fallo al inicializar base de datos IndexedDB', dbErr);
+    }
+
+    // 3.1 Inicializar conexión con Firebase Firestore y perfiles organizacionales base
+    try {
+      const conn = await firebaseService.checkConnection();
+      this.layout.header.setFirebaseStatus(conn.connected);
+      await sessionService.ensureBaseOrganizationsInFirestore();
+    } catch (fbErr) {
+      logger.warn('Firebase Firestore en modo local/pendiente:', fbErr.message);
     }
 
     // 4. Configurar escuchadores de conectividad del navegador
@@ -62,6 +76,67 @@ export class App {
 
     // 9. Iniciar navegación a la ruta solicitada
     this.router.init();
+  }
+
+  /**
+   * Garantiza que los registros territoriales existentes de Montes de María estén disponibles en IndexedDB
+   * con su organizationId inferido si el navegador aún no tenía datos locales cargados.
+   */
+  async _ensureBaseLocalDataset() {
+    try {
+      if (localStorage.getItem('hidroterra_test_period_cleared') === 'true') {
+        return;
+      }
+    } catch {
+      // Ignorar si localStorage no está disponible
+    }
+
+    const existingSites = await idb.getAll('sites').catch(() => []);
+    const existingSources = await idb.getAll('water_sources').catch(() => []);
+    if (existingSites.length > 0 || existingSources.length > 0) {
+      return;
+    }
+
+    const data = SAMPLE_MONTES_DE_MARIA?.data;
+    if (!data) return;
+
+    const siteToOrgMap = new Map();
+    for (const s of (data.sites || [])) {
+      const inf = FirebaseSyncService.inferOrganizationForRecord('sites', s, siteToOrgMap);
+      if (inf.organizationId) siteToOrgMap.set(s.id, inf.organizationId);
+      await idb.put('sites', { ...s, organizationId: s.organizationId || inf.organizationId });
+    }
+
+    const sourceToSiteMap = new Map();
+    for (const ws of (data.water_sources || [])) {
+      if (ws.id && ws.siteId) sourceToSiteMap.set(ws.id, ws.siteId);
+    }
+    const pluvToSiteMap = new Map();
+    for (const pl of (data.pluviometers || [])) {
+      if (pl.id && pl.siteId) pluvToSiteMap.set(pl.id, pl.siteId);
+    }
+    const parcelToSiteMap = new Map();
+    for (const pa of (data.parcels || [])) {
+      if (pa.id && pa.siteId) parcelToSiteMap.set(pa.id, pa.siteId);
+    }
+
+    const stores = [
+      'water_sources', 'water_measurements', 'water_alerts',
+      'pluviometers', 'rainfall_records', 'parcels', 'crops', 'observations'
+    ];
+    for (const storeName of stores) {
+      const records = data[storeName] || [];
+      for (const rec of records) {
+        const inf = FirebaseSyncService.inferOrganizationForRecord(
+          storeName, rec, siteToOrgMap, sourceToSiteMap, pluvToSiteMap, parcelToSiteMap
+        );
+        await idb.put(storeName, {
+          ...rec,
+          organizationId: rec.organizationId || inf.organizationId || null
+        });
+      }
+    }
+    logger.info('Datos territoriales iniciales de Montes de María cargados en IndexedDB con asignación organizacional.');
   }
 
   _setupConnectivityListeners() {
@@ -90,6 +165,10 @@ export class App {
     });
 
     events.on('backup:completed', async () => {
+      await this._refreshStorageAndBackupStatus();
+    });
+
+    events.on('session:changed', async () => {
       await this._refreshStorageAndBackupStatus();
     });
   }

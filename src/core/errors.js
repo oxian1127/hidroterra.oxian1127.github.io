@@ -41,3 +41,10 @@ export class NotFoundError extends AppError {
     this.name = 'NotFoundError';
   }
 }
+
+export class PermissionError extends AppError {
+  constructor(message = 'No cuenta con los permisos necesarios para realizar esta acción.') {
+    super(message, 'PERMISSION_DENIED');
+    this.name = 'PermissionError';
+  }
+}

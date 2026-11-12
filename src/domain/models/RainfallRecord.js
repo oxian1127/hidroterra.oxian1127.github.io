@@ -21,6 +21,7 @@ export class RainfallRecord {
     this.measurementType = data.measurementType || 'manual';
     this.responsible = (data.responsible || '').trim();
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -63,6 +64,7 @@ export class RainfallRecord {
       measurementType: this.measurementType,
       responsible: this.responsible,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

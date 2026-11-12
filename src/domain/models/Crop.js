@@ -21,6 +21,7 @@ export class Crop {
     this.cropArea = data.cropArea !== undefined && data.cropArea !== '' && data.cropArea !== null ? Number(data.cropArea) : null;
     this.status = data.status || 'activo';
     this.notes = (data.notes || '').trim();
+    this.organizationId = data.organizationId || null;
     this.createdAt = data.createdAt || nowIso();
     this.updatedAt = data.updatedAt || nowIso();
   }
@@ -56,6 +57,7 @@ export class Crop {
       cropArea: this.cropArea,
       status: this.status,
       notes: this.notes,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };
