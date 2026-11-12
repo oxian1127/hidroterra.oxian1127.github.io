@@ -6,6 +6,7 @@ import { AppLayout } from './ui/layouts/app-layout.js';
 import { Router } from './router.js';
 import { idb } from './infrastructure/database/indexeddb.js';
 import { BackupService } from './application/backup.service.js';
+import { waterAlertRepository } from './infrastructure/database/repositories/water-alert.repository.js';
 import { SAMPLE_MONTES_DE_MARIA } from '../data/examples/sample-data.js';
 import { firebaseService } from '../js/firebase-service.js';
 import { sessionService } from './core/session.service.js';
@@ -689,7 +690,8 @@ export class App {
         showBackupWarning = true;
       }
 
-      this.layout.header.setBackupWarning(showBackupWarning, daysSince);
+      const activeAlerts = await waterAlertRepository.getByStatus('activa').catch(() => []);
+      this.layout.header.setBackupWarning(showBackupWarning, daysSince, activeAlerts);
     } catch (e) {
       console.warn('No se pudo actualizar métrica de almacenamiento:', e);
     }
