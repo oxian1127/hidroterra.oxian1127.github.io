@@ -35,9 +35,11 @@ class ModalManager {
     return this.overlay;
   }
 
-  open({ title = 'Diálogo', contentHtml = '', footerHtml = '', size = '', onMount = null, onClose = null }) {
+  open({ title = 'Diálogo', contentHtml = '', content = '', footerHtml = '', footer = '', size = '', onMount = null, onOpen = null, onClose = null }) {
     const overlay = this._getOverlay();
     this.activeCloseCallback = onClose;
+    const bodyContent = contentHtml || content || '';
+    const footContent = footerHtml || footer || '';
 
     overlay.innerHTML = `
       <div class="modal-dialog ${size === 'lg' ? 'modal-lg' : ''}">
@@ -46,11 +48,11 @@ class ModalManager {
           <button class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
         </div>
         <div class="modal-body">
-          ${contentHtml}
+          ${bodyContent}
         </div>
-        ${footerHtml ? `
+        ${footContent ? `
           <div class="modal-footer">
-            ${footerHtml}
+            ${footContent}
           </div>
         ` : ''}
       </div>
@@ -59,11 +61,19 @@ class ModalManager {
     const closeBtn = overlay.querySelector('.modal-close-btn');
     closeBtn.addEventListener('click', () => this.close());
 
+    overlay.querySelectorAll('[data-modal-close]').forEach(btn => {
+      btn.addEventListener('click', () => this.close());
+    });
+
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
+    const dialogEl = overlay.querySelector('.modal-dialog');
     if (typeof onMount === 'function') {
-      onMount(overlay.querySelector('.modal-dialog'));
+      onMount(dialogEl);
+    }
+    if (typeof onOpen === 'function') {
+      onOpen(dialogEl);
     }
   }
 

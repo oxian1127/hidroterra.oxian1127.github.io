@@ -4,12 +4,15 @@
 
 import { MODULES_CONFIG, SIDEBAR_GROUPS_CONFIG } from '../../config/modules.config.js';
 import { APP_CONFIG } from '../../config/app.config.js';
+import { sessionService } from '../../core/session.service.js';
+import { events } from '../../core/events.js';
 
 export class Sidebar {
   constructor(onNavigate) {
     this.onNavigate = onNavigate;
     this.activeRoute = 'dashboard';
-    this.storageSummaryText = 'IndexedDB Local';
+    this.storageSummaryText = 'IndexedDB + Firestore';
+    this.containerRef = null;
   }
 
   setActiveRoute(route) {
@@ -54,11 +57,30 @@ export class Sidebar {
     `;
   }
 
-  render() {
-    const topLevelModules = MODULES_CONFIG.filter(mod => !mod.group);
+  _renderNavigationContent() {
+    const isAuth = sessionService.isAuthenticated();
+    const isSuper = sessionService.isSuperAdmin();
+
+    if (!isAuth) {
+      const publicMods = MODULES_CONFIG.filter(mod => mod.id === 'directory' || mod.id === 'login');
+      return `
+        <div class="nav-section-title">Acceso Público</div>
+        ${publicMods.map(mod => this._renderNavItem(mod, false)).join('')}
+      `;
+    }
+
+    const topLevelModules = MODULES_CONFIG.filter(mod => {
+      if (mod.group || mod.hiddenFromMenu) return false;
+      if (mod.superAdminOnly && !isSuper) return false;
+      return true;
+    });
 
     const groupsHtml = SIDEBAR_GROUPS_CONFIG.map(group => {
-      const groupModules = MODULES_CONFIG.filter(mod => mod.group === group.id);
+      const groupModules = MODULES_CONFIG.filter(mod => {
+        if (mod.group !== group.id || mod.hiddenFromMenu) return false;
+        if (mod.superAdminOnly && !isSuper) return false;
+        return true;
+      });
       const hasActive = groupModules.some(mod => mod.id === this.activeRoute);
       const isOpen = hasActive;
 
@@ -77,6 +99,14 @@ export class Sidebar {
     }).join('');
 
     return `
+      <div class="nav-section-title">Menú Principal</div>
+      ${topLevelModules.map(mod => this._renderNavItem(mod, false)).join('')}
+      ${groupsHtml}
+    `;
+  }
+
+  render() {
+    return `
       <aside class="app-sidebar" id="app-sidebar">
         <div class="sidebar-header">
           <img src="./assets/icons/icon-192.svg" alt="HIDROTERRA" class="sidebar-logo" />
@@ -86,10 +116,8 @@ export class Sidebar {
           </div>
         </div>
 
-        <nav class="sidebar-nav">
-          <div class="nav-section-title">Menú Principal</div>
-          ${topLevelModules.map(mod => this._renderNavItem(mod, false)).join('')}
-          ${groupsHtml}
+        <nav class="sidebar-nav" id="sidebar-nav-container">
+          ${this._renderNavigationContent()}
         </nav>
 
         <div class="sidebar-footer">
@@ -97,7 +125,8 @@ export class Sidebar {
             <span>Almacenamiento:</span>
             <strong id="sidebar-storage-stat">${this.storageSummaryText}</strong>
           </div>
-          <div>Versión PWA ${APP_CONFIG.version} (Offline-First)</div>
+          <div>Ubicación de la base de datos: <strong>nam5</strong></div>
+          <div>Versión PWA ${APP_CONFIG.version} (Offline-First + Firestore)</div>
           <div class="sidebar-developer-credit">
             Software desarrollado por <strong>José Félix Ibáñez Romero. Ing. de Sistemas</strong>
           </div>
@@ -107,7 +136,7 @@ export class Sidebar {
     `;
   }
 
-  bindEvents(container) {
+  _bindNavInteractions(container) {
     const navItems = container.querySelectorAll('.nav-item');
     const groupToggles = container.querySelectorAll('.nav-group-toggle');
     const sidebar = container.querySelector('#app-sidebar');
@@ -120,7 +149,6 @@ export class Sidebar {
         if (!groupEl) return;
         const willOpen = !groupEl.classList.contains('open');
 
-        // Cerrar otros grupos desplegados para mantener el menú minimalista
         container.querySelectorAll('.nav-group.open').forEach(otherGroup => {
           if (otherGroup !== groupEl) {
             otherGroup.classList.remove('open');
@@ -141,13 +169,20 @@ export class Sidebar {
         if (route && typeof this.onNavigate === 'function') {
           this.onNavigate(route);
         }
-        // Cerrar sidebar en móvil al seleccionar
         if (sidebar && sidebar.classList.contains('open')) {
           sidebar.classList.remove('open');
           if (backdrop) backdrop.classList.remove('active');
         }
       });
     });
+  }
+
+  bindEvents(container) {
+    this.containerRef = container;
+    this._bindNavInteractions(container);
+
+    const sidebar = container.querySelector('#app-sidebar');
+    const backdrop = container.querySelector('#sidebar-backdrop');
 
     if (backdrop) {
       backdrop.addEventListener('click', () => {
@@ -155,5 +190,13 @@ export class Sidebar {
         backdrop.classList.remove('active');
       });
     }
+
+    events.on('session:changed', () => {
+      const navContainer = container.querySelector('#sidebar-nav-container');
+      if (navContainer) {
+        navContainer.innerHTML = this._renderNavigationContent();
+        this._bindNavInteractions(container);
+      }
+    });
   }
 }

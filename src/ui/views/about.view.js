@@ -329,15 +329,16 @@ export class AboutView {
 
             <div class="recent-activity-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
               <div class="d-flex justify-between align-center w-100">
-                <strong>12. Observaciones, Reportes y Configuración</strong>
-                <div class="d-flex gap-2">
-                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="observations">Notas</button>
+                <strong>12. Observaciones, Auditoría, Directorio, Reportes y Configuración</strong>
+                <div class="d-flex gap-2" style="flex-wrap:wrap;">
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="directory">Directorio</button>
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="audit">Auditoría</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="reports">Reportes</button>
                   <button class="btn btn-outline btn-sm btn-nav-module" data-route="settings">Configuración</button>
                 </div>
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                Bitácora de observaciones de campo, generador de 9 informes técnicos exportables a CSV/JSON/Impresión y centro de <strong>Configuración y Respaldos</strong> (modo oscuro, globo de texto completo para textos recortados y copias de seguridad JSON).
+                Directorio público de organizaciones comunitarias, registro de auditoría, bitácora de observaciones de campo, generador de 9 informes técnicos exportables a CSV/JSON/Impresión y centro de <strong>Configuración y Respaldos</strong> (Sincronización con Firebase Firestore, Mi Perfil, Mi Organización, Seguridad PBKDF2-SHA256, Gestión de Usuarios, modo oscuro y copias de seguridad JSON).
               </p>
             </div>
           </div>
