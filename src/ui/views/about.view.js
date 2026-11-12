@@ -57,8 +57,8 @@ export class AboutView {
 
             <div style="display: flex; flex-direction: column; gap: 6px; font-size: var(--font-size-xs); color: var(--color-neutral-600); background-color: var(--color-neutral-50); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-md); border: 1px solid var(--color-neutral-200);">
               <div><i class="fa-solid fa-location-dot" style="color: var(--color-green-700); width: 16px;"></i> <strong>Región:</strong> ${escapeHtml(APP_CONFIG.geo.regionName)}, Colombia</div>
-              <div><i class="fa-solid fa-database" style="color: var(--color-blue-700); width: 16px;"></i> <strong>Motor Local:</strong> IndexedDB (${escapeHtml(DB_CONFIG.name)} v${DB_CONFIG.version})</div>
-              <div><i class="fa-solid fa-wifi" style="color: var(--color-green-700); width: 16px;"></i> <strong>Operación:</strong> 100% Autónoma sin Internet</div>
+              <div><i class="fa-solid fa-database" style="color: var(--color-blue-700); width: 16px;"></i> <strong>Motor Híbrido:</strong> IndexedDB (${escapeHtml(DB_CONFIG.name)} v${DB_CONFIG.version}) + Firebase Firestore (<code>nam5</code>)</div>
+              <div><i class="fa-solid fa-wifi" style="color: var(--color-green-700); width: 16px;"></i> <strong>Operación:</strong> Autónoma Offline-First + Sincronización Multiorganización</div>
               <div><strong>Desarrollado por:</strong> José Félix Ibáñez Romero. Ing. de Sistemas</div>
             </div>
           </div>
@@ -183,9 +183,19 @@ export class AboutView {
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-mobile-screen-button" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">Menú Minimalista en Acordeón y Visualización Configurable</strong>
+                  <strong style="color: var(--color-neutral-900);">Menú Lateral en Acordeón y Menú Superior Derecho con Notificaciones</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Menú lateral agrupado por categorías desplegables (<em>Gestión Hídrica</em>, <em>Lluvias y Clima</em>, <em>Territorio y Campo</em> y <em>Reportes y Sistema</em>) con íconos exclusivos en las opciones principales, recorte automático con <code>...</code> y globo de texto completo activable por el usuario desde <strong>Configuración y Respaldos</strong>.
+                    Menú lateral agrupado por categorías desplegables con ubicación de base de datos (<code>nam5</code>), y botón desplegable compacto en la <strong>esquina superior derecha</strong> de la barra superior que concentra la sesión activa (Usuario, Organización, Rol), estado de conexión con Firebase, apartado de <strong>Notificaciones y Alertas</strong> con contador, acceso al perfil y cierre de sesión.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
+                <i class="fa-solid fa-users-gear" style="color: var(--color-blue-700); font-size: 1.2rem; margin-top: 2px;"></i>
+                <div>
+                  <strong style="color: var(--color-neutral-900);">Gobernanza Multiorganización, Hashing PBKDF2-SHA256 y Firebase Firestore</strong>
+                  <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
+                    Inicio de sesión demostrativo con Web Crypto API (<code>PBKDF2-SHA256</code>, sal aleatoria y 120.000 iteraciones), 4 roles (<code>SUPERADMINISTRADOR</code>, <code>ADMIN_ORGANIZACION</code>, <code>EDITOR</code>, <code>CONSULTA</code>), Directorio Público de Organizaciones, Panel Superadministrador, Registro de Auditoría, sincronización por lotes con Firestore y opción para <strong>vaciar la base de datos en Firestore al finalizar el periodo de pruebas</strong>.
                   </p>
                 </div>
               </div>
@@ -520,7 +530,26 @@ export class AboutView {
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
                 <li><strong>Mapa Territorial:</strong> Active o desactive capas y utilice el filtro de <strong>Estado de Disponibilidad Hídrica</strong> para localizar en el mapa las fuentes con disponibilidad alta (verde), moderada (azul), baja (ámbar) o crítica (rojo), y abra su Ficha de Disponibilidad desde el marcador.</li>
                 <li><strong>Reportes y Exportación:</strong> Genere cualquiera de los <strong>9 informes técnicos</strong> (incluyendo <em>Estado de Disponibilidad Hídrica de Fuentes</em>, <em>Historial de Mediciones de Nivel y Volumen</em> y <em>Balance Pluviométrico vs Disponibilidad</em>) y descárguelos en <strong>CSV (Excel)</strong>, <strong>JSON</strong> o <strong>Impresión / PDF</strong>.</li>
-                <li><strong>Copia de Seguridad con Confirmación (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> (en la barra superior de escritorio o dentro de <strong>Reportes y Sistema &rarr; Configuración y Respaldos</strong> en móvil y PC) y confirme el mensaje emergente para conservar su archivo <code>.json</code> en un lugar seguro.</li>
+                <li><strong>Menú Superior Derecho y Notificaciones:</strong> En la esquina superior derecha de la barra superior encontrará el botón desplegable con su nombre, organización, estado de conexión a Firebase y el apartado <strong>Notificaciones y Alertas</strong> (donde se agrupan los avisos de respaldo pendiente y las alertas hídricas activas sin ocupar espacio en la pantalla), además de las opciones para cambiar el tema, exportar respaldo JSON o cerrar sesión.</li>
+              </ol>
+            </div>
+
+            <!-- PASO 9 -->
+            <div class="coords-picker-box" style="margin-bottom: 0; border-left: 4px solid var(--color-green-700);">
+              <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                <h4 style="margin: 0; color: var(--color-neutral-900);">
+                  <span class="badge badge-success" style="margin-right: 6px;">Paso 9</span>
+                  Sincronizar con Firebase Firestore, Administrar Organizaciones y Vaciar Datos de Prueba
+                </h4>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline btn-sm btn-nav-module" data-route="directory">Directorio</button>
+                  <button class="btn btn-primary btn-sm btn-nav-module" data-route="settings">Configuración y Firebase</button>
+                </div>
+              </div>
+              <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
+                <li><strong>Sincronizar Datos con Firebase (<code>nam5</code>):</strong> En <strong>Configuración y Respaldos &rarr; Sincronizar Datos con Firebase</strong>, pulse <em>1. Analizar datos locales</em>, revise la <em>2. Vista previa de migración</em> y ejecute <em>3. Sincronizar con Firestore</em> para respaldar en la nube los registros de cada organización conservando sus IDs, fechas y coordenadas GPS.</li>
+                <li><strong>Mi Organización, Usuarios y Directorio Público:</strong> Complete los datos institucionales, autorice la publicación en el <strong>Directorio de Organizaciones</strong> conforme a la Ley 1581 de 2012 y gestione las cuentas de su organización según su rol (<code>SUPERADMINISTRADOR</code>, <code>ADMIN_ORGANIZACION</code>, <code>EDITOR</code> o <code>CONSULTA</code>).</li>
+                <li><strong>Vaciar Base de Datos en Firestore al Finalizar el Periodo de Pruebas:</strong> Cuando concluya la etapa de pruebas y desee comenzar a ingresar datos reales de campo, ingrese a <strong>Configuración y Respaldos</strong>, pulse <strong>«Vaciar Base de Datos en Firestore (Fin de Pruebas)»</strong> y escriba la palabra <code>VACIAR</code> para limpiar las colecciones operativas en Firestore e IndexedDB conservando intactas las organizaciones y cuentas de usuario.</li>
               </ol>
             </div>
 
