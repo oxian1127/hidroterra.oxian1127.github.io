@@ -1,0 +1,121 @@
+rules_version = '2';
+
+/**
+ * REGLAS BÁSICAS DE FIRESTORE — HIDROTERRA (Versión Demostrativa y Académica)
+ * Proyecto Firebase: hidroterra-32ce7
+ *
+ * IMPORTANTE — LIMITACIONES DE SEGURIDAD:
+ * 1. Esta versión académica y demostrativa de HIDROTERRA NO utiliza Firebase Authentication
+ *    (request.auth es null en las peticiones directas desde el cliente web).
+ * 2. La autenticación demostrativa (PBKDF2-SHA256 con Web Crypto API y sal aleatoria por usuario)
+ *    y el control de acceso basado en roles (SUPERADMINISTRADOR, ADMIN_ORGANIZACION, EDITOR, CONSULTA)
+ *    se ejecutan en la capa de aplicación JavaScript del navegador (src/core/session.service.js).
+ * 3. Sin Firebase Authentication ni un backend intermedio que firme tokens JWT, Firestore no puede
+ *    verificar criptográficamente en el servidor la identidad ni el rol del usuario que envía la consulta.
+ * 4. Por lo tanto, estas reglas validan la estructura e integridad básica de los documentos
+ *    (como la presencia obligatoria de organizationId en las colecciones operativas y la estructura
+ *    de hashes PBKDF2 en users), pero NO constituyen una barrera de seguridad de producción contra
+ *    clientes que manipulen directamente la API REST/SDK de Firestore fuera de la interfaz de HIDROTERRA.
+ * 5. Para un despliegue en producción real, se recomienda integrar Firebase Authentication con Custom Claims
+ *    (request.auth.token.organizationId y request.auth.token.role) para hacer cumplir el aislamiento
+ *    multiorganización directamente en el motor de reglas del servidor.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función auxiliar: verifica que el documento entrante contenga organizationId válido
+    function hasOrganizationId() {
+      return request.resource.data.keys().hasAll(['organizationId'])
+        && request.resource.data.organizationId is string
+        && request.resource.data.organizationId.size() > 0;
+    }
+
+    // 1. Directorio Público de Organizaciones (lectura pública sin iniciar sesión)
+    match /public_directory/{orgId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['organizationId', 'nombre']);
+    }
+
+    // 2. Perfiles Institucionales de Organizaciones
+    match /organizations/{orgId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['organizationId', 'nombre']);
+    }
+
+    // 3. Usuarios (almacena únicamente hash PBKDF2-SHA256 y sal, nunca contraseñas en texto plano)
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasAll(['email', 'organizationId', 'role'])
+        && !request.resource.data.keys().hasAny(['password', 'plainPassword', 'rawPassword']);
+      allow delete: if false;
+    }
+
+    // 4. Configuración general del sistema (estado del asistente inicial)
+    match /app_settings/{docId} {
+      allow read, write: if true;
+    }
+
+    // 5. Registro de Auditoría (solo lectura y creación de trazas; no se permite borrar auditoría)
+    match /audit_logs/{logId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
+
+    // 6. Colecciones operativas multiorganización (requieren organizationId)
+    match /rain_events/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /pluviometers/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /water_sources/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /water_measurements/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /water_alerts/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /sites/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /parcels/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /crops/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+
+    match /observations/{recordId} {
+      allow read: if true;
+      allow create, update: if hasOrganizationId();
+      allow delete: if true;
+    }
+  }
+}
+

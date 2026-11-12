@@ -13,7 +13,13 @@ Diseñada bajo el principio **Offline-First**, la plataforma funciona de forma 1
 
 El menú lateral cuenta con un diseño minimalista en tonos verdes institucionales suaves, organizado mediante un acceso directo principal y **4 categorías desplegables en acordeón** (con íconos identificativos exclusivos en las opciones principales):
 
-### Acceso Principal
+### Acceso Principal y Gobernanza Multiorganización
+0. **Inicio de Sesión Demostrativo (`#login`), Panel Superadministrador (`#superadmin`) y Directorio Público (`#directory`):**
+   - **Inicio de Sesión Demostrativo con PBKDF2-SHA256:** Validación local mediante Web Crypto API (`PBKDF2` + `SHA-256`, sal aleatoria de 16 bytes por usuario y `120.000` iteraciones) contra la colección `users` de Firebase Firestore, sin almacenar contraseñas en texto plano.
+   - **Asistente de Configuración Inicial Único:** Creación guiada del `SUPERADMINISTRADOR`, perfiles institucionales de las 4 organizaciones reales identificadas en Montes de María y cuentas de administrador organizacional con establecimiento de contraseña por primera vez.
+   - **Roles y Permisos (`SUPERADMINISTRADOR`, `ADMIN_ORGANIZACION`, `EDITOR`, `CONSULTA`):** Separación demostrativa y visual de datos por `organizationId` en todos los módulos operativos.
+   - **Panel Superadministrador (`#superadmin`):** Estadísticas globales de organizaciones, usuarios, lluvias, pluviómetros, fuentes y alertas, gráfica comparativa entre organizaciones y edición global auditada.
+   - **Directorio de Organizaciones (`#directory`):** Accesible públicamente sin iniciar sesión, con búsqueda y filtros por departamento, municipio y tipo de organización, respetando la configuración de privacidad y el consentimiento de publicación (Ley 1581 de 2012).
 1. **Inicio / Panel (`#dashboard`):**
    - Indicadores en tiempo real de fuentes hídricas registradas, fuentes con disponibilidad alta/moderada vs. baja/crítica, volumen total estimado disponible frente a capacidad registrada, pluviómetros activos, lluvia acumulada del mes y alertas hídricas activas.
    - Gráficos interactivos de evolución de disponibilidad hídrica y precipitación diaria de los últimos 30 días, mini-mapa territorial, tabla de mediciones recientes y accesos rápidos de campo.
@@ -52,7 +58,11 @@ El menú lateral cuenta con un diseño minimalista en tonos verdes institucional
 ### Categoría 4: Reportes y Sistema
 10. **Reportes y Exportación (`#reports`):**
     - 9 tipos de reporte incluyendo Estado de Disponibilidad Hídrica, Historial de Mediciones Hídricas y Balance Territorial por Comunidad y Municipio, con filtros por fecha, municipio y comunidad, exportación a CSV (UTF-8 BOM), JSON e impresión limpia.
+10.1. **Registro de Auditoría (`#audit`):**
+    - Trazabilidad en Firestore (`audit_logs`) de inicios y cierres de sesión, sincronizaciones con Firebase, creación/edición/eliminación de registros y comparación de valores anteriores vs. nuevos cuando el `SUPERADMINISTRADOR` modifica información de cualquier organización.
 11. **Configuración y Respaldos (`#settings`):**
+    - **Sincronizar Datos con Firebase (`hidroterra-32ce7`):** Análisis automático de registros locales en IndexedDB, vista previa de migración por organización, resolución de registros sin organización e importación idempotente por lotes hacia las colecciones de Firestore (`organizations`, `users`, `rain_events`, `pluviometers`, `water_sources`, `water_measurements`, `water_alerts`, `sites`, `parcels`, `crops`, `observations`, `audit_logs`, `public_directory`).
+    - **Mi Perfil, Mi Organización, Seguridad y Gestión de Usuarios:** Administración de datos personales, perfil institucional y consentimiento del directorio público, cambio de contraseña con verificación PBKDF2 y gestión de usuarios por organización.
     - **Apariencia y Visualización:** Conmutador de **Modo Claro / Modo Oscuro** y opción configurable por el usuario para activar o desactivar el **globo flotante de texto completo** en controles o botones con puntos suspensivos (`...`), desactivada por defecto para evitar distracciones.
     - **Copias de Seguridad con Confirmación:** Exportación e importación de copias de seguridad JSON (`hidroterra-respaldo-AAAA-MM-DD.json`) con diálogo de confirmación previa antes de exportar, análisis previo (*Dry-Run*) al importar y retrocompatibilidad total.
 12. **Acerca de y Manual (`#about`):**

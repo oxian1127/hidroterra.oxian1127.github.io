@@ -8,6 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" />
   <link rel="stylesheet" href="../assets/vendor/fontawesome/css/all.min.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"
+      }
+    }
+  </script>
   <style>
     body {
       font-family: 'Open Sans', 'Open_Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -48,6 +56,7 @@
     import { runRepositoriesTests } from './repositories.test.js';
     import { runClimateTests } from './climate.test.js';
     import { runWaterManagementTests } from './water-management.test.js';
+    import { runMultiOrgAuthTests } from './multiorg-auth.test.js';
 
     // Registrar todas las suites
     runValidatorsTests(suite);
@@ -56,6 +65,7 @@
     runRepositoriesTests(suite);
     runClimateTests(suite);
     runWaterManagementTests(suite);
+    runMultiOrgAuthTests(suite);
 
     const container = document.getElementById('test-results-container');
     const runBtn = document.getElementById('btn-run-all-tests');

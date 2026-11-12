@@ -3,12 +3,14 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v2.1.6';
+const CACHE_NAME = 'hidroterra-cache-v2.2.3';
 
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './js/firebase-config.js',
+  './js/firebase-service.js',
   './assets/icons/icon.svg',
   './assets/icons/icon-192.svg',
   './assets/fonts/open-sans-latin.woff2',
@@ -46,6 +48,8 @@ const PRECACHE_ASSETS = [
   './src/core/logger.js',
   './src/core/validators.js',
   './src/core/date-utils.js',
+  './src/core/crypto-auth.js',
+  './src/core/session.service.js',
   './src/domain/models/WaterSource.js',
   './src/domain/models/WaterMeasurement.js',
   './src/domain/models/WaterAlert.js',
@@ -75,6 +79,8 @@ const PRECACHE_ASSETS = [
   './src/application/reports.service.js',
   './src/application/backup.service.js',
   './src/application/future-sync.service.js',
+  './src/application/audit.service.js',
+  './src/application/firebase-sync.service.js',
   './src/infrastructure/database/indexeddb.js',
   './src/infrastructure/database/migrations.js',
   './src/infrastructure/database/repositories/base.repository.js',
@@ -117,6 +123,10 @@ const PRECACHE_ASSETS = [
   './src/ui/views/reports.view.js',
   './src/ui/views/settings.view.js',
   './src/ui/views/about.view.js',
+  './src/ui/views/login.view.js',
+  './src/ui/views/directory.view.js',
+  './src/ui/views/superadmin.view.js',
+  './src/ui/views/audit.view.js',
   './src/modules/climate/config/weatherConfig.js',
   './src/modules/climate/utils/weatherValidators.js',
   './src/modules/climate/utils/weatherFormatters.js',
@@ -161,10 +171,11 @@ self.addEventListener('activate', (event) => {
 
 // Intercepción de peticiones (Fetch)
 self.addEventListener('fetch', (event) => {
-  // Ignorar esquemas no soportados (extensiones, etc.)
-  if (!event.request.url.startsWith('http')) return;
+  // Ignorar esquemas no soportados o peticiones que no sean GET (ej. escrituras a Firestore)
+  if (!event.request.url.startsWith('http') || event.request.method !== 'GET') return;
 
   const requestUrl = new URL(event.request.url);
+  if (requestUrl.hostname.includes('firestore.googleapis.com')) return;
 
   // Para recursos locales de la app: Estrategia Cache First, con fallback de Red
   if (requestUrl.origin === self.location.origin) {
@@ -183,6 +194,11 @@ self.addEventListener('fetch', (event) => {
             cache.put(event.request, responseToCache);
           });
           return networkResponse;
+        }).catch(() => {
+          return new Response('Recurso local no encontrado', {
+            status: 404,
+            statusText: 'Not Found'
+          });
         });
       })
     );
