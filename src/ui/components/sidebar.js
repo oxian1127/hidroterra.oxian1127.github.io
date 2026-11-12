@@ -43,11 +43,12 @@ export class Sidebar {
 
   _renderNavItem(mod, isSubItem = false) {
     const isActive = this.activeRoute === mod.id;
+    const iconHtml = isSubItem ? '' : `<span class="nav-icon"><i class="${mod.icon}"></i></span>`;
     return `
       <a class="nav-item ${isSubItem ? 'nav-subitem' : ''} ${isActive ? 'active' : ''}" 
          data-route="${mod.id}" 
          title="${mod.description}">
-        <span class="nav-icon"><i class="${mod.icon}"></i></span>
+        ${iconHtml}
         <span class="nav-item-label">${mod.label}</span>
       </a>
     `;
@@ -97,6 +98,9 @@ export class Sidebar {
             <strong id="sidebar-storage-stat">${this.storageSummaryText}</strong>
           </div>
           <div>Versión PWA ${APP_CONFIG.version} (Offline-First)</div>
+          <div class="sidebar-developer-credit">
+            Software desarrollado por <strong>José Félix Ibáñez Romero. Ing. de Sistemas</strong>
+          </div>
         </div>
       </aside>
       <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
