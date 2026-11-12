@@ -3,7 +3,7 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v2.2.3';
+const CACHE_NAME = 'hidroterra-cache-v2.2.5';
 
 const PRECACHE_ASSETS = [
   './',
