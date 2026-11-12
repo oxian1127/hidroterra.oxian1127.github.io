@@ -59,6 +59,7 @@ export class AboutView {
               <div><i class="fa-solid fa-location-dot" style="color: var(--color-green-700); width: 16px;"></i> <strong>Región:</strong> ${escapeHtml(APP_CONFIG.geo.regionName)}, Colombia</div>
               <div><i class="fa-solid fa-database" style="color: var(--color-blue-700); width: 16px;"></i> <strong>Motor Local:</strong> IndexedDB (${escapeHtml(DB_CONFIG.name)} v${DB_CONFIG.version})</div>
               <div><i class="fa-solid fa-wifi" style="color: var(--color-green-700); width: 16px;"></i> <strong>Operación:</strong> 100% Autónoma sin Internet</div>
+              <div><strong>Desarrollado por:</strong> José Félix Ibáñez Romero. Ing. de Sistemas</div>
             </div>
           </div>
         </div>
@@ -182,9 +183,9 @@ export class AboutView {
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-mobile-screen-button" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">Interfaz Adaptable con Puntos Suspensivos y Lectura Táctil</strong>
+                  <strong style="color: var(--color-neutral-900);">Menú Minimalista en Acordeón y Visualización Configurable</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Optimización visual para teléfonos y escritorio: los textos largos en selectores, cajas de texto o botones se ajustan con <code>...</code> y muestran su contenido íntegro al pasar el mouse (PC) o al presionarlos (teléfono).
+                    Menú lateral agrupado por categorías desplegables (<em>Gestión Hídrica</em>, <em>Lluvias y Clima</em>, <em>Territorio y Campo</em> y <em>Reportes y Sistema</em>) con íconos exclusivos en las opciones principales, recorte automático con <code>...</code> y globo de texto completo activable por el usuario desde <strong>Configuración y Respaldos</strong>.
                   </p>
                 </div>
               </div>
@@ -192,9 +193,9 @@ export class AboutView {
               <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
                 <i class="fa-solid fa-shield-halved" style="color: var(--color-green-700); font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                  <strong style="color: var(--color-neutral-900);">Intercambio de Datos e Integridad (9 Reportes + JSON v3)</strong>
+                  <strong style="color: var(--color-neutral-900);">Protección de Contenido, 9 Reportes y Respaldos con Confirmación</strong>
                   <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                    Exportación a Excel (CSV UTF-8), formato imprimible y respaldos completos en JSON con asistente de combinación o restauración para consolidar datos de múltiples monitores.
+                    Protección frente a selecciones o copias accidentales y bloqueo de clic derecho (permitiendo copia controlada solo en formularios y datos técnicos autorizados como coordenadas GPS e ID del dispositivo), junto con diálogo de confirmación antes de exportar copias de seguridad JSON.
                   </p>
                 </div>
               </div>
@@ -518,7 +519,7 @@ export class AboutView {
               <ol style="font-size: var(--font-size-sm); color: var(--color-neutral-700); padding-left: 1.25rem; margin: 0; line-height: 1.6;">
                 <li><strong>Mapa Territorial:</strong> Active o desactive capas y utilice el filtro de <strong>Estado de Disponibilidad Hídrica</strong> para localizar en el mapa las fuentes con disponibilidad alta (verde), moderada (azul), baja (ámbar) o crítica (rojo), y abra su Ficha de Disponibilidad desde el marcador.</li>
                 <li><strong>Reportes y Exportación:</strong> Genere cualquiera de los <strong>9 informes técnicos</strong> (incluyendo <em>Estado de Disponibilidad Hídrica de Fuentes</em>, <em>Historial de Mediciones de Nivel y Volumen</em> y <em>Balance Pluviométrico vs Disponibilidad</em>) y descárguelos en <strong>CSV (Excel)</strong>, <strong>JSON</strong> o <strong>Impresión / PDF</strong>.</li>
-                <li><strong>Copia de Seguridad (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> en la barra superior o desde <strong>Configuración y Respaldos</strong> para conservar su archivo <code>.json</code> en un lugar seguro.</li>
+                <li><strong>Copia de Seguridad con Confirmación (Fundamental):</strong> Al finalizar su jornada, pulse <strong>«Respaldo JSON»</strong> (en la barra superior de escritorio o dentro de <strong>Reportes y Sistema &rarr; Configuración y Respaldos</strong> en móvil y PC) y confirme el mensaje emergente para conservar su archivo <code>.json</code> en un lugar seguro.</li>
               </ol>
             </div>
 
@@ -568,10 +569,10 @@ export class AboutView {
 
             <div>
               <strong style="color: var(--color-neutral-900); display: block; margin-bottom: 4px;">
-                4. ¿Cómo puedo leer el texto completo cuando un botón, selector o tarjeta muestra puntos suspensivos (...)?
+                4. ¿Cómo puedo activar la lectura del texto completo cuando un botón o selector muestra puntos suspensivos (...)?
               </strong>
               <p style="margin: 0; color: var(--color-neutral-600);">
-                Para mantener todas las vistas ordenadas sin que los textos largos desborden las cajas, el sistema recorta el excedente con puntos suspensivos (<code>...</code>). Si está en <strong>computador (PC)</strong>, simplemente pase el cursor (mouse) por encima del elemento; si está en un <strong>teléfono o tableta</strong>, mantenga presionado un instante el botón o selector para que aparezca un globo flotante con el texto completo sin activar el botón por accidente.
+                Para mantener todas las vistas ordenadas sin que los textos largos desborden las cajas, el sistema recorta el excedente con puntos suspensivos (<code>...</code>). Esta ayuda viene desactivada por defecto para no resultar molesta; si desea usarla, ingrese a <strong>Reportes y Sistema &rarr; Configuración y Respaldos</strong> y active la opción <strong>«Mostrar texto completo en controles recortados (...)»</strong>. Con ello podrá ver el texto completo al pasar el mouse (PC) o al mantener presionado un instante el control (teléfono).
               </p>
             </div>
 
@@ -645,9 +646,9 @@ export class AboutView {
             <div class="recent-activity-item" style="align-items: flex-start; gap: var(--spacing-3);">
               <i class="fa-solid fa-hand-pointer" style="color: var(--color-blue-700); font-size: 1.15rem; margin-top: 2px;"></i>
               <div>
-                <strong>Lectura de textos largos en pantallas pequeñas</strong>
+                <strong>Globo opcional de textos largos y copia controlada</strong>
                 <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                  Si usa un teléfono en campo y ve un botón o lista desplegable con <code>...</code>, mantenga presionado el elemento durante medio segundo para desplegar la etiqueta completa en pantalla.
+                  En <strong>Configuración y Respaldos</strong> puede activar o desactivar el globo de texto completo para elementos con <code>...</code>. Además, aunque el contenido general está protegido contra copias accidentales, puede copiar coordenadas GPS o el ID del dispositivo haciendo clic sobre ellos.
                 </p>
               </div>
             </div>
@@ -657,7 +658,7 @@ export class AboutView {
               <div>
                 <strong>Uso del Modo Claro / Oscuro en campo</strong>
                 <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                  Bajo luz solar directa utilice el <strong>Modo Claro</strong> para máximo contraste; en ambientes interiores o nocturnos active el <strong>Modo Oscuro</strong> desde el ícono de luna (<i class="fa-solid fa-moon"></i>) en el encabezado para ahorrar batería.
+                  Bajo luz solar directa utilice el <strong>Modo Claro</strong> para máximo contraste; en ambientes interiores o nocturnos active el <strong>Modo Oscuro</strong> desde <strong>Configuración y Respaldos</strong> (o desde la barra superior en computador) para ahorrar batería.
                 </p>
               </div>
             </div>
@@ -667,7 +668,7 @@ export class AboutView {
               <div>
                 <strong>Pruebas con datos de demostración</strong>
                 <p style="margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-                  Si está capacitando a nuevos monitores, puede cargar el conjunto de datos de ejemplo de Montes de María desde <strong>Respaldo y Datos &rarr; Cargar Datos de Ejemplo</strong> para practicar sin riesgo.
+                  Si está capacitando a nuevos monitores, puede cargar el conjunto de datos de ejemplo de Montes de María desde <strong>Configuración y Respaldos &rarr; Cargar Datos de Ejemplo</strong> para practicar sin riesgo.
                 </p>
               </div>
             </div>
