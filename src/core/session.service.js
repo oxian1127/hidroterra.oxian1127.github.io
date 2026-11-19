@@ -333,16 +333,58 @@ class SessionService {
 
   /**
    * Verifica si ya se ejecutó el asistente de configuración inicial en Firestore
+   * Usa caché local en localStorage/IndexedDB para respuesta instantánea en móvil.
    */
   async isInitialSetupCompleted() {
+    try {
+      if (localStorage.getItem('hidroterra_setup_completed_v1') === 'true') {
+        return true;
+      }
+    } catch {
+      // Ignorar restricciones de localStorage
+    }
+
+    const localSetup = await firebaseService._getLocalMirror(FIRESTORE_COLLECTIONS.app_settings);
+    const cachedSetupDoc = localSetup.find(d => d.id === 'initial_setup');
+    if (cachedSetupDoc && cachedSetupDoc.completed === true) {
+      try {
+        localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+      } catch {
+        // Ignorar
+      }
+      return true;
+    }
+
+    const localUsers = await firebaseService._getLocalMirror(FIRESTORE_COLLECTIONS.users);
+    if (localUsers.some(u => u.role === USER_ROLES.SUPERADMINISTRADOR && u.passwordHash && u.passwordSalt)) {
+      try {
+        localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+      } catch {
+        // Ignorar
+      }
+      return true;
+    }
+
     const setupDoc = await firebaseService.getDocument(FIRESTORE_COLLECTIONS.app_settings, 'initial_setup');
     if (setupDoc && setupDoc.completed === true) {
+      try {
+        localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+      } catch {
+        // Ignorar
+      }
       return true;
     }
     const existingUsers = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.users);
     const hasSuperAdmin = existingUsers.some(
       u => u.role === USER_ROLES.SUPERADMINISTRADOR && u.passwordHash && u.passwordSalt
     );
+    if (hasSuperAdmin) {
+      try {
+        localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+      } catch {
+        // Ignorar
+      }
+    }
     return hasSuperAdmin;
   }
 
@@ -351,6 +393,10 @@ class SessionService {
    * sin sobrescribir cambios posteriores hechos por sus administradores.
    */
   async ensureBaseOrganizationsInFirestore() {
+    if (Array.isArray(this.organizationsCache) && this.organizationsCache.length >= IDENTIFIED_BASE_ORGANIZATIONS.length) {
+      return this.organizationsCache;
+    }
+
     const existing = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.organizations);
     const existingIds = new Set(existing.map(o => o.id || o.organizationId));
     const operations = [];
@@ -377,14 +423,19 @@ class SessionService {
 
     if (operations.length > 0) {
       await firebaseService.batchUpsert(operations);
+      this.organizationsCache = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.organizations);
+    } else {
+      this.organizationsCache = existing;
     }
 
-    this.organizationsCache = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.organizations);
     return this.organizationsCache;
   }
 
   /**
-   * Construye el documento seguro que se publica en `public_directory` respetando la configuración de privacidad
+   * Construye el documento seguro que se publica en `public_directory`.
+   * Todos los datos de contacto proporcionados en la organización (correo, teléfono, WhatsApp, página web, redes)
+   * se incluyen para mostrarse tanto en la tarjeta de la organización como en la tarjeta de contacto;
+   * si un dato no se proporciona, queda vacío para no mostrarse.
    */
   _buildPublicDirectoryEntry(org) {
     const priv = org.privacySettings || {};
@@ -396,21 +447,23 @@ class SessionService {
       organizationType: org.organizationType || 'Organización Comunitaria',
       department: org.department || '',
       municipality: org.municipality || '',
+      address: String(org.address || '').trim(),
       description: org.description || '',
+      productsOrServices: String(org.productsOrServices || '').trim(),
       workAreas: Array.isArray(org.workAreas) ? org.workAreas : [],
       logoDataUrl: org.logoDataUrl || '',
       status: org.status || 'activa',
       publishedInDirectory: priv.publishedInDirectory !== false,
       consentGranted: Boolean(priv.consentGranted),
       consentDate: priv.consentDate || null,
-      // Campos de contacto filtrados estrictamente según visibilidad autorizada
-      contactName: priv.showContactName ? (org.representativeName || '') : '',
-      contactRole: priv.showContactName ? (org.representativeRole || '') : '',
-      publicEmail: (priv.consentGranted && priv.showEmail) ? (org.institutionalEmail || '') : '',
-      publicPhone: (priv.consentGranted && priv.showPhone) ? (org.phone || '') : '',
-      publicWhatsapp: (priv.consentGranted && priv.showWhatsapp) ? (org.whatsapp || '') : '',
-      publicWebsite: priv.showWebsite ? (org.website || '') : '',
-      publicSocialLinks: priv.showSocialLinks ? (org.socialLinks || '') : '',
+      contactName: String(org.representativeName || '').trim(),
+      contactRole: String(org.representativeRole || '').trim(),
+      publicEmail: String(org.institutionalEmail || '').trim(),
+      publicPhone: String(org.phone || '').trim(),
+      publicWhatsapp: String(org.whatsapp || '').trim(),
+      publicWebsite: String(org.website || '').trim(),
+      website: String(org.website || '').trim(),
+      publicSocialLinks: String(org.socialLinks || '').trim(),
       updatedAt: nowIso()
     };
   }
@@ -556,13 +609,20 @@ class SessionService {
 
     await firebaseService.batchUpsert(batchOps);
 
-    await auditService.logEvent({
+    try {
+      localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+    } catch {
+      // Ignorar
+    }
+
+    // Registrar auditoría en segundo plano sin bloquear navegación
+    auditService.logEvent({
       user: superAdminDoc,
       module: 'setup',
       action: 'initial_setup_completed',
       recordId: 'initial_setup',
       details: `Configuración inicial completada y cuenta Superadministrador creada (${emailClean}).`
-    });
+    }).catch(() => {});
 
     // Iniciar sesión automáticamente con el Superadministrador recién creado
     this.currentUser = sanitizeUserForClient(superAdminDoc);
@@ -583,7 +643,8 @@ class SessionService {
   }
 
   /**
-   * Inicio de sesión demostrativo mediante consulta a Firestore y verificación local PBKDF2-SHA256
+   * Inicio de sesión demostrativo mediante consulta a Firestore (con espejo local rápido) y verificación local PBKDF2-SHA256.
+   * No bloquea la transición a la pantalla principal mientras descarga datos operativos en segundo plano.
    */
   async login(email, plainPassword) {
     const cleanEmail = String(email || '').trim().toLowerCase();
@@ -591,8 +652,17 @@ class SessionService {
       throw new Error('Ingrese su correo electrónico y contraseña.');
     }
 
-    const users = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.users);
-    const userDoc = users.find(u => u.email && u.email.toLowerCase() === cleanEmail);
+    // 1. Intentar primero con el espejo local en IndexedDB para respuesta inmediata en teléfono; si no existe, consultar Firestore
+    let localUsers = await firebaseService._getLocalMirror(FIRESTORE_COLLECTIONS.users);
+    let userDoc = localUsers.find(u => u.email && u.email.toLowerCase() === cleanEmail);
+
+    if (!userDoc || userDoc.pendingPasswordSetup) {
+      const remoteUsers = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.users);
+      userDoc = remoteUsers.find(u => u.email && u.email.toLowerCase() === cleanEmail);
+    } else {
+      // Actualizar espejo de usuarios en segundo plano sin bloquear el login
+      firebaseService.getCollection(FIRESTORE_COLLECTIONS.users).catch(() => {});
+    }
 
     if (!userDoc) {
       throw new Error('No se encontró una cuenta registrada con ese correo electrónico.');
@@ -610,14 +680,26 @@ class SessionService {
       throw err;
     }
 
-    const valid = await verifyPasswordCredential(plainPassword, userDoc);
+    let valid = await verifyPasswordCredential(plainPassword, userDoc);
+    // Si falló contra caché local, consultar Firestore por si cambió recientemente la contraseña en otro dispositivo
+    if (!valid && localUsers.length > 0) {
+      const remoteUsers = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.users);
+      const freshUser = remoteUsers.find(u => u.email && u.email.toLowerCase() === cleanEmail);
+      if (freshUser) {
+        userDoc = freshUser;
+        valid = await verifyPasswordCredential(plainPassword, userDoc);
+      }
+    }
+
     if (!valid) {
       throw new Error('Credenciales incorrectas. Verifique su correo y contraseña.');
     }
 
     let orgDoc = null;
     if (userDoc.organizationId && userDoc.organizationId !== 'org-admin-central') {
-      orgDoc = await firebaseService.getDocument(FIRESTORE_COLLECTIONS.organizations, userDoc.organizationId);
+      orgDoc = (this.organizationsCache || []).find(o => o.id === userDoc.organizationId || o.organizationId === userDoc.organizationId)
+        || IDENTIFIED_BASE_ORGANIZATIONS.find(o => o.id === userDoc.organizationId)
+        || await firebaseService.getDocument(FIRESTORE_COLLECTIONS.organizations, userDoc.organizationId);
       if (orgDoc && orgDoc.status === 'suspendida' && userDoc.role !== USER_ROLES.SUPERADMINISTRADOR) {
         throw new Error('La organización asociada a esta cuenta se encuentra temporalmente suspendida.');
       }
@@ -639,20 +721,34 @@ class SessionService {
     this.superadminSelectedOrgId = 'all';
     this._persistSessionToStorage();
 
-    // Sincronizar datos operativos desde Firestore hacia IndexedDB al iniciar sesión
-    const pullOrgId = this.isSuperAdmin() ? null : this.currentUser.organizationId;
-    await firebaseService.pullOperationalDataToIndexedDB(pullOrgId);
+    try {
+      localStorage.setItem('hidroterra_setup_completed_v1', 'true');
+    } catch {
+      // Ignorar
+    }
 
-    await auditService.logEvent({
+    // Emitir cambio de sesión inmediatamente para que la interfaz navegue al instante sin requerir recarga
+    events.emit('session:changed', { user: this.currentUser, organization: this.currentOrganization });
+
+    // Sincronizar datos operativos desde Firestore y registrar auditoría en segundo plano (sin bloquear entrada)
+    const pullOrgId = this.isSuperAdmin() ? null : this.currentUser.organizationId;
+    firebaseService.pullOperationalDataToIndexedDB(pullOrgId)
+      .then((res) => {
+        if (res && res.synced) {
+          events.emit('data:changed');
+        }
+      })
+      .catch(() => {});
+
+    auditService.logEvent({
       user: this.currentUser,
       organization: this.currentOrganization,
       module: 'auth',
       action: 'login',
       recordId: this.currentUser.id,
       details: `Inicio de sesión exitoso (${USER_ROLE_LABELS[this.currentUser.role] || this.currentUser.role}).`
-    });
+    }).catch(() => {});
 
-    events.emit('session:changed', { user: this.currentUser, organization: this.currentOrganization });
     return { user: this.currentUser, organization: this.currentOrganization };
   }
 
@@ -998,6 +1094,7 @@ class SessionService {
       nit: String(orgData.nit ?? existing?.nit ?? '').trim(),
       organizationType: String(orgData.organizationType ?? existing?.organizationType ?? 'Organización Comunitaria').trim(),
       description: String(orgData.description ?? existing?.description ?? '').trim(),
+      productsOrServices: String(orgData.productsOrServices ?? existing?.productsOrServices ?? '').trim(),
       department: String(orgData.department ?? existing?.department ?? 'Bolívar').trim(),
       municipality: String(orgData.municipality ?? existing?.municipality ?? '').trim(),
       address: String(orgData.address ?? existing?.address ?? '').trim(),
@@ -1023,6 +1120,10 @@ class SessionService {
 
     if (!mergedOrg.name) {
       throw new Error('El nombre completo de la organización es obligatorio.');
+    }
+
+    if ((isNew || orgData.privacySettings !== undefined) && !mergedOrg.privacySettings?.consentGranted) {
+      throw new Error('El Consentimiento Informado (Ley 1581 de 2012) es obligatorio antes de guardar la información de la organización.');
     }
 
     await firebaseService.setDocument(FIRESTORE_COLLECTIONS.organizations, targetOrgId, mergedOrg, true);
@@ -1184,11 +1285,59 @@ class SessionService {
 
   /**
    * Consulta exclusivamente las tarjetas institucionales autorizadas en `public_directory`
+   * sincronizadas con los datos de contacto actualizados de cada organización.
    * Disponible sin iniciar sesión.
    */
   async getPublicDirectoryEntries() {
     await this.ensureBaseOrganizationsInFirestore();
-    const entries = await firebaseService.getCollection(FIRESTORE_COLLECTIONS.public_directory);
+    const [orgs, entries] = await Promise.all([
+      firebaseService.getCollection(FIRESTORE_COLLECTIONS.organizations).catch(() => []),
+      firebaseService.getCollection(FIRESTORE_COLLECTIONS.public_directory).catch(() => [])
+    ]);
+
+    if (Array.isArray(orgs) && orgs.length > 0) {
+      const entryMap = new Map((entries || []).map(e => [e.id || e.organizationId, e]));
+      return orgs
+        .map(org => {
+          const prevEntry = entryMap.get(org.id || org.organizationId) || {};
+          const priv = org.privacySettings || {};
+          const websiteVal = String(org.website || prevEntry.publicWebsite || prevEntry.website || '').trim();
+          const emailVal = String(org.institutionalEmail || prevEntry.publicEmail || prevEntry.institutionalEmail || '').trim();
+          const phoneVal = String(org.phone || prevEntry.publicPhone || prevEntry.phone || '').trim();
+          const whatsappVal = String(org.whatsapp || prevEntry.publicWhatsapp || prevEntry.whatsapp || '').trim();
+          const socialVal = String(org.socialLinks || prevEntry.publicSocialLinks || prevEntry.socialLinks || '').trim();
+          const repNameVal = String(org.representativeName || prevEntry.contactName || '').trim();
+          const repRoleVal = String(org.representativeRole || prevEntry.contactRole || '').trim();
+
+          return {
+            ...prevEntry,
+            id: org.id || org.organizationId,
+            organizationId: org.id || org.organizationId,
+            name: org.name || prevEntry.name || '',
+            shortName: org.shortName || prevEntry.shortName || '',
+            organizationType: org.organizationType || prevEntry.organizationType || 'Organización Comunitaria',
+            department: org.department || prevEntry.department || '',
+            municipality: org.municipality || prevEntry.municipality || '',
+            address: String(org.address || prevEntry.address || '').trim(),
+            description: org.description || prevEntry.description || '',
+            productsOrServices: String(org.productsOrServices || prevEntry.productsOrServices || '').trim(),
+            workAreas: Array.isArray(org.workAreas) ? org.workAreas : (prevEntry.workAreas || []),
+            logoDataUrl: org.logoDataUrl || prevEntry.logoDataUrl || '',
+            status: org.status || prevEntry.status || 'activa',
+            publishedInDirectory: priv.publishedInDirectory !== false,
+            contactName: repNameVal,
+            contactRole: repRoleVal,
+            publicEmail: emailVal,
+            publicPhone: phoneVal,
+            publicWhatsapp: whatsappVal,
+            publicWebsite: websiteVal,
+            website: websiteVal,
+            publicSocialLinks: socialVal
+          };
+        })
+        .filter(e => e.publishedInDirectory !== false && e.status !== 'suspendida');
+    }
+
     return entries.filter(e => e.publishedInDirectory !== false && e.status !== 'suspendida');
   }
 }

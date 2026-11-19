@@ -223,6 +223,22 @@ export class WeatherMapSection {
     });
 
     this.renderMarkers(selectedLocation, currentWeatherRecord);
+
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 80);
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 280);
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this._resizeObserver = new ResizeObserver(() => {
+        if (this.map) {
+          this.map.invalidateSize({ animate: false });
+        }
+      });
+      this._resizeObserver.observe(mapEl);
+    }
   }
 
   _showOfflineBanner(container) {
@@ -457,6 +473,14 @@ export class WeatherMapSection {
   }
 
   destroy() {
+    if (this._resizeObserver) {
+      try {
+        this._resizeObserver.disconnect();
+      } catch {
+        // Ignorar
+      }
+      this._resizeObserver = null;
+    }
     if (this.map) {
       try {
         this.map.remove();

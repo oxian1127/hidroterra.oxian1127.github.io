@@ -58,18 +58,35 @@ export class BackupService {
     const totalRecords = sourcesCount + waterMeasurementsCount + waterAlertsCount + pluviometersCount + rainfallCount + sitesCount + parcelsCount + cropsCount + observationsCount;
 
     let quotaEstimate = null;
+    const fallbackBytes = totalRecords * 1536;
     if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.estimate) {
       try {
         const est = await navigator.storage.estimate();
+        const usageBytes = est.usage || fallbackBytes;
+        const quotaBytes = est.quota || 0;
+        const rawMb = usageBytes / (1024 * 1024);
+        const formattedMb = totalRecords > 0 && rawMb < 0.01 ? '0.01' : rawMb.toFixed(2);
         quotaEstimate = {
-          usageBytes: est.usage || 0,
-          quotaBytes: est.quota || 0,
-          usageMb: Math.round(((est.usage || 0) / (1024 * 1024)) * 10) / 10,
-          quotaMb: Math.round(((est.quota || 0) / (1024 * 1024)) * 10) / 10
+          usageBytes,
+          quotaBytes,
+          usageMb: Math.round(rawMb * 100) / 100,
+          formattedMb,
+          quotaMb: Math.round((quotaBytes / (1024 * 1024)) * 10) / 10
         };
       } catch {
         // Ignorar si el navegador no permite estimar la cuota
       }
+    }
+
+    if (!quotaEstimate) {
+      const rawMb = fallbackBytes / (1024 * 1024);
+      quotaEstimate = {
+        usageBytes: fallbackBytes,
+        quotaBytes: 0,
+        usageMb: Math.round(rawMb * 100) / 100,
+        formattedMb: totalRecords > 0 && rawMb < 0.01 ? '0.01' : rawMb.toFixed(2),
+        quotaMb: 0
+      };
     }
 
     let lastBackupDate = null;

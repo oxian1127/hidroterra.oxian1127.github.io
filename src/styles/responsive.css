@@ -20,6 +20,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
   }
 
   .app-sidebar {
@@ -30,7 +33,7 @@
     width: min(280px, 85vw);
     transform: translateX(-100%);
     box-shadow: var(--shadow-elevated);
-    z-index: 50;
+    z-index: 1300;
   }
 
   .app-sidebar.open {
@@ -41,7 +44,7 @@
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.55);
-    z-index: 45;
+    z-index: 1250;
     display: none;
   }
 
@@ -256,8 +259,14 @@
 
   /* Mapa Territorial en móvil */
   .map-view-layout {
-    height: calc(100vh - 110px);
-    min-height: 400px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .map-canvas {
+    height: 360px;
+    min-height: 300px;
+    max-height: 55vh;
   }
 
   .map-toolbar {

@@ -76,7 +76,7 @@ textarea,
 }
 
 /* Ocultar íconos en botones y textos de todos los módulos para mantener una estética limpia y profesional (conservando únicamente los íconos en las opciones del menú lateral) */
-button:not(.nav-group-toggle) i,
+button:not(.nav-group-toggle):not(.menu-toggle-btn) i,
 .btn i,
 .nav-tab-btn i,
 .tool-tab-btn i,
@@ -196,6 +196,108 @@ h4 { font-size: var(--font-size-md); }
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* Estado visual de carga en botones y guía de actividad del sistema */
+@keyframes htButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes htProgressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
+}
+
+.btn.is-loading,
+button.is-loading {
+  position: relative;
+  cursor: wait !important;
+  opacity: 0.92 !important;
+  pointer-events: none !important;
+}
+
+.btn.is-loading::before,
+button.is-loading::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: htButtonSpin 0.65s linear infinite;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.ht-global-activity-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2500;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.16s ease, visibility 0.16s ease;
+}
+
+.ht-global-activity-indicator.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ht-activity-progress-track {
+  width: 100%;
+  height: 3px;
+  background-color: rgba(45, 106, 79, 0.18);
+  overflow: hidden;
+}
+
+.ht-activity-progress-bar {
+  width: 42%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-green-600, #2d6a4f), var(--color-blue-600, #0284c7), var(--color-green-500, #40916c));
+  border-radius: 999px;
+  animation: htProgressSlide 1.15s ease-in-out infinite;
+}
+
+.ht-activity-pill {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: var(--color-green-900, #1b4332);
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
+  max-width: 92vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ht-activity-pill-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #ffffff;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: htButtonSpin 0.65s linear infinite;
+  flex-shrink: 0;
 }
 
 .btn-primary {

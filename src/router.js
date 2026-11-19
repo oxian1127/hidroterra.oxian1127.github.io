@@ -23,6 +23,7 @@ import { LoginView } from './ui/views/login.view.js';
 import { DirectoryView } from './ui/views/directory.view.js';
 import { SuperAdminView } from './ui/views/superadmin.view.js';
 import { AuditView } from './ui/views/audit.view.js';
+import { NotificationsView } from './ui/views/notifications.view.js';
 import { MODULES_CONFIG } from './config/modules.config.js';
 import { events } from './core/events.js';
 import { sessionService, ROLES, ROLE_LABELS } from './core/session.service.js';
@@ -35,12 +36,14 @@ export class Router {
     this.layout = layout;
     this.currentViewInstance = null;
     this.currentRoute = 'dashboard';
+    this._suppressNextHashChange = false;
 
     this.routes = {
       'login': LoginView,
       'directory': DirectoryView,
       'superadmin': SuperAdminView,
       'audit': AuditView,
+      'notifications': NotificationsView,
       'dashboard': DashboardView,
       'water-sources': WaterSourcesView,
       'water-availability': WaterAvailabilityView,
@@ -67,6 +70,11 @@ export class Router {
   }
 
   _handleHashChange() {
+    if (this._suppressNextHashChange) {
+      this._suppressNextHashChange = false;
+      return;
+    }
+
     const rawHash = window.location.hash.replace(/^#\/?/, '');
     const [route, queryString] = rawHash.split('?');
     const targetRoute = route || (sessionService.isAuthenticated() ? 'dashboard' : 'login');
@@ -83,7 +91,7 @@ export class Router {
   }
 
   /**
-   * Navega a una ruta específica con parámetros
+   * Navega a una ruta específica con parámetros y renderiza la vista inmediatamente
    */
   async navigate(routeId, params = {}, updateHash = true) {
     let resolvedRoute = this.routes[routeId] ? routeId : 'dashboard';
@@ -113,8 +121,8 @@ export class Router {
         hash += `?${q.toString()}`;
       }
       if (window.location.hash !== hash) {
+        this._suppressNextHashChange = true;
         window.location.hash = hash;
-        return;
       }
     }
 

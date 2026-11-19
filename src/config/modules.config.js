@@ -156,6 +156,13 @@ export const MODULES_CONFIG = [
     description: 'Información del proyecto, descripción de la plataforma y manual de uso'
   },
   {
+    id: 'notifications',
+    label: 'Centro de Notificaciones',
+    icon: 'fa-solid fa-bell',
+    hiddenFromMenu: true,
+    description: 'Visualización en pantalla completa y gestión de notificaciones activas y descartadas'
+  },
+  {
     id: 'login',
     label: 'Iniciar Sesión',
     icon: 'fa-solid fa-right-to-bracket',

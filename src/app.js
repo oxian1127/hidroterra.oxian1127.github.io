@@ -48,15 +48,6 @@ export class App {
       logger.error('Fallo al inicializar base de datos IndexedDB', dbErr);
     }
 
-    // 3.1 Inicializar conexión con Firebase Firestore y perfiles organizacionales base
-    try {
-      const conn = await firebaseService.checkConnection();
-      this.layout.header.setFirebaseStatus(conn.connected);
-      await sessionService.ensureBaseOrganizationsInFirestore();
-    } catch (fbErr) {
-      logger.warn('Firebase Firestore en modo local/pendiente:', fbErr.message);
-    }
-
     // 4. Configurar escuchadores de conectividad del navegador
     this._setupConnectivityListeners();
 
@@ -69,14 +60,28 @@ export class App {
     // 6.1 Configurar protección de contenido (bloqueo de clic derecho, selección y copia salvo áreas controladas)
     this._setupContentProtection();
 
+    // 6.2 Configurar guía visual de carga en botones y barra superior de actividad
+    this._setupGlobalActivityAndButtonFeedback();
+
     // 7. Registrar Service Worker para PWA Offline
     this._registerServiceWorker();
 
-    // 8. Actualizar indicadores de almacenamiento y respaldos
-    await this._refreshStorageAndBackupStatus();
-
-    // 9. Iniciar navegación a la ruta solicitada
+    // 8. Iniciar navegación inmediatamente para evitar demoras en dispositivos móviles
     this.router.init();
+
+    // 9. Actualizar indicadores locales y verificar Firebase Firestore en segundo plano (sin bloquear interfaz)
+    this._refreshStorageAndBackupStatus();
+    this._initFirebaseInBackground();
+  }
+
+  async _initFirebaseInBackground() {
+    try {
+      const conn = await firebaseService.checkConnection();
+      this.layout.header.setFirebaseStatus(conn.connected);
+      await sessionService.ensureBaseOrganizationsInFirestore();
+    } catch (fbErr) {
+      logger.warn('Firebase Firestore en modo local/pendiente:', fbErr.message);
+    }
   }
 
   /**
@@ -212,6 +217,14 @@ export class App {
 
     const formatSelectElement = (selectEl) => {
       if (!selectEl || selectEl.tagName !== 'SELECT') return;
+      if (selectEl.dataset.noTruncate === 'true' || selectEl.closest('[data-no-truncate="true"]')) {
+        Array.from(selectEl.options).forEach((opt) => {
+          if (opt.dataset.fullText && opt.textContent !== opt.dataset.fullText) {
+            opt.textContent = opt.dataset.fullText;
+          }
+        });
+        return;
+      }
       const clientW = selectEl.clientWidth;
       if (!clientW || clientW <= 0) return;
 
@@ -656,7 +669,7 @@ export class App {
         : null;
       if (!copyableTag) return;
 
-      const textToCopy = (copyableTag.textContent || '').replace(/\s+/g, ' ').trim();
+      const textToCopy = (copyableTag.dataset.copyValue || copyableTag.textContent || '').replace(/\s+/g, ' ').trim();
       if (!textToCopy) return;
 
       try {
@@ -670,10 +683,145 @@ export class App {
     });
   }
 
+  /**
+   * Guía visual universal de carga en botones y barra superior de progreso:
+   * - Muestra un indicador giratorio dentro del botón pulsado (.is-loading)
+   * - Muestra una barra superior animada y cápsula de estado ("Procesando...", "Guardando en Firestore...", etc.)
+   */
+  _setupGlobalActivityAndButtonFeedback() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+    let indicatorEl = document.getElementById('hidroterra-activity-indicator');
+    if (!indicatorEl) {
+      indicatorEl = document.createElement('div');
+      indicatorEl.id = 'hidroterra-activity-indicator';
+      indicatorEl.className = 'ht-global-activity-indicator';
+      indicatorEl.setAttribute('aria-live', 'polite');
+      indicatorEl.innerHTML = `
+        <div class="ht-activity-progress-track">
+          <div class="ht-activity-progress-bar"></div>
+        </div>
+        <div class="ht-activity-pill">
+          <span class="ht-activity-pill-spinner"></span>
+          <span id="ht-activity-pill-text">Procesando acción...</span>
+        </div>
+      `;
+      document.body.appendChild(indicatorEl);
+    }
+
+    const pillTextEl = indicatorEl.querySelector('#ht-activity-pill-text');
+    let lastActionBtn = null;
+    let lastActionTime = 0;
+    let busyCount = 0;
+    let hideTimer = null;
+    const activeLoadingButtons = new Set();
+
+    const setButtonLoadingState = (btn, isLoading, loadingText = null) => {
+      if (!btn || !(btn instanceof HTMLElement)) return;
+      if (isLoading) {
+        btn.classList.add('is-loading');
+        activeLoadingButtons.add(btn);
+        const spanEl = btn.querySelector('span');
+        if (spanEl && loadingText) {
+          if (!btn.dataset.htOrigLabel) {
+            btn.dataset.htOrigLabel = spanEl.textContent;
+          }
+          spanEl.textContent = loadingText;
+        }
+      } else {
+        btn.classList.remove('is-loading');
+        activeLoadingButtons.delete(btn);
+        const spanEl = btn.querySelector('span');
+        if (spanEl && btn.dataset.htOrigLabel) {
+          spanEl.textContent = btn.dataset.htOrigLabel;
+          delete btn.dataset.htOrigLabel;
+        }
+      }
+    };
+
+    const startActivity = (label = 'Procesando acción...', targetBtn = null, btnLabel = null) => {
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+      busyCount += 1;
+      if (pillTextEl && label) {
+        pillTextEl.textContent = label;
+      }
+      indicatorEl.classList.add('active');
+
+      const btn = targetBtn || ((Date.now() - lastActionTime < 1500) ? lastActionBtn : null);
+      if (btn) {
+        setButtonLoadingState(btn, true, btnLabel);
+      }
+    };
+
+    const stopActivity = (delayMs = 240) => {
+      busyCount = Math.max(0, busyCount - 1);
+      if (busyCount > 0) return;
+
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (busyCount === 0) {
+          indicatorEl.classList.remove('active');
+          activeLoadingButtons.forEach(btn => setButtonLoadingState(btn, false));
+          activeLoadingButtons.clear();
+        }
+      }, delayMs);
+    };
+
+    // Capturar botón pulsado por el usuario para asociarle la guía visual
+    document.addEventListener('click', (e) => {
+      const btn = e.target && typeof e.target.closest === 'function'
+        ? e.target.closest('button, .btn')
+        : null;
+      if (!btn) return;
+      if (
+        btn.matches('#btn-toggle-sidebar, #btn-header-quick-menu, .nav-group-toggle, .nav-tab-btn, [data-modal-close], .modal-close-btn, #btn-toggle-pwd')
+      ) {
+        return;
+      }
+      lastActionBtn = btn;
+      lastActionTime = Date.now();
+
+      // Para botones de acción, mostrar retroalimentación inmediata al pulsar
+      if (
+        btn.matches('.btn-primary, .btn-blue, .btn-danger, [id^="btn-sync-"], [id^="btn-save-"], [id^="btn-sa-"], [id^="btn-notif-"]') &&
+        btn.type !== 'submit'
+      ) {
+        const text = (btn.textContent || '').trim();
+        startActivity(text ? `Ejecutando: ${text}...` : 'Procesando acción...', btn);
+        stopActivity(380);
+      }
+    }, true);
+
+    // Capturar envío de formularios para activar guía visual en el botón submit
+    document.addEventListener('submit', (e) => {
+      const form = e.target;
+      if (!form || !(form instanceof HTMLFormElement)) return;
+      const submitBtn = form.querySelector('button[type="submit"], .btn-primary');
+      if (submitBtn) {
+        lastActionBtn = submitBtn;
+        lastActionTime = Date.now();
+        startActivity('Procesando y validando información...', submitBtn);
+        stopActivity(420);
+      }
+    }, true);
+
+    events.on('app:busy', ({ busy, label, button, buttonLabel }) => {
+      if (busy) {
+        startActivity(label || 'Procesando información...', button || null, buttonLabel || null);
+      } else {
+        stopActivity(220);
+      }
+    });
+  }
+
   async _refreshStorageAndBackupStatus() {
     try {
       const info = await BackupService.getStorageInfo();
-      this.layout.sidebar.setStorageSummary(`${info.counts.totalRecords} registros`);
+      const sizeMb = info.quotaEstimate?.formattedMb ?? '0.00';
+      this.layout.sidebar.setStorageSummary(`${info.counts.totalRecords} registros (${sizeMb} MB)`);
 
       // Calcular advertencia de respaldo
       let showBackupWarning = false;

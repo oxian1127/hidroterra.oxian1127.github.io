@@ -38,6 +38,14 @@
   word-break: break-word;
 }
 
+.source-code-badge {
+  display: inline-block;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  line-height: 1.35;
+}
+
 .data-table tbody tr:last-child td {
   border-bottom: none;
 }

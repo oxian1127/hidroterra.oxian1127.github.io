@@ -77,6 +77,23 @@ export class MapService {
       window.addEventListener('offline', () => this._showOfflineNotice());
       window.addEventListener('online', () => this._hideOfflineNotice());
 
+      // Recalcular dimensiones del lienzo Leaflet tras el montaje y ante cambios de tamaño del contenedor (ej. al ocultar menú lateral)
+      setTimeout(() => {
+        if (this.map) this.map.invalidateSize();
+      }, 80);
+      setTimeout(() => {
+        if (this.map) this.map.invalidateSize();
+      }, 280);
+
+      if (typeof ResizeObserver !== 'undefined') {
+        this._resizeObserver = new ResizeObserver(() => {
+          if (this.map) {
+            this.map.invalidateSize({ animate: false });
+          }
+        });
+        this._resizeObserver.observe(container);
+      }
+
       return this.map;
     } catch (err) {
       logger.error('Fallo al inicializar mapa Leaflet', err);
@@ -353,6 +370,14 @@ export class MapService {
    * Destruye la instancia del mapa y limpia listeners
    */
   destroy() {
+    if (this._resizeObserver) {
+      try {
+        this._resizeObserver.disconnect();
+      } catch {
+        // Ignorar
+      }
+      this._resizeObserver = null;
+    }
     if (this.map) {
       this.map.remove();
       this.map = null;
