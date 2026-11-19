@@ -38,6 +38,16 @@
   word-break: break-word;
 }
 
+html[data-table-density="compact"] .data-table th,
+html[data-table-density="compact"] .data-table td {
+  padding: 0.45rem 0.65rem;
+}
+
+html[data-table-density="spacious"] .data-table th,
+html[data-table-density="spacious"] .data-table td {
+  padding: 1.05rem 1.25rem;
+}
+
 .source-code-badge {
   display: inline-block;
   white-space: nowrap !important;

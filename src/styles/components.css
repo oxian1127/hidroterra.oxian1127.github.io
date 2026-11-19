@@ -417,13 +417,16 @@
 }
 
 .theme-switch input:checked + .theme-slider {
-  background-color: var(--color-green-600);
+  background: linear-gradient(135deg, #2d6a4f, #40916c);
+  background-color: #2d6a4f;
 }
 
 .theme-switch input:checked + .theme-slider .theme-slider-thumb {
   transform: translateX(24px);
-  background-color: #0f172a;
-  color: #38bdf8;
+  background-color: #e2f7ec;
+  border: 1px solid #95d5b2;
+  color: #1b4332;
+  box-shadow: 0 1px 3px rgba(27, 67, 50, 0.35);
 }
 
 /* Tooltip inteligente para ver texto completo (PC hover y Móvil al presionar) */

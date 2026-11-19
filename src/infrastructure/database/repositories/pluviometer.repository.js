@@ -12,7 +12,7 @@ class PluviometerRepository extends BaseRepository {
 
   async getByCode(code) {
     if (!code) return null;
-    const all = await this.getAll();
+    const all = await this.getAllRaw();
     const clean = code.trim().toUpperCase();
     return all.find(item => item.code && item.code.toUpperCase() === clean) || null;
   }

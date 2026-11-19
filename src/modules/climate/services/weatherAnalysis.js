@@ -4,6 +4,7 @@
  */
 
 import { WEATHER_CONFIG } from '../config/weatherConfig.js';
+import { ThemeService } from '../../../core/theme.js';
 import { safeNumber } from '../utils/weatherValidators.js';
 
 /**
@@ -124,7 +125,12 @@ export function computeAgroclimaticIndicators(weatherRecord, customRules = {}) {
 export function generateAgroclimaticAlerts(weatherRecord, indicators, customRules = {}) {
   if (!weatherRecord || !indicators) return [];
 
-  const rules = { ...WEATHER_CONFIG.alertRules, ...customRules };
+  const userPrefs = ThemeService.getPreferences();
+  const rules = {
+    ...WEATHER_CONFIG.alertRules,
+    consecutiveDryDaysAlert: userPrefs.droughtDryDaysAlert || WEATHER_CONFIG.alertRules.consecutiveDryDaysAlert,
+    ...customRules
+  };
   const locationName = weatherRecord.location?.name || 'Ubicación consultada';
   const generatedAt = new Date().toISOString();
   const alerts = [];

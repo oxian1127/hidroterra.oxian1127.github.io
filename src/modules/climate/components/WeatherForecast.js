@@ -24,6 +24,38 @@ export class WeatherForecastSection {
     this.dailyTempEt0Chart = null;
   }
 
+  _formatCellLines(rawText, maxLen = 22, isBold = false) {
+    const text = String(rawText || '').trim();
+    if (!text) return '—';
+    if (text.length <= maxLen) {
+      const span = `<span style="display: block; white-space: nowrap;">${escapeHtml(text)}</span>`;
+      return isBold ? `<strong style="display: block; line-height: 1.35;">${span}</strong>` : `<div style="line-height: 1.35;">${span}</div>`;
+    }
+
+    const words = text.split(/\s+/);
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      if (!currentLine) {
+        currentLine = word;
+      } else if (currentLine.length + 1 + word.length <= maxLen) {
+        currentLine += ` ${word}`;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    const html = lines
+      .map(line => `<span style="display: block; white-space: nowrap;">${escapeHtml(line)}</span>`)
+      .join('');
+    return isBold ? `<strong style="display: block; line-height: 1.35;">${html}</strong>` : `<div style="line-height: 1.35;">${html}</div>`;
+  }
+
   render(weatherRecord) {
     if (!weatherRecord) {
       return `
@@ -101,20 +133,22 @@ export class WeatherForecastSection {
               const cond = getWeatherCondition(h.weatherCode, 1);
               return `
                 <tr>
-                  <td data-label="Hora"><strong>${escapeHtml(formatHourLabel(h.time))}</strong> <small class="text-muted">(${escapeHtml(formatDayNameShort(h.date))})</small></td>
-                  <td data-label="Condición">
-                    <i class="fa-solid ${cond.icon}" style="color: ${cond.color}; margin-right: 4px;"></i>
-                    ${escapeHtml(cond.label)}
+                  <td data-label="Hora" style="white-space: nowrap;">
+                    <strong>${escapeHtml(formatHourLabel(h.time))}</strong>
+                    <small class="text-muted" style="margin-left: 4px;">(${escapeHtml(formatDayNameShort(h.date))})</small>
                   </td>
-                  <td data-label="Temperatura"><strong>${formatTemp(h.temperatureC)}</strong></td>
-                  <td data-label="Prob. Lluvia">
+                  <td data-label="Condición" style="white-space: nowrap; word-break: keep-all;">
+                    ${this._formatCellLines(cond.label, 22, false)}
+                  </td>
+                  <td data-label="Temperatura" style="white-space: nowrap;"><strong>${formatTemp(h.temperatureC)}</strong></td>
+                  <td data-label="Prob. Lluvia" style="white-space: nowrap;">
                     <span class="badge ${h.precipitationProbabilityPct >= 60 ? 'badge-info' : 'badge-neutral'}">
                       ${formatPercent(h.precipitationProbabilityPct)}
                     </span>
                   </td>
-                  <td data-label="Precipitación Est."><strong>${formatMm(h.precipitationMm)}</strong></td>
-                  <td data-label="Humedad Relativa">${formatPercent(h.humidityPct)}</td>
-                  <td data-label="Viento">${formatWindSpeed(h.windSpeedKmh)} <small class="text-muted">${escapeHtml(formatWindDirection(h.windDirectionDeg))}</small></td>
+                  <td data-label="Precipitación Est." style="white-space: nowrap;"><strong>${formatMm(h.precipitationMm)}</strong></td>
+                  <td data-label="Humedad Relativa" style="white-space: nowrap;">${formatPercent(h.humidityPct)}</td>
+                  <td data-label="Viento" style="white-space: nowrap;">${formatWindSpeed(h.windSpeedKmh)} <small class="text-muted">${escapeHtml(formatWindDirection(h.windDirectionDeg))}</small></td>
                 </tr>
               `;
             }).join('')}
@@ -197,21 +231,22 @@ export class WeatherForecastSection {
               const isSelected = d.date === (selectedDayObj && selectedDayObj.date);
               return `
                 <tr class="${isSelected ? 'climate-row-selected' : ''}">
-                  <td data-label="Día y Fecha"><strong>${escapeHtml(formatDayNameFull(d.date, idx))}</strong></td>
-                  <td data-label="Estado del Tiempo">
-                    <i class="fa-solid ${cond.icon}" style="color: ${cond.color}; margin-right: 4px;"></i>
-                    ${escapeHtml(cond.label)}
+                  <td data-label="Día y Fecha" style="white-space: nowrap; word-break: keep-all;">
+                    ${this._formatCellLines(formatDayNameFull(d.date, idx), 22, true)}
                   </td>
-                  <td data-label="Temp. Máxima"><strong class="text-danger">${formatTemp(d.tempMaxC)}</strong></td>
-                  <td data-label="Temp. Mínima"><strong style="color: var(--color-blue-700);">${formatTemp(d.tempMinC)}</strong></td>
-                  <td data-label="Prob. Máx. Lluvia">
+                  <td data-label="Estado del Tiempo" style="white-space: nowrap; word-break: keep-all;">
+                    ${this._formatCellLines(cond.label, 22, false)}
+                  </td>
+                  <td data-label="Temp. Máxima" style="white-space: nowrap;"><strong class="text-danger">${formatTemp(d.tempMaxC)}</strong></td>
+                  <td data-label="Temp. Mínima" style="white-space: nowrap;"><strong style="color: var(--color-blue-700);">${formatTemp(d.tempMinC)}</strong></td>
+                  <td data-label="Prob. Máx. Lluvia" style="white-space: nowrap;">
                     <span class="badge ${d.precipitationProbabilityMaxPct >= 60 ? 'badge-info' : 'badge-neutral'}">
                       ${formatPercent(d.precipitationProbabilityMaxPct)}
                     </span>
                   </td>
-                  <td data-label="Precipitación Acum. Est."><strong>${formatMm(d.precipitationSumMm)}</strong></td>
-                  <td data-label="Evapotranspiración (ET₀)">${formatMm(d.et0SumMm)}</td>
-                  <td data-label="Detalle">
+                  <td data-label="Precipitación Acum. Est." style="white-space: nowrap;"><strong>${formatMm(d.precipitationSumMm)}</strong></td>
+                  <td data-label="Evapotranspiración (ET₀)" style="white-space: nowrap;">${formatMm(d.et0SumMm)}</td>
+                  <td data-label="Detalle" style="white-space: nowrap;">
                     <button type="button" class="btn btn-outline btn-sm btn-select-forecast-day" data-date="${escapeHtml(d.date)}">
                       Ver horas
                     </button>
@@ -261,14 +296,14 @@ export class WeatherForecastSection {
                   const cond = getWeatherCondition(h.weatherCode, 1);
                   return `
                     <tr>
-                      <td><strong>${escapeHtml(formatHourLabel(h.time))}</strong></td>
-                      <td><i class="fa-solid ${cond.icon}" style="color: ${cond.color};"></i> ${escapeHtml(cond.label)}</td>
-                      <td>${formatTemp(h.temperatureC)}</td>
-                      <td>${formatPercent(h.precipitationProbabilityPct)}</td>
-                      <td><strong>${formatMm(h.precipitationMm)}</strong></td>
-                      <td>${formatPercent(h.humidityPct)}</td>
-                      <td>${formatMm(h.et0Mm, 2)}</td>
-                      <td>${formatWindSpeed(h.windSpeedKmh)}</td>
+                      <td style="white-space: nowrap;"><strong>${escapeHtml(formatHourLabel(h.time))}</strong></td>
+                      <td style="white-space: nowrap; word-break: keep-all;">${this._formatCellLines(cond.label, 22, false)}</td>
+                      <td style="white-space: nowrap;">${formatTemp(h.temperatureC)}</td>
+                      <td style="white-space: nowrap;">${formatPercent(h.precipitationProbabilityPct)}</td>
+                      <td style="white-space: nowrap;"><strong>${formatMm(h.precipitationMm)}</strong></td>
+                      <td style="white-space: nowrap;">${formatPercent(h.humidityPct)}</td>
+                      <td style="white-space: nowrap;">${formatMm(h.et0Mm, 2)}</td>
+                      <td style="white-space: nowrap;">${formatWindSpeed(h.windSpeedKmh)}</td>
                     </tr>
                   `;
                 }).join('')}

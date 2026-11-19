@@ -17,6 +17,7 @@ export class MapService {
       sites: null,
       parcels: null
     };
+    this.markersById = new Map();
     this.tileLayer = null;
     this.isOffline = !navigator.onLine;
   }
@@ -202,6 +203,7 @@ export class MapService {
 
     // Limpiar capas previas
     Object.values(this.markerLayers).forEach(layer => layer && layer.clearLayers());
+    this.markersById.clear();
 
     const allMarkers = [];
 
@@ -260,6 +262,7 @@ export class MapService {
         }
 
         marker.addTo(this.markerLayers.water_sources);
+        this.markersById.set(`water_source:${source.id}`, marker);
         allMarkers.push(marker);
       }
     });
@@ -290,6 +293,7 @@ export class MapService {
         }
 
         marker.addTo(this.markerLayers.pluviometers);
+        this.markersById.set(`pluviometer:${pluv.id}`, marker);
         allMarkers.push(marker);
       }
     });
@@ -363,6 +367,36 @@ export class MapService {
   setView(lat, lon, zoom = 14) {
     if (this.map && lat !== null && lon !== null) {
       this.map.setView([lat, lon], zoom);
+    }
+  }
+
+  /**
+   * Ubica un elemento georreferenciado en el mapa por sus coordenadas y abre su globo informativo
+   */
+  focusElement(type, id, lat, lon, zoom = 16) {
+    if (!this.map) return;
+    const numLat = lat !== null && lat !== undefined && lat !== '' ? Number(lat) : null;
+    const numLon = lon !== null && lon !== undefined && lon !== '' ? Number(lon) : null;
+
+    if (numLat !== null && numLon !== null && Number.isFinite(numLat) && Number.isFinite(numLon)) {
+      this.map.setView([numLat, numLon], zoom, { animate: true });
+    }
+
+    if (type && id) {
+      const marker = this.markersById.get(`${type}:${id}`);
+      if (marker) {
+        if (numLat === null || numLon === null) {
+          const latLng = marker.getLatLng();
+          if (latLng) this.map.setView(latLng, zoom, { animate: true });
+        }
+        setTimeout(() => {
+          try {
+            marker.openPopup();
+          } catch {
+            // Ignorar si el mapa ya se desmontó
+          }
+        }, 180);
+      }
     }
   }
 

@@ -3,6 +3,8 @@
  * Criterios diferenciados según el tipo de infraestructura hídrica (pozo, jagüey, reservorio, tanque, etc.).
  */
 
+import { ThemeService } from '../../core/theme.js';
+
 /**
  * Umbrales técnicos diferenciados por tipo de infraestructura hídrica.
  * No se aplican los mismos umbrales a un pozo, un jagüey y un reservorio/tanque:
@@ -195,7 +197,16 @@ export function classifyWaterAvailability({
   customThresholds = null
 }) {
   const config = getInfrastructureConfig(sourceType);
-  const pctRules = customThresholds?.pctThresholds || config.pctThresholds;
+  const userPrefs = ThemeService.getPreferences();
+  const hasCustomUserThresholds = userPrefs.waterLowAlertPct !== 40 || userPrefs.waterCriticalAlertPct !== 20;
+  const basePctRules = customThresholds?.pctThresholds || config.pctThresholds;
+  const pctRules = (!customThresholds?.pctThresholds && hasCustomUserThresholds && basePctRules)
+    ? {
+        alta: Math.max(basePctRules.alta, userPrefs.waterLowAlertPct + 15),
+        moderada: userPrefs.waterLowAlertPct,
+        baja: userPrefs.waterCriticalAlertPct
+      }
+    : basePctRules;
   const levelRules = customThresholds?.levelMetersThresholds || config.levelMetersThresholds;
   const flowRules = customThresholds?.flowLsThresholds || config.flowLsThresholds;
 

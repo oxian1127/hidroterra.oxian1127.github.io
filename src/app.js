@@ -69,9 +69,46 @@ export class App {
     // 8. Iniciar navegación inmediatamente para evitar demoras en dispositivos móviles
     this.router.init();
 
-    // 9. Actualizar indicadores locales y verificar Firebase Firestore en segundo plano (sin bloquear interfaz)
+    // 9. Actualizar indicadores locales, configurar monitor de inactividad y verificar Firebase Firestore en segundo plano
+    this._setupInactivitySessionMonitor();
     this._refreshStorageAndBackupStatus();
     this._initFirebaseInBackground();
+  }
+
+  _setupInactivitySessionMonitor() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    let inactivityTimer = null;
+
+    const resetInactivityTimer = () => {
+      if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = null;
+      }
+      const timeoutMin = Number(ThemeService.getPreferences().sessionTimeoutMinutes) || 0;
+      if (timeoutMin <= 0 || !sessionService.isAuthenticated()) return;
+
+      inactivityTimer = setTimeout(async () => {
+        if (!sessionService.isAuthenticated()) return;
+        await sessionService.logout();
+        notification.warning(
+          'Sesión cerrada por inactividad',
+          `Su sesión se bloqueó automáticamente tras ${timeoutMin} minutos de inactividad.`
+        );
+        window.location.hash = '#login';
+      }, timeoutMin * 60 * 1000);
+    };
+
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(evt => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+
+    events.on('session:changed', resetInactivityTimer);
+    events.on('preferences:updated', () => {
+      resetInactivityTimer();
+      this._refreshStorageAndBackupStatus();
+    });
+
+    resetInactivityTimer();
   }
 
   async _initFirebaseInBackground() {
@@ -313,10 +350,47 @@ export class App {
       });
     };
 
+    const syncBadgeMarqueeElements = () => {
+      const badges = document.querySelectorAll('.badge');
+      badges.forEach((badge) => {
+        if (!badge || badge.clientWidth <= 0) return;
+
+        let track = badge.querySelector(':scope > .ht-badge-marquee-track');
+        const style = window.getComputedStyle(badge);
+        const padLeft = parseFloat(style.paddingLeft) || 8;
+        const padRight = parseFloat(style.paddingRight) || 8;
+        const innerMaxWidth = Math.max(0, badge.clientWidth - padLeft - padRight);
+
+        const contentWidth = track ? track.scrollWidth : (badge.scrollWidth - padLeft - padRight);
+        const overflowPx = Math.ceil(contentWidth - innerMaxWidth);
+
+        if (overflowPx > 2) {
+          if (!track) {
+            track = document.createElement('span');
+            track.className = 'ht-badge-marquee-track';
+            while (badge.firstChild) {
+              track.appendChild(badge.firstChild);
+            }
+            badge.appendChild(track);
+          }
+          const finalShift = Math.ceil(track.scrollWidth - innerMaxWidth + 4);
+          const durationSec = Math.max(3.8, Math.min(9.5, finalShift / 16)).toFixed(1);
+          badge.style.setProperty('--ht-marquee-shift', `-${finalShift}px`);
+          badge.style.setProperty('--ht-marquee-duration', `${durationSec}s`);
+          badge.classList.add('ht-badge-is-overflowing');
+        } else {
+          badge.classList.remove('ht-badge-is-overflowing');
+          badge.style.removeProperty('--ht-marquee-shift');
+          badge.style.removeProperty('--ht-marquee-duration');
+        }
+      });
+    };
+
     const applyAllControls = () => {
       document.querySelectorAll('select').forEach(formatSelectElement);
       document.querySelectorAll('input').forEach(syncInputElement);
       syncTruncatedContainers();
+      syncBadgeMarqueeElements();
     };
 
     // Tooltip flotante universal (PC mouse hover y Móvil al presionar)
@@ -552,6 +626,10 @@ export class App {
       if (!enabled) {
         hideSmartTooltip();
       }
+      scheduleApply();
+    });
+
+    events.on('preferences:badge-marquee', () => {
       scheduleApply();
     });
 
@@ -827,10 +905,12 @@ export class App {
       let showBackupWarning = false;
       let daysSince = null;
 
+      const warningDays = Number(ThemeService.getPreferences().backupWarningDays) || APP_CONFIG.storage.backupWarningDays;
+
       if (info.lastBackupDate) {
         const diffMs = Date.now() - new Date(info.lastBackupDate).getTime();
         daysSince = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        if (daysSince >= APP_CONFIG.storage.backupWarningDays) {
+        if (daysSince >= warningDays) {
           showBackupWarning = true;
         }
       } else if (info.counts.totalRecords > 0) {

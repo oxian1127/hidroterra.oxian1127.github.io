@@ -35,16 +35,17 @@ export class PrecipitationAnalysisSection {
             <h3 class="card-title">Análisis de Precipitaciones: Observación Real vs. Pronóstico</h3>
             <p class="card-subtitle">Alcance comparativo: <strong>${escapeHtml(precipComparison.scopeLabel)}</strong></p>
           </div>
-          <span class="badge badge-info">Separación Estricta Observación / Modelo</span>
         </div>
 
         <div class="card-body">
-          <!-- Leyenda Conceptual Obligatoria (3 Conceptos Diferenciados) -->
+          <!-- Tarjetas Comparativas sin etiquetas tipo badge: Nombre arriba y valor en mm debajo -->
           <div class="climate-precip-legend-grid mb-4">
             <div class="climate-legend-box observed">
-              <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-success">1. Lluvia Observada (Pluviómetro)</span>
-                <strong>${precipComparison.observedLast7dMm} mm (últ. 7d)</strong>
+              <div style="font-weight: 700; font-size: var(--font-size-sm); color: var(--color-neutral-900); margin-bottom: 4px;">
+                1. Lluvia Observada (Pluviómetro)
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--color-green-700); margin-bottom: 6px;">
+                ${precipComparison.observedLast7dMm} mm (últ. 7d)
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
                 Medición física real capturada en campo por monitores comunitarios (${precipComparison.totalObservedRecordsCount} lecturas registradas; acum. 30d: <strong>${precipComparison.observedLast30dMm} mm</strong>).
@@ -53,9 +54,11 @@ export class PrecipitationAnalysisSection {
             </div>
 
             <div class="climate-legend-box estimated">
-              <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-info">2. Precipitación Estimada (24h)</span>
-                <strong>${formatMm(precipComparison.estimatedNext24hMm)}</strong>
+              <div style="font-weight: 700; font-size: var(--font-size-sm); color: var(--color-neutral-900); margin-bottom: 4px;">
+                2. Precipitación Estimada (24h)
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--color-blue-700); margin-bottom: 6px;">
+                ${formatMm(precipComparison.estimatedNext24hMm)}
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
                 Estimación numérica del modelo meteorológico Open-Meteo para la ventana inmediata de 24 horas en estas coordenadas. No equivale a lectura de pluviómetro.
@@ -63,9 +66,11 @@ export class PrecipitationAnalysisSection {
             </div>
 
             <div class="climate-legend-box forecasted">
-              <div class="d-flex justify-between align-center mb-1">
-                <span class="badge badge-neutral" style="background-color: #e0e7ff; color: #3730a3;">3. Precipitación Pronosticada (7d)</span>
-                <strong>${formatMm(precipComparison.forecasted7dMm)}</strong>
+              <div style="font-weight: 700; font-size: var(--font-size-sm); color: var(--color-neutral-900); margin-bottom: 4px;">
+                3. Precipitación Pronosticada (7d)
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #3730a3; margin-bottom: 6px;">
+                ${formatMm(precipComparison.forecasted7dMm)}
               </div>
               <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
                 Acumulación proyectada para los próximos 7 días. Incluye <strong>${precipComparison.dryDaysCount7d} de 7 días</strong> sin precipitaciones significativas pronosticadas (&lt; 1.0 mm).
@@ -123,20 +128,23 @@ export class PrecipitationAnalysisSection {
 
                   return `
                     <tr>
-                      <td data-label="Fecha"><strong>${escapeHtml(formatDayNameShort(row.date))}</strong> <small class="text-muted">(${escapeHtml(row.date)})</small></td>
-                      <td data-label="Clasificación">${badgeHtml}</td>
-                      <td data-label="1. Lluvia Observada">
+                      <td data-label="Fecha" style="white-space: nowrap;">
+                        <strong>${escapeHtml(formatDayNameShort(row.date))}</strong>
+                        <small class="text-muted" style="margin-left: 4px;">(${escapeHtml(row.date)})</small>
+                      </td>
+                      <td data-label="Clasificación" style="white-space: nowrap;">${badgeHtml}</td>
+                      <td data-label="1. Lluvia Observada" style="white-space: nowrap;">
                         ${hasObs
-                          ? `<strong class="text-success"><i class="fa-solid fa-check"></i> ${formatMm(row.observedMm)}</strong>`
+                          ? `<strong class="text-success">${formatMm(row.observedMm)}</strong>`
                           : '<span class="text-muted">Sin lectura registrada</span>'}
                       </td>
-                      <td data-label="2. Estimada Hoy">
+                      <td data-label="2. Estimada Hoy" style="white-space: nowrap;">
                         ${isToday ? `<strong>${formatMm(row.estimatedModelTodayMm)}</strong>` : '—'}
                       </td>
-                      <td data-label="3. Pronosticada">
+                      <td data-label="3. Pronosticada" style="white-space: nowrap;">
                         ${isFuture ? `<strong>${formatMm(row.forecastFutureMm)}</strong>` : '—'}
                       </td>
-                      <td data-label="Prob. Lluvia Modelo">
+                      <td data-label="Prob. Lluvia Modelo" style="white-space: nowrap;">
                         ${row.probabilityPct !== null ? formatPercent(row.probabilityPct) : '—'}
                       </td>
                     </tr>

@@ -13,6 +13,7 @@ import { firebaseService } from '../../../../js/firebase-service.js';
 import { auditService } from '../../../application/audit.service.js';
 import { inferOrganizationForRecord } from '../../../application/firebase-sync.service.js';
 import { PermissionError } from '../../../core/errors.js';
+import { ThemeService } from '../../../core/theme.js';
 
 export class BaseRepository {
   /**
@@ -85,11 +86,13 @@ export class BaseRepository {
     await idb.put(this.storeName, item);
     await syncAdapter.enqueueOperation(this.entityName, 'create', item.id, item);
 
-    // Sincronizar con Firestore y registrar auditoría
-    const syncRes = await firebaseService.syncStoreRecordToFirestore(this.storeName, item);
-    if (syncRes && syncRes._syncedToFirestore) {
-      item.syncStatus = 'synced';
-      await idb.put(this.storeName, item);
+    // Sincronizar con Firestore si la sincronización automática está habilitada
+    if (ThemeService.isAutoFirestoreSyncEnabled()) {
+      const syncRes = await firebaseService.syncStoreRecordToFirestore(this.storeName, item);
+      if (syncRes && syncRes._syncedToFirestore) {
+        item.syncStatus = 'synced';
+        await idb.put(this.storeName, item);
+      }
     }
 
     if (currentUser) {
@@ -131,10 +134,12 @@ export class BaseRepository {
     await idb.put(this.storeName, updated);
     await syncAdapter.enqueueOperation(this.entityName, 'update', id, updated);
 
-    const syncRes = await firebaseService.syncStoreRecordToFirestore(this.storeName, updated);
-    if (syncRes && syncRes._syncedToFirestore) {
-      updated.syncStatus = 'synced';
-      await idb.put(this.storeName, updated);
+    if (ThemeService.isAutoFirestoreSyncEnabled()) {
+      const syncRes = await firebaseService.syncStoreRecordToFirestore(this.storeName, updated);
+      if (syncRes && syncRes._syncedToFirestore) {
+        updated.syncStatus = 'synced';
+        await idb.put(this.storeName, updated);
+      }
     }
 
     if (currentUser) {
@@ -165,7 +170,9 @@ export class BaseRepository {
 
     await idb.delete(this.storeName, id);
     await syncAdapter.enqueueOperation(this.entityName, 'delete', id, existing || { id });
-    await firebaseService.deleteStoreRecordFromFirestore(this.storeName, id);
+    if (ThemeService.isAutoFirestoreSyncEnabled()) {
+      await firebaseService.deleteStoreRecordFromFirestore(this.storeName, id);
+    }
 
     const currentUser = sessionService.getCurrentUser();
     if (currentUser) {

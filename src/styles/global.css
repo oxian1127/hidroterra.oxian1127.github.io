@@ -2,6 +2,14 @@
  * Estilos globales para HIDROTERRA
  */
 
+html[data-font-scale="large"] {
+  font-size: 108%;
+}
+
+html[data-font-scale="xlarge"] {
+  font-size: 116%;
+}
+
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
@@ -371,6 +379,41 @@ button.is-loading::before {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Ancho máximo compacto para etiquetas en tablas y encabezados para evitar estirar columnas */
+.data-table td .badge,
+.card-header .badge,
+.header-dropdown-role-badge.badge {
+  max-width: 160px;
+}
+
+.ht-badge-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  white-space: nowrap;
+  will-change: transform;
+}
+
+@keyframes htBadgeMarqueeScroll {
+  0%, 20% {
+    transform: translateX(0);
+  }
+  70%, 88% {
+    transform: translateX(var(--ht-marquee-shift, -40px));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+[data-badge-marquee="true"] .badge.ht-badge-is-overflowing {
+  text-overflow: clip !important;
+}
+
+[data-badge-marquee="true"] .badge.ht-badge-is-overflowing .ht-badge-marquee-track {
+  animation: htBadgeMarqueeScroll var(--ht-marquee-duration, 5.5s) ease-in-out infinite;
 }
 
 .badge-success {
