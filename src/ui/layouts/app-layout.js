@@ -12,27 +12,59 @@ import { notification } from '../components/notification.js';
 export class AppLayout {
   constructor(onNavigate) {
     this.onNavigate = onNavigate;
+    this.isDesktopSidebarCollapsed = false;
 
     this.sidebar = new Sidebar(onNavigate);
     this.header = new Header({
-      onToggleMenu: () => this.toggleMobileSidebar(),
+      onToggleMenu: () => this.toggleSidebar(),
       onQuickBackup: () => this.handleQuickBackup()
     });
   }
 
-  toggleMobileSidebar() {
+  toggleSidebar() {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    const appContainer = document.querySelector('.app-container');
     const sidebarEl = document.querySelector('#app-sidebar');
     const backdropEl = document.querySelector('#sidebar-backdrop');
-    if (sidebarEl && backdropEl) {
-      const isOpen = sidebarEl.classList.contains('open');
-      if (isOpen) {
-        sidebarEl.classList.remove('open');
-        backdropEl.classList.remove('active');
-      } else {
-        sidebarEl.classList.add('open');
-        backdropEl.classList.add('active');
+    const desktopLabel = document.querySelector('#btn-toggle-sidebar .menu-btn-desktop-label');
+
+    if (isMobile) {
+      if (sidebarEl && backdropEl) {
+        const isOpen = sidebarEl.classList.contains('open');
+        if (isOpen) {
+          sidebarEl.classList.remove('open');
+          backdropEl.classList.remove('active');
+        } else {
+          sidebarEl.classList.add('open');
+          backdropEl.classList.add('active');
+        }
       }
+      return;
     }
+
+    // En versión de escritorio: ocultar o mostrar el menú lateral
+    this.isDesktopSidebarCollapsed = !this.isDesktopSidebarCollapsed;
+    if (appContainer) {
+      appContainer.classList.toggle('sidebar-collapsed', this.isDesktopSidebarCollapsed);
+    }
+    const toggleBtn = document.querySelector('#btn-toggle-sidebar');
+    if (toggleBtn) {
+      toggleBtn.classList.toggle('is-collapsed', this.isDesktopSidebarCollapsed);
+      toggleBtn.title = this.isDesktopSidebarCollapsed ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
+      toggleBtn.setAttribute('aria-label', toggleBtn.title);
+    }
+
+    // Notificar redimensionamiento para que los mapas Leaflet y gráficos Chart.js se ajusten al nuevo espacio
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 60);
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 260);
+  }
+
+  toggleMobileSidebar() {
+    this.toggleSidebar();
   }
 
   async handleQuickBackup() {

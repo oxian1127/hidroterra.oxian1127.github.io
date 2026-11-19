@@ -121,9 +121,8 @@ export class Sidebar {
         </nav>
 
         <div class="sidebar-footer">
-          <div class="sidebar-storage-indicator">
-            <span>Almacenamiento:</span>
-            <strong id="sidebar-storage-stat">${this.storageSummaryText}</strong>
+          <div class="sidebar-storage-indicator" style="justify-content: flex-start; gap: 4px; flex-wrap: wrap;">
+            <span>Almacenamiento: <strong id="sidebar-storage-stat">${this.storageSummaryText}</strong></span>
           </div>
           <div>Ubicación de la base de datos: <strong>nam5</strong></div>
           <div>Versión PWA ${APP_CONFIG.version} (Offline-First + Firestore)</div>

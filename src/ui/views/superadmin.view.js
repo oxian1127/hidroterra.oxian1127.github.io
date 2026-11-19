@@ -331,8 +331,20 @@ export class SuperAdminView {
                       </td>
                       <td>${escapeHtml(org.municipality || '—')}</td>
                       <td>${escapeHtml(org.department || '—')}</td>
-                      <td>${escapeHtml(org.representativeName || '—')}</td>
-                      <td>${org.institutionalEmail ? escapeHtml(org.institutionalEmail) : '<em class="text-muted">Pendiente</em>'}</td>
+                      <td>
+                        <div>${escapeHtml(org.representativeName || '—')}</div>
+                        ${(org.phone || org.whatsapp) ? `
+                          <div style="font-size: 0.72rem; margin-top: 2px; display: flex; flex-wrap: wrap; gap: 6px;">
+                            ${org.phone ? `<a href="tel:${escapeHtml(String(org.phone).replace(/[^\d+]/g, ''))}" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;" title="Llamar">${escapeHtml(org.phone)} (Llamar)</a>` : ''}
+                            ${(org.whatsapp || org.phone) ? `<a href="https://wa.me/${escapeHtml((String(org.whatsapp || org.phone).replace(/\D/g, '').length === 10 ? '57' : '') + String(org.whatsapp || org.phone).replace(/\D/g, ''))}" target="_blank" rel="noopener" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;" title="Enviar WhatsApp">WhatsApp</a>` : ''}
+                          </div>
+                        ` : ''}
+                      </td>
+                      <td>
+                        ${org.institutionalEmail
+                          ? `<a href="mailto:${escapeHtml(org.institutionalEmail)}?subject=${encodeURIComponent(`Contacto HIDROTERRA — ${org.name}`)}" class="btn btn-outline btn-sm" style="text-decoration: none; white-space: nowrap;" title="${escapeHtml(org.institutionalEmail)}"><span>Enviar correo</span></a>`
+                          : '<em class="text-muted">—</em>'}
+                      </td>
                       <td><span class="badge badge-info">${st.usersCount}</span></td>
                       <td><span class="badge badge-success">${st.totalRecords}</span></td>
                       <td>
@@ -605,6 +617,12 @@ export class SuperAdminView {
   }
 
   _openViewOrganizationModal(org) {
+    const cleanPhone = String(org.phone || '').replace(/[^\d+]/g, '');
+    const rawWa = String(org.whatsapp || org.phone || '').replace(/\D/g, '');
+    const waDigits = rawWa.length === 10 ? `57${rawWa}` : rawWa;
+    const rawWeb = String(org.website || '').trim();
+    const webHref = rawWeb ? (/^https?:\/\//i.test(rawWeb) ? rawWeb : `https://${rawWeb}`) : '';
+
     modal.open({
       title: `Ficha Institucional — ${org.name}`,
       size: 'md',
@@ -612,14 +630,38 @@ export class SuperAdminView {
         <div style="display: flex; flex-direction: column; gap: 10px; font-size: var(--font-size-sm);">
           <div><strong>ID Organización:</strong> <code>${escapeHtml(org.id)}</code></div>
           <div><strong>Nombre completo:</strong> ${escapeHtml(org.name)}</div>
-          <div><strong>Nombre corto:</strong> ${escapeHtml(org.shortName || '—')}</div>
-          <div><strong>NIT:</strong> ${escapeHtml(org.nit || 'No registrado')}</div>
+          ${org.shortName ? `<div><strong>Nombre corto:</strong> ${escapeHtml(org.shortName)}</div>` : ''}
+          ${org.nit ? `<div><strong>NIT:</strong> ${escapeHtml(org.nit)}</div>` : ''}
           <div><strong>Tipo:</strong> ${escapeHtml(org.organizationType || '—')}</div>
-          <div><strong>Ubicación:</strong> ${escapeHtml(org.municipality || '—')}, ${escapeHtml(org.department || '—')} (${escapeHtml(org.address || '—')})</div>
-          <div><strong>Representante:</strong> ${escapeHtml(org.representativeName || '—')} (${escapeHtml(org.representativeRole || '—')})</div>
-          <div><strong>Correo institucional:</strong> ${escapeHtml(org.institutionalEmail || 'Pendiente de completar')}</div>
-          <div><strong>Teléfono / WhatsApp:</strong> ${escapeHtml(org.phone || '—')} / ${escapeHtml(org.whatsapp || '—')}</div>
-          <div><strong>Descripción:</strong> ${escapeHtml(org.description || '—')}</div>
+          <div><strong>Ubicación:</strong> ${escapeHtml(org.municipality || '—')}, ${escapeHtml(org.department || '—')} ${org.address ? `(${escapeHtml(org.address)})` : ''}</div>
+          ${org.representativeName ? `<div><strong>Representante:</strong> ${escapeHtml(org.representativeName)} ${org.representativeRole ? `(${escapeHtml(org.representativeRole)})` : ''}</div>` : ''}
+          ${org.institutionalEmail ? `
+            <div>
+              <strong>Correo institucional:</strong>
+              <a href="mailto:${escapeHtml(org.institutionalEmail)}?subject=${encodeURIComponent(`Contacto Institucional HIDROTERRA — ${org.name}`)}" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline; margin-left: 4px;">${escapeHtml(org.institutionalEmail)} (Enviar correo)</a>
+            </div>
+          ` : ''}
+          ${org.phone ? `
+            <div>
+              <strong>Teléfono:</strong>
+              <a href="tel:${escapeHtml(cleanPhone)}" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline; margin-left: 4px;">${escapeHtml(org.phone)} (Llamar)</a>
+            </div>
+          ` : ''}
+          ${(org.whatsapp || org.phone) ? `
+            <div>
+              <strong>WhatsApp:</strong>
+              <a href="https://wa.me/${escapeHtml(waDigits)}?text=${encodeURIComponent(`Hola, me comunico desde HIDROTERRA con ${org.name}.`)}" target="_blank" rel="noopener" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline; margin-left: 4px;">${escapeHtml(org.whatsapp || org.phone)} (Enviar WhatsApp)</a>
+            </div>
+          ` : ''}
+          ${rawWeb ? `
+            <div>
+              <strong>Página web:</strong>
+              <a href="${escapeHtml(webHref)}" target="_blank" rel="noopener noreferrer" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline; margin-left: 4px;">${escapeHtml(rawWeb)} (Visitar sitio web)</a>
+            </div>
+          ` : ''}
+          ${org.socialLinks ? `<div><strong>Redes sociales:</strong> ${escapeHtml(org.socialLinks)}</div>` : ''}
+          ${org.productsOrServices ? `<div><strong>Actividad / Productos o Servicios:</strong> ${escapeHtml(org.productsOrServices)}</div>` : ''}
+          ${org.description ? `<div><strong>Descripción:</strong> ${escapeHtml(org.description)}</div>` : ''}
         </div>
       `,
       footer: `<button type="button" class="btn btn-primary" data-modal-close>Cerrar</button>`
@@ -682,19 +724,68 @@ export class SuperAdminView {
               <label class="form-label">WhatsApp</label>
               <input type="text" id="sa-org-wa" class="form-control" value="${escapeHtml(org?.whatsapp || '')}" />
             </div>
+            <div class="form-group">
+              <label class="form-label">Página web</label>
+              <input type="url" id="sa-org-web" class="form-control" value="${escapeHtml(org?.website || '')}" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Redes sociales</label>
+              <input type="text" id="sa-org-social" class="form-control" value="${escapeHtml(org?.socialLinks || '')}" placeholder="@organizacion" />
+            </div>
+          </div>
+          <div class="form-group mt-2">
+            <label class="form-label">¿A qué se dedica la organización? (Productos o servicios que comercializa o brinda)</label>
+            <textarea id="sa-org-products" class="form-control" rows="2" placeholder="Ej. Comercialización de productos agrícolas, artesanías, servicio comunitario de agua...">${escapeHtml(org?.productsOrServices || '')}</textarea>
           </div>
           <div class="form-group mt-2">
             <label class="form-label">Descripción institucional</label>
             <textarea id="sa-org-desc" class="form-control" rows="2">${escapeHtml(org?.description || '')}</textarea>
           </div>
+          <div id="sa-org-consent-box" style="margin-top: 12px; padding: 10px 12px; background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); font-size: var(--font-size-xs);">
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="sa-org-consent" ${org?.privacySettings?.consentGranted ? 'checked' : ''} required style="margin-top: 3px;" />
+              <span>
+                <strong>Consentimiento Informado (Ley 1581 de 2012 — Colombia) <span style="color: var(--color-danger, #dc2626);">* (Obligatorio)</span>:</strong> Autorizo de manera libre, previa, expresa e informada el tratamiento institucional y la publicación de los datos autorizados en el Directorio Público de Organizaciones de HIDROTERRA.
+              </span>
+            </label>
+          </div>
         </form>
       `,
       footer: `
         <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
-        <button type="button" class="btn btn-primary" id="btn-sa-save-org">Guardar en Firestore</button>
+        <button type="button" class="btn btn-primary" id="btn-sa-save-org"><span>Guardar en Firestore</span></button>
       `,
       onOpen: (modalEl) => {
-        modalEl.querySelector('#btn-sa-save-org')?.addEventListener('click', async () => {
+        const saveBtn = modalEl.querySelector('#btn-sa-save-org');
+        const consentChk = modalEl.querySelector('#sa-org-consent');
+        const consentBox = modalEl.querySelector('#sa-org-consent-box');
+
+        consentChk?.addEventListener('change', () => {
+          if (consentChk.checked && consentBox) {
+            consentBox.style.borderColor = 'var(--color-neutral-200)';
+            consentBox.style.backgroundColor = 'var(--color-neutral-50)';
+          }
+        });
+
+        saveBtn?.addEventListener('click', async () => {
+          if (!consentChk?.checked) {
+            if (consentBox) {
+              consentBox.style.borderColor = '#ef4444';
+              consentBox.style.backgroundColor = '#fef2f2';
+            }
+            consentChk?.focus();
+            notification.warning(
+              'Consentimiento Informado Obligatorio',
+              'Debe marcar la casilla de Consentimiento Informado (Ley 1581 de 2012) antes de guardar la organización.'
+            );
+            return;
+          }
+
+          saveBtn.classList.add('is-loading');
+          saveBtn.disabled = true;
+          const span = saveBtn.querySelector('span');
+          if (span) span.textContent = 'Guardando en Firestore...';
+
           try {
             const payload = {
               ...(org || {}),
@@ -710,7 +801,22 @@ export class SuperAdminView {
               institutionalEmail: modalEl.querySelector('#sa-org-email')?.value || '',
               phone: modalEl.querySelector('#sa-org-phone')?.value || '',
               whatsapp: modalEl.querySelector('#sa-org-wa')?.value || '',
-              description: modalEl.querySelector('#sa-org-desc')?.value || ''
+              website: modalEl.querySelector('#sa-org-web')?.value || '',
+              socialLinks: modalEl.querySelector('#sa-org-social')?.value || '',
+              productsOrServices: modalEl.querySelector('#sa-org-products')?.value || '',
+              description: modalEl.querySelector('#sa-org-desc')?.value || '',
+              privacySettings: {
+                ...(org?.privacySettings || {}),
+                publishedInDirectory: org?.privacySettings?.publishedInDirectory !== false,
+                showContactName: true,
+                showEmail: true,
+                showPhone: true,
+                showWhatsapp: true,
+                showWebsite: true,
+                showSocialLinks: true,
+                consentGranted: true,
+                consentDate: new Date().toISOString()
+              }
             };
             await sessionService.saveOrganization(payload, isNew);
             modal.close();
@@ -718,6 +824,9 @@ export class SuperAdminView {
             await this._loadData();
             this._renderDashboard(container);
           } catch (err) {
+            saveBtn.classList.remove('is-loading');
+            saveBtn.disabled = false;
+            if (span) span.textContent = 'Guardar en Firestore';
             notification.error('Error al guardar', err.message);
           }
         });

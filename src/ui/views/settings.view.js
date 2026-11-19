@@ -34,6 +34,43 @@ export class SettingsView {
     this.syncPreview = null;
     this.syncHistory = [];
     this.selectedSyncTargetOrg = 'all';
+    this._creatingNewOrgInTab = false;
+  }
+
+  /**
+   * Ejecuta una operación asíncrona mostrando guía visual de carga en el botón pulsado
+   * y en la barra superior de actividad del sistema.
+   */
+  async _runWithBtnLoading(btnEl, busyLabel, btnLoadingLabel, asyncFn) {
+    events.emit('app:busy', {
+      busy: true,
+      label: busyLabel || 'Procesando acción...',
+      button: btnEl,
+      buttonLabel: btnLoadingLabel || 'Procesando...'
+    });
+    if (btnEl) {
+      btnEl.classList.add('is-loading');
+      btnEl.disabled = true;
+      const span = btnEl.querySelector('span');
+      if (span && btnLoadingLabel) {
+        if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = span.textContent;
+        span.textContent = btnLoadingLabel;
+      }
+    }
+    try {
+      return await asyncFn();
+    } finally {
+      events.emit('app:busy', { busy: false });
+      if (btnEl) {
+        btnEl.classList.remove('is-loading');
+        btnEl.disabled = false;
+        const span = btnEl.querySelector('span');
+        if (span && btnEl.dataset.origLabel) {
+          span.textContent = btnEl.dataset.origLabel;
+          delete btnEl.dataset.origLabel;
+        }
+      }
+    }
   }
 
   async render(container, params = {}) {
@@ -266,11 +303,6 @@ export class SettingsView {
             <button type="button" class="btn btn-blue" id="btn-sync-export-local">
               <span>Exportar respaldo local</span>
             </button>
-            ${(isSuper || sessionService.isOrgAdmin()) ? `
-              <button type="button" class="btn btn-danger" id="btn-sync-clear-firestore">
-                <span>Vaciar Base de Datos en Firestore (Fin de Pruebas)</span>
-              </button>
-            ` : ''}
           </div>
 
           <!-- Barra de progreso y resultado de sincronización -->
@@ -345,26 +377,36 @@ export class SettingsView {
       this.selectedSyncTargetOrg = e.target.value;
     });
 
-    outlet.querySelector('#btn-sync-analyze')?.addEventListener('click', async () => {
-      this.syncAnalysis = await FirebaseSyncService.analyzeLocalData();
-      const panel = outlet.querySelector('#sync-dynamic-panel');
-      if (panel) panel.innerHTML = this._renderSyncAnalysisTable(this.syncAnalysis);
-      notification.info('Análisis completado', `Se encontraron ${this.syncAnalysis.totalRecords} registros locales en IndexedDB.`);
+    outlet.querySelector('#btn-sync-analyze')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      await this._runWithBtnLoading(btn, 'Analizando datos locales en IndexedDB...', 'Analizando...', async () => {
+        this.syncAnalysis = await FirebaseSyncService.analyzeLocalData();
+        const panel = outlet.querySelector('#sync-dynamic-panel');
+        if (panel) panel.innerHTML = this._renderSyncAnalysisTable(this.syncAnalysis);
+        notification.info('Análisis completado', `Se encontraron ${this.syncAnalysis.totalRecords} registros locales en IndexedDB.`);
+      });
     });
 
-    outlet.querySelector('#btn-sync-preview')?.addEventListener('click', async () => {
-      const preview = await FirebaseSyncService.buildMigrationPreview(this.selectedSyncTargetOrg);
-      const panel = outlet.querySelector('#sync-dynamic-panel');
-      if (panel) panel.innerHTML = this._renderSyncPreviewTable(preview);
+    outlet.querySelector('#btn-sync-preview')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      await this._runWithBtnLoading(btn, 'Generando vista previa de migración...', 'Generando vista previa...', async () => {
+        const preview = await FirebaseSyncService.buildMigrationPreview(this.selectedSyncTargetOrg);
+        const panel = outlet.querySelector('#sync-dynamic-panel');
+        if (panel) panel.innerHTML = this._renderSyncPreviewTable(preview);
+      });
     });
 
-    outlet.querySelector('#btn-sync-history')?.addEventListener('click', async () => {
-      this.syncHistory = await FirebaseSyncService.getSyncHistory();
-      const panel = outlet.querySelector('#sync-dynamic-panel');
-      if (panel) panel.innerHTML = this._renderSyncHistoryTable(this.syncHistory);
+    outlet.querySelector('#btn-sync-history')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      await this._runWithBtnLoading(btn, 'Consultando historial de sincronizaciones en Firestore...', 'Consultando...', async () => {
+        this.syncHistory = await FirebaseSyncService.getSyncHistory();
+        const panel = outlet.querySelector('#sync-dynamic-panel');
+        if (panel) panel.innerHTML = this._renderSyncHistoryTable(this.syncHistory);
+      });
     });
 
-    outlet.querySelector('#btn-sync-export-local')?.addEventListener('click', async () => {
+    outlet.querySelector('#btn-sync-export-local')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
       const confirmed = await modal.confirm({
         title: 'Exportar Respaldo Local Antes de Migrar',
         message: `¿Desea descargar una copia JSON completa con los ${analysis.totalRecords} registros locales actuales antes de sincronizar con Firestore?`,
@@ -372,15 +414,14 @@ export class SettingsView {
         cancelText: 'Cancelar'
       });
       if (!confirmed) return;
-      const res = await FirebaseSyncService.exportLocalBackupBeforeMigration();
-      notification.success('Respaldo local exportado', `Se descargó "${res.filename}" correctamente.`);
+      await this._runWithBtnLoading(btn, 'Generando respaldo local JSON...', 'Exportando...', async () => {
+        const res = await FirebaseSyncService.exportLocalBackupBeforeMigration();
+        notification.success('Respaldo local exportado', `Se descargó "${res.filename}" correctamente.`);
+      });
     });
 
-    outlet.querySelector('#btn-sync-clear-firestore')?.addEventListener('click', () => {
-      this._openClearFirestoreModal(outlet, rootContainer);
-    });
-
-    outlet.querySelector('#btn-save-unassigned-classifications')?.addEventListener('click', async () => {
+    outlet.querySelector('#btn-save-unassigned-classifications')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
       const selects = outlet.querySelectorAll('.unassigned-org-select');
       const assignments = [];
       selects.forEach(sel => {
@@ -396,61 +437,62 @@ export class SettingsView {
         notification.warning('Sin selección', 'Seleccione al menos una organización para clasificar los registros.');
         return;
       }
-      const res = await FirebaseSyncService.classifyUnassignedRecords(assignments);
-      notification.success('Registros clasificados', `Se asignó organización a ${res.updated} registros locales.`);
-      await this._renderSyncTab(outlet, rootContainer);
+      await this._runWithBtnLoading(btn, 'Guardando clasificación de registros...', 'Guardando...', async () => {
+        const res = await FirebaseSyncService.classifyUnassignedRecords(assignments);
+        notification.success('Registros clasificados', `Se asignó organización a ${res.updated} registros locales.`);
+        await this._renderSyncTab(outlet, rootContainer);
+      });
     });
 
-    outlet.querySelector('#btn-sync-execute')?.addEventListener('click', async () => {
+    outlet.querySelector('#btn-sync-execute')?.addEventListener('click', async (e) => {
+      const execBtn = e.currentTarget;
       const progressBox = outlet.querySelector('#sync-progress-box');
       const progressBar = outlet.querySelector('#sync-progress-bar');
       const progressPct = outlet.querySelector('#sync-progress-pct');
       const progressText = outlet.querySelector('#sync-progress-text');
       const resultDetails = outlet.querySelector('#sync-result-details');
-      const execBtn = outlet.querySelector('#btn-sync-execute');
 
       if (progressBox) progressBox.style.display = 'block';
-      if (execBtn) execBtn.disabled = true;
 
-      try {
-        const result = await FirebaseSyncService.synchronizeWithFirestore({
-          targetOrganizationId: this.selectedSyncTargetOrg,
-          onProgress: (done, total) => {
-            const pct = total > 0 ? Math.round((done / total) * 100) : 100;
-            if (progressBar) progressBar.style.width = `${pct}%`;
-            if (progressPct) progressPct.textContent = `${pct}%`;
-            if (progressText) progressText.textContent = `Transfiriendo registros a Firestore (${done} de ${total})...`;
+      await this._runWithBtnLoading(execBtn, 'Sincronizando registros locales con Firebase Firestore...', 'Sincronizando con Firestore...', async () => {
+        try {
+          const result = await FirebaseSyncService.synchronizeWithFirestore({
+            targetOrganizationId: this.selectedSyncTargetOrg,
+            onProgress: (done, total) => {
+              const pct = total > 0 ? Math.round((done / total) * 100) : 100;
+              if (progressBar) progressBar.style.width = `${pct}%`;
+              if (progressPct) progressPct.textContent = `${pct}%`;
+              if (progressText) progressText.textContent = `Transfiriendo registros a Firestore (${done} de ${total})...`;
+            }
+          });
+
+          if (progressBar) progressBar.style.width = '100%';
+          if (progressPct) progressPct.textContent = '100%';
+          if (progressText) {
+            progressText.textContent = `Sincronización finalizada (${result.status.toUpperCase()})`;
           }
-        });
+          if (resultDetails) {
+            resultDetails.innerHTML = `
+              <div><strong>Transferidos con éxito:</strong> ${result.succeededCount} de ${result.attemptedCount} registros.</div>
+              <div><strong>Omitidos sin organización:</strong> ${result.skippedUnassignedCount} | <strong>Duplicados evitados:</strong> ${result.skippedDuplicatesCount}</div>
+              ${result.errors.length > 0 ? `<div class="text-danger"><strong>Errores:</strong> ${escapeHtml(result.errors.join('; '))}</div>` : ''}
+            `;
+          }
 
-        if (progressBar) progressBar.style.width = '100%';
-        if (progressPct) progressPct.textContent = '100%';
-        if (progressText) {
-          progressText.textContent = `Sincronización finalizada (${result.status.toUpperCase()})`;
+          if (result.succeededCount > 0) {
+            notification.success(
+              'Sincronización con Firestore Completada',
+              `Se transfirieron ${result.succeededCount} registros conservando la copia local en IndexedDB.`
+            );
+          } else if (result.errors.length > 0) {
+            notification.error('Error en sincronización', result.errors[0]);
+          } else {
+            notification.info('Sincronización revisada', 'No había registros pendientes o transferibles para el filtro seleccionado.');
+          }
+        } catch (err) {
+          notification.error('Error al sincronizar', err.message);
         }
-        if (resultDetails) {
-          resultDetails.innerHTML = `
-            <div><strong>Transferidos con éxito:</strong> ${result.succeededCount} de ${result.attemptedCount} registros.</div>
-            <div><strong>Omitidos sin organización:</strong> ${result.skippedUnassignedCount} | <strong>Duplicados evitados:</strong> ${result.skippedDuplicatesCount}</div>
-            ${result.errors.length > 0 ? `<div class="text-danger"><strong>Errores:</strong> ${escapeHtml(result.errors.join('; '))}</div>` : ''}
-          `;
-        }
-
-        if (result.succeededCount > 0) {
-          notification.success(
-            'Sincronización con Firestore Completada',
-            `Se transfirieron ${result.succeededCount} registros conservando la copia local en IndexedDB.`
-          );
-        } else if (result.errors.length > 0) {
-          notification.error('Error en sincronización', result.errors[0]);
-        } else {
-          notification.info('Sincronización revisada', 'No había registros pendientes o transferibles para el filtro seleccionado.');
-        }
-      } catch (err) {
-        notification.error('Error al sincronizar', err.message);
-      } finally {
-        if (execBtn) execBtn.disabled = false;
-      }
+      });
     });
   }
 
@@ -477,8 +519,8 @@ export class SettingsView {
               const m = analysis.byModule[mod.storeName] || { total: 0, assigned: 0, unassigned: 0, duplicates: 0, synced: 0 };
               return `
                 <tr>
-                  <td><strong>${escapeHtml(mod.shortLabel)}</strong></td>
-                  <td><code>${escapeHtml(mod.firestoreCollection)}</code></td>
+                  <td style="white-space: nowrap; word-break: keep-all; overflow-wrap: normal;"><strong>${escapeHtml(mod.shortLabel)}</strong></td>
+                  <td style="white-space: nowrap; word-break: keep-all; overflow-wrap: normal;"><code style="white-space: nowrap; word-break: normal; overflow-wrap: normal;">${escapeHtml(mod.firestoreCollection)}</code></td>
                   <td><strong>${m.total}</strong></td>
                   <td><span class="badge badge-success">${m.assigned}</span></td>
                   <td><span class="badge ${m.unassigned > 0 ? 'badge-warning' : 'badge-info'}">${m.unassigned}</span></td>
@@ -522,8 +564,11 @@ export class SettingsView {
               <tr><td colspan="6" style="text-align: center; padding: 20px;" class="text-muted">No hay registros locales para previsualizar.</td></tr>
             ` : preview.items.slice(0, 100).map(item => `
               <tr>
-                <td><code>${escapeHtml(String(item.id))}</code></td>
-                <td>${escapeHtml(item.moduleLabel)} (<code>${escapeHtml(item.firestoreCollection)}</code>)</td>
+                <td style="white-space: nowrap;"><code style="white-space: nowrap;">${escapeHtml(String(item.id))}</code></td>
+                <td style="white-space: nowrap; word-break: keep-all; overflow-wrap: normal;">
+                  <strong>${escapeHtml(item.moduleLabel)}</strong>
+                  <div style="margin-top: 2px;"><code style="white-space: nowrap;">${escapeHtml(item.firestoreCollection)}</code></div>
+                </td>
                 <td><strong>${escapeHtml(String(item.nameOrSummary))}</strong></td>
                 <td>${escapeHtml(item.organizationName)}</td>
                 <td>${escapeHtml(item.coordinates)}</td>
@@ -665,19 +710,22 @@ export class SettingsView {
 
     outlet.querySelector('#form-my-profile')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      try {
-        await sessionService.updateMyProfile({
-          firstName: outlet.querySelector('#prof-first')?.value || '',
-          lastName: outlet.querySelector('#prof-last')?.value || '',
-          position: outlet.querySelector('#prof-pos')?.value || '',
-          email: outlet.querySelector('#prof-email')?.value || '',
-          phone: outlet.querySelector('#prof-phone')?.value || '',
-          photoDataUrl: pendingPhotoDataUrl
-        });
-        notification.success('Perfil actualizado', 'Sus datos personales fueron guardados en Firestore.');
-      } catch (err) {
-        notification.error('Error al actualizar perfil', err.message);
-      }
+      const saveBtn = outlet.querySelector('#btn-save-my-profile');
+      await this._runWithBtnLoading(saveBtn, 'Guardando cambios de perfil en Firestore...', 'Guardando cambios...', async () => {
+        try {
+          await sessionService.updateMyProfile({
+            firstName: outlet.querySelector('#prof-first')?.value || '',
+            lastName: outlet.querySelector('#prof-last')?.value || '',
+            position: outlet.querySelector('#prof-pos')?.value || '',
+            email: outlet.querySelector('#prof-email')?.value || '',
+            phone: outlet.querySelector('#prof-phone')?.value || '',
+            photoDataUrl: pendingPhotoDataUrl
+          });
+          notification.success('Perfil actualizado', 'Sus datos personales fueron guardados en Firestore.');
+        } catch (err) {
+          notification.error('Error al actualizar perfil', err.message);
+        }
+      });
     });
   }
 
@@ -687,24 +735,38 @@ export class SettingsView {
   async _renderOrganizationTab(outlet, rootContainer) {
     const orgs = await sessionService.getOrganizations(sessionService.isSuperAdmin());
     const currentOrg = sessionService.getCurrentOrganization() || orgs[0] || {};
-    const targetOrg = orgs.find(o => o.id === currentOrg.id) || orgs[0] || {};
+    const isCreatingNew = Boolean(this._creatingNewOrgInTab && sessionService.isSuperAdmin());
+    const targetOrg = isCreatingNew
+      ? { id: '', name: '', shortName: '', organizationType: 'Comité Comunitario de Agua', department: 'Bolívar', municipality: '', privacySettings: { publishedInDirectory: true, consentGranted: false } }
+      : (orgs.find(o => o.id === currentOrg.id) || orgs[0] || {});
     const priv = targetOrg.privacySettings || {};
 
     outlet.innerHTML = `
       <div class="card">
         <div class="card-header">
           <div>
-            <h3 class="card-title">Información Institucional de Mi Organización</h3>
+            <h3 class="card-title">${isCreatingNew ? 'Crear Nueva Organización Institucional' : 'Información Institucional de Mi Organización'}</h3>
             <p class="card-subtitle">Administre los datos oficiales y la visibilidad en el Directorio Público de Organizaciones</p>
           </div>
           ${sessionService.isSuperAdmin() ? `
-            <select id="org-tab-selector" class="form-control" style="max-width: 280px;">
-              ${orgs.map(o => `<option value="${escapeHtml(o.id)}" ${o.id === targetOrg.id ? 'selected' : ''}>${escapeHtml(o.name)}</option>`).join('')}
-            </select>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              ${!isCreatingNew ? `
+                <select id="org-tab-selector" class="form-control" style="max-width: 260px;">
+                  ${orgs.map(o => `<option value="${escapeHtml(o.id)}" ${o.id === targetOrg.id ? 'selected' : ''}>${escapeHtml(o.name)}</option>`).join('')}
+                </select>
+                <button type="button" class="btn btn-outline btn-sm" id="btn-org-new-mode">
+                  <span>+ Nueva Organización</span>
+                </button>
+              ` : `
+                <button type="button" class="btn btn-outline btn-sm" id="btn-org-cancel-new">
+                  <span>Volver a Organizaciones Existentes</span>
+                </button>
+              `}
+            </div>
           ` : ''}
         </div>
         <div class="card-body">
-          <form id="form-my-organization">
+          <form id="form-my-organization" novalidate>
             <div class="form-grid-2">
               <div class="form-group">
                 <label class="form-label">Nombre completo de la organización *</label>
@@ -772,7 +834,12 @@ export class SettingsView {
               </div>
             </div>
 
-            <div class="form-group mt-2 mb-4">
+            <div class="form-group mt-2 mb-3">
+              <label class="form-label">¿A qué se dedica la organización? (Productos o servicios que comercializa o brinda)</label>
+              <textarea id="org-products" class="form-control" rows="2" placeholder="Ej. Comercialización de ñame espino, miel de abejas, yuca, artesanías, servicio de acueducto comunitario o asistencia técnica agropecuaria...">${escapeHtml(targetOrg.productsOrServices || '')}</textarea>
+            </div>
+
+            <div class="form-group mb-4">
               <label class="form-label">Descripción institucional</label>
               <textarea id="org-desc" class="form-control" rows="2">${escapeHtml(targetOrg.description || '')}</textarea>
             </div>
@@ -792,43 +859,46 @@ export class SettingsView {
                   <span>Mostrar organización en el Directorio Público</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-contact-name" ${priv.showContactName ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-contact-name" ${priv.showContactName !== false ? 'checked' : ''} />
                   <span>Publicar nombre del representante</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-email" ${priv.showEmail ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-email" ${(priv.showEmail || Boolean(targetOrg.institutionalEmail)) ? 'checked' : ''} />
                   <span>Publicar correo institucional</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-phone" ${priv.showPhone ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-phone" ${(priv.showPhone || Boolean(targetOrg.phone)) ? 'checked' : ''} />
                   <span>Publicar teléfono de contacto</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-wa" ${priv.showWhatsapp ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-wa" ${(priv.showWhatsapp || Boolean(targetOrg.whatsapp)) ? 'checked' : ''} />
                   <span>Publicar número de WhatsApp</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-web" ${priv.showWebsite ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-web" ${(priv.showWebsite || Boolean(targetOrg.website)) ? 'checked' : ''} />
                   <span>Publicar página web</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-social" ${priv.showSocialLinks ? 'checked' : ''} />
+                  <input type="checkbox" id="priv-social" ${(priv.showSocialLinks || Boolean(targetOrg.socialLinks)) ? 'checked' : ''} />
                   <span>Publicar redes sociales</span>
                 </label>
               </div>
 
-              <div style="padding-top: 10px; border-top: 1px solid var(--color-neutral-200); font-size: var(--font-size-xs);">
+              <div id="priv-consent-box" style="padding: 12px; border-top: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); font-size: var(--font-size-xs); transition: background-color 0.2s ease, border-color 0.2s ease;">
                 <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;">
-                  <input type="checkbox" id="priv-consent" ${priv.consentGranted ? 'checked' : ''} style="margin-top: 3px;" />
+                  <input type="checkbox" id="priv-consent" ${priv.consentGranted ? 'checked' : ''} required style="margin-top: 3px;" />
                   <span>
-                    <strong>Consentimiento Informado (Ley 1581 de 2012 — Colombia):</strong> Autorizo de manera libre, previa, expresa e informada la publicación de los datos de contacto marcados arriba en el Directorio Público de Organizaciones de HIDROTERRA con fines de articulación comunitaria y gestión hídrica territorial.
+                    <strong>Consentimiento Informado (Ley 1581 de 2012 — Colombia) <span style="color: var(--color-danger, #dc2626);">* (Obligatorio)</span>:</strong> Autorizo de manera libre, previa, expresa e informada el tratamiento institucional y la publicación de los datos de contacto marcados arriba en el Directorio Público de Organizaciones de HIDROTERRA con fines de articulación comunitaria y gestión hídrica territorial.
                   </span>
                 </label>
+                <div id="priv-consent-error" style="display: none; margin-top: 8px; padding: 8px 10px; border-radius: var(--radius-sm); background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-weight: 600;">
+                  Debe marcar la casilla de Consentimiento Informado (Ley 1581 de 2012) antes de poder guardar la información de la organización.
+                </div>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">
-              <span>Guardar Información Institucional y Privacidad</span>
+            <button type="submit" class="btn btn-primary" id="btn-save-organization">
+              <span>${isCreatingNew ? 'Crear Organización y Guardar en Firestore' : 'Guardar Información Institucional y Privacidad'}</span>
             </button>
           </form>
         </div>
@@ -847,50 +917,132 @@ export class SettingsView {
     });
 
     outlet.querySelector('#org-tab-selector')?.addEventListener('change', async (e) => {
+      this._creatingNewOrgInTab = false;
       sessionService.setSuperadminOrganizationFilter(e.target.value);
       await this._renderOrganizationTab(outlet, rootContainer);
     });
 
+    outlet.querySelector('#btn-org-new-mode')?.addEventListener('click', async () => {
+      this._creatingNewOrgInTab = true;
+      await this._renderOrganizationTab(outlet, rootContainer);
+    });
+
+    outlet.querySelector('#btn-org-cancel-new')?.addEventListener('click', async () => {
+      this._creatingNewOrgInTab = false;
+      await this._renderOrganizationTab(outlet, rootContainer);
+    });
+
+    const consentCheckbox = outlet.querySelector('#priv-consent');
+    const consentErrorEl = outlet.querySelector('#priv-consent-error');
+    const consentBoxEl = outlet.querySelector('#priv-consent-box');
+
+    // Al ingresar un dato de contacto (correo, teléfono, WhatsApp, página web o redes), activar automáticamente su casilla de publicación
+    const autoCheckMap = [
+      ['#org-rep', '#priv-contact-name'],
+      ['#org-email', '#priv-email'],
+      ['#org-phone', '#priv-phone'],
+      ['#org-wa', '#priv-wa'],
+      ['#org-web', '#priv-web'],
+      ['#org-social', '#priv-social']
+    ];
+    autoCheckMap.forEach(([inputSel, chkSel]) => {
+      const inp = outlet.querySelector(inputSel);
+      const chk = outlet.querySelector(chkSel);
+      inp?.addEventListener('input', () => {
+        if (inp.value.trim() && chk) {
+          chk.checked = true;
+        }
+      });
+    });
+
+    consentCheckbox?.addEventListener('change', () => {
+      if (consentCheckbox.checked) {
+        if (consentErrorEl) consentErrorEl.style.display = 'none';
+        if (consentBoxEl) {
+          consentBoxEl.style.backgroundColor = 'transparent';
+          consentBoxEl.style.border = 'none';
+          consentBoxEl.style.borderTop = '1px solid var(--color-neutral-200)';
+        }
+      }
+    });
+
     outlet.querySelector('#form-my-organization')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      try {
-        const consentChecked = Boolean(outlet.querySelector('#priv-consent')?.checked);
-        await sessionService.saveOrganization({
-          ...targetOrg,
-          name: outlet.querySelector('#org-name')?.value || '',
-          shortName: outlet.querySelector('#org-short')?.value || '',
-          nit: outlet.querySelector('#org-nit')?.value || '',
-          organizationType: outlet.querySelector('#org-type')?.value || '',
-          department: outlet.querySelector('#org-dept')?.value || '',
-          municipality: outlet.querySelector('#org-muni')?.value || '',
-          address: outlet.querySelector('#org-addr')?.value || '',
-          representativeName: outlet.querySelector('#org-rep')?.value || '',
-          representativeRole: outlet.querySelector('#org-reprole')?.value || '',
-          institutionalEmail: outlet.querySelector('#org-email')?.value || '',
-          phone: outlet.querySelector('#org-phone')?.value || '',
-          whatsapp: outlet.querySelector('#org-wa')?.value || '',
-          website: outlet.querySelector('#org-web')?.value || '',
-          socialLinks: outlet.querySelector('#org-social')?.value || '',
-          workAreas: outlet.querySelector('#org-areas')?.value || '',
-          description: outlet.querySelector('#org-desc')?.value || '',
-          logoDataUrl: pendingLogoDataUrl,
-          privacySettings: {
-            publishedInDirectory: Boolean(outlet.querySelector('#priv-published')?.checked),
-            consentGranted: consentChecked,
-            consentDate: consentChecked ? new Date().toISOString() : null,
-            showContactName: Boolean(outlet.querySelector('#priv-contact-name')?.checked),
-            showEmail: Boolean(outlet.querySelector('#priv-email')?.checked),
-            showPhone: Boolean(outlet.querySelector('#priv-phone')?.checked),
-            showWhatsapp: Boolean(outlet.querySelector('#priv-wa')?.checked),
-            showWebsite: Boolean(outlet.querySelector('#priv-web')?.checked),
-            showSocialLinks: Boolean(outlet.querySelector('#priv-social')?.checked)
-          }
-        }, false);
-
-        notification.success('Organización actualizada', 'Los datos institucionales y el Directorio Público se actualizaron en Firestore.');
-      } catch (err) {
-        notification.error('Error al guardar organización', err.message);
+      const orgNameVal = (outlet.querySelector('#org-name')?.value || '').trim();
+      if (!orgNameVal) {
+        notification.warning('Nombre obligatorio', 'Ingrese el nombre completo de la organización.');
+        outlet.querySelector('#org-name')?.focus();
+        return;
       }
+
+      const consentChecked = Boolean(consentCheckbox?.checked);
+      if (!consentChecked) {
+        if (consentErrorEl) consentErrorEl.style.display = 'block';
+        if (consentBoxEl) {
+          consentBoxEl.style.backgroundColor = 'rgba(254, 242, 242, 0.7)';
+          consentBoxEl.style.border = '1px solid #ef4444';
+        }
+        consentCheckbox?.focus();
+        notification.warning(
+          'Consentimiento Informado Obligatorio',
+          'Debe marcar la casilla de Consentimiento Informado (Ley 1581 de 2012) antes de guardar la información de la organización.'
+        );
+        return;
+      }
+
+      const saveBtn = outlet.querySelector('#btn-save-organization');
+      await this._runWithBtnLoading(
+        saveBtn,
+        'Guardando información institucional en Firebase Firestore...',
+        'Guardando organización...',
+        async () => {
+          try {
+            const savedOrg = await sessionService.saveOrganization({
+              ...targetOrg,
+              name: orgNameVal,
+              shortName: outlet.querySelector('#org-short')?.value || '',
+              nit: outlet.querySelector('#org-nit')?.value || '',
+              organizationType: outlet.querySelector('#org-type')?.value || '',
+              department: outlet.querySelector('#org-dept')?.value || '',
+              municipality: outlet.querySelector('#org-muni')?.value || '',
+              address: outlet.querySelector('#org-addr')?.value || '',
+              representativeName: outlet.querySelector('#org-rep')?.value || '',
+              representativeRole: outlet.querySelector('#org-reprole')?.value || '',
+              institutionalEmail: outlet.querySelector('#org-email')?.value || '',
+              phone: outlet.querySelector('#org-phone')?.value || '',
+              whatsapp: outlet.querySelector('#org-wa')?.value || '',
+              website: outlet.querySelector('#org-web')?.value || '',
+              socialLinks: outlet.querySelector('#org-social')?.value || '',
+              workAreas: outlet.querySelector('#org-areas')?.value || '',
+              productsOrServices: outlet.querySelector('#org-products')?.value || '',
+              description: outlet.querySelector('#org-desc')?.value || '',
+              logoDataUrl: pendingLogoDataUrl,
+              privacySettings: {
+                publishedInDirectory: Boolean(outlet.querySelector('#priv-published')?.checked),
+                consentGranted: true,
+                consentDate: new Date().toISOString(),
+                showContactName: Boolean(outlet.querySelector('#priv-contact-name')?.checked),
+                showEmail: Boolean(outlet.querySelector('#priv-email')?.checked),
+                showPhone: Boolean(outlet.querySelector('#priv-phone')?.checked),
+                showWhatsapp: Boolean(outlet.querySelector('#priv-wa')?.checked),
+                showWebsite: Boolean(outlet.querySelector('#priv-web')?.checked),
+                showSocialLinks: Boolean(outlet.querySelector('#priv-social')?.checked)
+              }
+            }, isCreatingNew);
+
+            if (isCreatingNew) {
+              this._creatingNewOrgInTab = false;
+              sessionService.setSuperadminOrganizationFilter(savedOrg.id);
+              notification.success('Organización creada', `La organización "${savedOrg.name}" fue registrada en Firestore.`);
+              await this._renderOrganizationTab(outlet, rootContainer);
+            } else {
+              notification.success('Organización actualizada', 'Los datos institucionales y el Directorio Público se actualizaron en Firestore.');
+            }
+          } catch (err) {
+            notification.error('Error al guardar organización', err.message);
+          }
+        }
+      );
     });
   }
 
@@ -981,6 +1133,108 @@ export class SettingsView {
     });
   }
 
+  /**
+   * Formatea el nombre del cargo en líneas de máximo 20 caracteres sin saltos prematuros
+   * para garantizar una lectura limpia y uniforme en la tabla de usuarios.
+   */
+  _formatUserPosition(rawPosition) {
+    const text = String(rawPosition || '').trim();
+    if (!text) return '—';
+
+    const maxLen = 20;
+    if (text.length <= maxLen) {
+      return `<span style="display: inline-block; white-space: nowrap;">${escapeHtml(text)}</span>`;
+    }
+
+    const words = text.split(/\s+/);
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      if (!currentLine) {
+        if (word.length <= maxLen) {
+          currentLine = word;
+        } else {
+          for (let i = 0; i < word.length; i += maxLen) {
+            const chunk = word.slice(i, i + maxLen);
+            if (chunk.length === maxLen && i + maxLen < word.length) {
+              lines.push(chunk);
+            } else {
+              currentLine = chunk;
+            }
+          }
+        }
+      } else if (currentLine.length + 1 + word.length <= maxLen) {
+        currentLine += ` ${word}`;
+      } else {
+        lines.push(currentLine);
+        currentLine = '';
+        if (word.length <= maxLen) {
+          currentLine = word;
+        } else {
+          for (let i = 0; i < word.length; i += maxLen) {
+            const chunk = word.slice(i, i + maxLen);
+            if (chunk.length === maxLen && i + maxLen < word.length) {
+              lines.push(chunk);
+            } else {
+              currentLine = chunk;
+            }
+          }
+        }
+      }
+    }
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return lines
+      .map(line => `<span style="display: block; white-space: nowrap;">${escapeHtml(line)}</span>`)
+      .join('');
+  }
+
+  /**
+   * Formatea el nombre del usuario mostrando los dos primeros nombres en la línea superior
+   * y los apellidos en la línea inferior para facilitar su lectura.
+   */
+  _formatUserNameTwoLines(u) {
+    const first = String(u?.firstName || '').trim();
+    const last = String(u?.lastName || '').trim();
+
+    if (first && last) {
+      return `
+        <strong style="display: block; line-height: 1.3;">
+          <span style="display: block; white-space: nowrap;">${escapeHtml(first)}</span>
+          <span style="display: block; white-space: nowrap;">${escapeHtml(last)}</span>
+        </strong>
+      `;
+    }
+
+    const full = String(u?.name || first || last || '').trim();
+    if (!full) return '<strong>—</strong>';
+
+    const words = full.split(/\s+/).filter(Boolean);
+    let topLine = '';
+    let bottomLine = '';
+
+    if (words.length >= 3) {
+      topLine = words.slice(0, 2).join(' ');
+      bottomLine = words.slice(2).join(' ');
+    } else if (words.length === 2) {
+      topLine = words[0];
+      bottomLine = words[1];
+    } else {
+      topLine = full;
+    }
+
+    return `
+      <strong style="display: block; line-height: 1.3;">
+        <span style="display: block; white-space: nowrap;">${escapeHtml(topLine)}</span>
+        ${bottomLine ? `<span style="display: block; white-space: nowrap;">${escapeHtml(bottomLine)}</span>` : ''}
+      </strong>
+    `;
+  }
+
   // =========================================================================
   // 5. PESTAÑA: GESTIÓN DE USUARIOS (Sección 11)
   // =========================================================================
@@ -1030,9 +1284,13 @@ export class SettingsView {
                 <tr><td colspan="7" style="text-align: center; padding: 24px;" class="text-muted">No hay usuarios registrados para este filtro.</td></tr>
               ` : users.map(u => `
                 <tr>
-                  <td><strong>${escapeHtml(u.name || `${u.firstName || ''} ${u.lastName || ''}`)}</strong></td>
-                  <td>${u.email ? escapeHtml(u.email) : '<em class="text-muted">Pendiente</em>'}</td>
-                  <td>${escapeHtml(u.position || '—')}</td>
+                  <td style="white-space: nowrap; line-height: 1.35;">${this._formatUserNameTwoLines(u)}</td>
+                  <td>
+                    ${u.email
+                      ? `<a href="mailto:${escapeHtml(u.email)}?subject=${encodeURIComponent('Contacto Institucional HIDROTERRA')}" class="btn btn-outline btn-sm" style="text-decoration: none; white-space: nowrap;" title="${escapeHtml(u.email)}"><span>Enviar correo</span></a>`
+                      : '<em class="text-muted">—</em>'}
+                  </td>
+                  <td style="white-space: nowrap; line-height: 1.35;">${this._formatUserPosition(u.position)}</td>
                   <td>${escapeHtml(u.organizationName || u.organizationId || '—')}</td>
                   <td><span class="badge badge-info">${escapeHtml(USER_ROLE_LABELS[u.role] || u.role)}</span></td>
                   <td>
@@ -1277,11 +1535,6 @@ export class SettingsView {
               <button type="button" class="btn btn-outline" id="btn-clear-database-all">
                 <span>Vaciar Solo Registros Locales (IndexedDB)</span>
               </button>
-              ${(sessionService.isSuperAdmin() || sessionService.isOrgAdmin()) ? `
-                <button type="button" class="btn btn-danger" id="btn-local-clear-firestore">
-                  <span>Vaciar Base de Datos en Firestore (Fin de Pruebas)</span>
-                </button>
-              ` : ''}
             </div>
           </div>
         </div>
@@ -1400,10 +1653,6 @@ export class SettingsView {
       events.emit('data:reloaded');
       notification.warning('Base de datos local vaciada', 'Los registros locales de IndexedDB fueron eliminados.');
       await this._renderLocalAndAppearanceTab(outlet, rootContainer);
-    });
-
-    outlet.querySelector('#btn-local-clear-firestore')?.addEventListener('click', () => {
-      this._openClearFirestoreModal(outlet, rootContainer);
     });
 
     outlet.querySelector('#btn-card-clear-firestore')?.addEventListener('click', () => {

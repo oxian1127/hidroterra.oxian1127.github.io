@@ -111,10 +111,24 @@ export class WaterSourcesView {
     }
   }
 
+  _formatCodeMaxChars(rawCode, maxChars = 15) {
+    const clean = String(rawCode || '').trim();
+    if (!clean) return '—';
+    const lines = [];
+    for (let i = 0; i < clean.length; i += maxChars) {
+      lines.push(escapeHtml(clean.slice(i, i + maxChars)));
+    }
+    return lines.join('<br/>');
+  }
+
   _setupTable(container) {
     this.dataTable = new DataTable({
       columns: [
-        { key: 'code', label: 'Código', render: (item) => `<code data-allow-copy="true" class="allow-copy" title="Código habilitado para copia">${escapeHtml(item.code)}</code>` },
+        {
+          key: 'code',
+          label: 'Código',
+          render: (item) => `<code data-allow-copy="true" data-copy-value="${escapeHtml(item.code)}" class="allow-copy source-code-badge" title="Código habilitado para copia: ${escapeHtml(item.code)}">${this._formatCodeMaxChars(item.code, 15)}</code>`
+        },
         { key: 'name', label: 'Nombre de la Fuente' },
         { key: 'typeLabel', label: 'Tipo' },
         { key: 'siteName', label: 'Comunidad / Sitio' },
@@ -216,6 +230,9 @@ export class WaterSourcesView {
   async openFormModal(id = null) {
     const isEdit = Boolean(id);
     const current = isEdit ? await WaterSourcesService.getById(id) : null;
+    const assignedCode = isEdit && current && current.code
+      ? current.code
+      : await WaterSourcesService.generateUniqueCode();
 
     const siteOptions = [
       { value: '', label: '— Seleccionar comunidad (opcional) —' },
@@ -231,11 +248,13 @@ export class WaterSourcesView {
         <div class="form-grid-2">
           ${renderTextField({
             id: 'ws-code',
-            label: 'Código de Identificación',
-            value: current ? current.code : '',
-            placeholder: 'Ej: FNT-CARMEN-01',
+            label: 'Código de Identificación (Automático)',
+            value: assignedCode,
+            placeholder: 'FNT-XXXX-XX',
             required: true,
-            help: 'Identificador único y legible'
+            readonly: true,
+            disabled: true,
+            help: 'Asignado automáticamente por el sistema para evitar duplicados (no editable)'
           })}
 
           ${renderTextField({
@@ -362,7 +381,7 @@ export class WaterSourcesView {
 
           try {
             const formData = {
-              code: dialog.querySelector('#ws-code').value,
+              code: assignedCode,
               name: dialog.querySelector('#ws-name').value,
               type: dialog.querySelector('#ws-type').value,
               siteId: dialog.querySelector('#ws-site').value || null,

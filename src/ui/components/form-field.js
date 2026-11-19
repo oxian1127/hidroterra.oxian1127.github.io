@@ -7,13 +7,16 @@ import { GeolocationService } from '../../infrastructure/geo/geolocation.js';
 import { isWithinMontesDeMaria, formatCoordinates } from '../../domain/rules/coordinates.rules.js';
 import { notification } from './notification.js';
 
-export function renderTextField({ id, label, value = '', placeholder = '', required = false, help = '', type = 'text', min = null, max = null, step = null }) {
+export function renderTextField({ id, label, value = '', placeholder = '', required = false, readonly = false, disabled = false, help = '', type = 'text', min = null, max = null, step = null }) {
   return `
     <div class="form-group">
       <label class="form-label ${required ? 'required' : ''}" for="${id}">${escapeHtml(label)}</label>
       <input type="${type}" id="${id}" name="${id}" class="form-control" 
              value="${escapeHtml(value)}" placeholder="${escapeHtml(placeholder)}"
              ${required ? 'required' : ''}
+             ${readonly ? 'readonly' : ''}
+             ${disabled ? 'disabled' : ''}
+             ${readonly || disabled ? 'style="background: var(--color-gray-100); color: var(--color-gray-600); cursor: not-allowed; font-family: var(--font-family-mono, monospace); font-weight: 600;"' : ''}
              ${min !== null ? `min="${min}"` : ''}
              ${max !== null ? `max="${max}"` : ''}
              ${step !== null ? `step="${step}"` : ''} />

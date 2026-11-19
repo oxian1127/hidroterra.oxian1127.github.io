@@ -30,24 +30,33 @@ export class LoginView {
   }
 
   async render(container) {
-    container.innerHTML = `
-      <div style="min-height: 82vh; display: flex; align-items: center; justify-content: center; padding: var(--spacing-4);">
-        <div class="card" style="max-width: 480px; width: 100%; padding: var(--spacing-6); text-align: center;">
-          <p class="text-muted" style="margin: 0;">Verificando conexión con Firebase Firestore y estado de cuentas...</p>
-        </div>
-      </div>
-    `;
-
+    let quickSetupKnown = false;
     try {
-      this.setupComplete = await sessionService.isInitialSetupCompleted();
-      if (!this.setupComplete) {
-        this.mode = 'setup_wizard';
-      }
+      quickSetupKnown = localStorage.getItem('hidroterra_setup_completed_v1') === 'true';
     } catch {
-      this.setupComplete = false;
+      quickSetupKnown = false;
     }
 
+    if (quickSetupKnown) {
+      this.setupComplete = true;
+      this._renderCurrentMode(container);
+      return;
+    }
+
+    // Mostrar el formulario de inicio de sesión inmediatamente y verificar estado del asistente en segundo plano
+    this.setupComplete = true;
     this._renderCurrentMode(container);
+
+    try {
+      const completed = await sessionService.isInitialSetupCompleted();
+      if (!completed && this.mode === 'login') {
+        this.setupComplete = false;
+        this.mode = 'setup_wizard';
+        this._renderCurrentMode(container);
+      }
+    } catch {
+      // Si está sin conexión o en modo local, mantener la pantalla de login disponible
+    }
   }
 
   _renderCurrentMode(container) {
@@ -84,26 +93,33 @@ export class LoginView {
             <form id="form-login" novalidate>
               <div class="form-group mb-3">
                 <label class="form-label" for="login-email">Correo electrónico institucional o de usuario</label>
-                <input type="email" id="login-email" class="form-control" placeholder="usuario@organizacion.org" value="${escapeHtml(this.pendingEmail)}" required autocomplete="username" />
+                <input type="email" id="login-email" class="form-control" style="width: 100%;" placeholder="usuario@organizacion.org" value="${escapeHtml(this.pendingEmail)}" required autocomplete="username" />
               </div>
 
               <div class="form-group mb-3">
                 <label class="form-label" for="login-password">Contraseña</label>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <input type="password" id="login-password" class="form-control" placeholder="Ingrese su contraseña" required autocomplete="current-password" style="flex: 1;" />
-                  <button type="button" class="btn btn-outline btn-sm" id="btn-toggle-pwd" style="white-space: nowrap;">
-                    <span>Mostrar</span>
+                <div style="position: relative; width: 100%; display: flex; align-items: center;">
+                  <input type="password" id="login-password" class="form-control" style="width: 100%; padding-right: 40px;" placeholder="Ingrese su contraseña" required autocomplete="current-password" />
+                  <button type="button"
+                          id="btn-toggle-pwd"
+                          aria-label="Mostrar u ocultar contraseña"
+                          title="Mostrar contraseña"
+                          style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--color-neutral-500); display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;">
+                    <svg id="pwd-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                   </button>
                 </div>
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: var(--spacing-4); font-size: var(--font-size-xs);">
-                <button type="button" class="btn btn-outline btn-sm" id="btn-go-first-password" style="font-size: 0.76rem; padding: 4px 8px;">
-                  <span>Establecer contraseña inicial</span>
-                </button>
-                <button type="button" class="btn btn-outline btn-sm" id="btn-go-reset-pwd" style="font-size: 0.76rem; padding: 4px 8px;">
-                  <span>Recuperar contraseña</span>
-                </button>
+                <a href="#login" id="btn-go-first-password" style="color: var(--color-green-700); font-weight: 600; text-decoration: none; cursor: pointer;">
+                  Establecer contraseña inicial
+                </a>
+                <a href="#login" id="btn-go-reset-pwd" style="color: var(--color-green-700); font-weight: 600; text-decoration: none; cursor: pointer;">
+                  ¿Olvidó su contraseña? Recuperar acceso
+                </a>
               </div>
 
               <button type="submit" class="btn btn-primary w-100" id="btn-submit-login" style="width: 100%; padding: 0.7rem;">
@@ -126,7 +142,7 @@ export class LoginView {
             </div>
 
             <div style="margin-top: var(--spacing-4); padding: 10px 12px; background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); font-size: 0.73rem; color: var(--color-neutral-600); line-height: 1.45;">
-              <strong>Nota académica y demostrativa:</strong> Este sistema valida credenciales mediante derivación criptográfica local <code>PBKDF2-SHA256</code> (Web Crypto API) y consultas demostrativas a Firebase Firestore. No constituye un servicio de autenticación de producción.
+              <strong>Seguridad y Protección de Datos Institucionales:</strong> El acceso a la plataforma se encuentra protegido mediante derivación criptográfica <code>PBKDF2-SHA256</code> y sincronización centralizada con Firebase Firestore.
             </div>
           </div>
         </div>
@@ -145,17 +161,28 @@ export class LoginView {
       togglePwdBtn.addEventListener('click', () => {
         const isPwd = pwdInput.type === 'password';
         pwdInput.type = isPwd ? 'text' : 'password';
-        togglePwdBtn.innerHTML = `<span>${isPwd ? 'Ocultar' : 'Mostrar'}</span>`;
+        togglePwdBtn.title = isPwd ? 'Ocultar contraseña' : 'Mostrar contraseña';
+        togglePwdBtn.innerHTML = isPwd
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+               <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+               <line x1="1" y1="1" x2="23" y2="23"></line>
+             </svg>`
+          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+               <circle cx="12" cy="12" r="3"></circle>
+             </svg>`;
       });
     }
 
-    container.querySelector('#btn-go-first-password')?.addEventListener('click', () => {
+    container.querySelector('#btn-go-first-password')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.pendingEmail = emailInput?.value || '';
       this.mode = 'first_password';
       this._renderCurrentMode(container);
     });
 
-    container.querySelector('#btn-go-reset-pwd')?.addEventListener('click', () => {
+    container.querySelector('#btn-go-reset-pwd')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.pendingEmail = emailInput?.value || '';
       this.mode = 'reset_request';
       this._renderCurrentMode(container);
@@ -181,9 +208,13 @@ export class LoginView {
         if (submitBtn) submitBtn.disabled = true;
         if (submitText) submitText.textContent = 'Verificando credenciales en Firestore...';
 
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+          document.activeElement.blur();
+        }
         await sessionService.login(email, password);
         notification.success('Bienvenido a HIDROTERRA', 'Sesión iniciada correctamente.');
-        this.router.navigate('dashboard');
+        await this.router.navigate('dashboard');
+        return;
       } catch (err) {
         if (err.code === 'PENDING_PASSWORD_SETUP') {
           this.pendingEmail = err.userEmail || email;

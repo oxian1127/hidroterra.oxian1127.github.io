@@ -23,6 +23,35 @@ export class DirectoryView {
     };
   }
 
+  _buildTelHref(rawPhone) {
+    const clean = String(rawPhone || '').replace(/[^\d+]/g, '');
+    return clean ? `tel:${clean}` : '#';
+  }
+
+  _buildWhatsappHref(rawPhone, orgName = '') {
+    let digits = String(rawPhone || '').replace(/\D/g, '');
+    if (!digits) return '#';
+    if (digits.length === 10) {
+      digits = `57${digits}`;
+    }
+    const text = encodeURIComponent(`Hola, me comunico desde la plataforma HIDROTERRA con ${orgName || 'su organización'}.`);
+    return `https://wa.me/${digits}?text=${text}`;
+  }
+
+  _buildMailtoHref(rawEmail, orgName = '') {
+    const clean = String(rawEmail || '').trim();
+    if (!clean) return '#';
+    const subject = encodeURIComponent(`Contacto Institucional HIDROTERRA — ${orgName || ''}`);
+    return `mailto:${clean}?subject=${subject}`;
+  }
+
+  _buildWebsiteHref(rawUrl) {
+    const clean = String(rawUrl || '').trim();
+    if (!clean) return '#';
+    if (/^https?:\/\//i.test(clean)) return clean;
+    return `https://${clean}`;
+  }
+
   async render(container) {
     container.innerHTML = `
       <div style="padding: 40px; text-align: center;">
@@ -49,8 +78,9 @@ export class DirectoryView {
         const q = this.filters.search.trim().toLowerCase();
         const matchName = (item.name || '').toLowerCase().includes(q) || (item.shortName || '').toLowerCase().includes(q);
         const matchMuni = (item.municipality || '').toLowerCase().includes(q);
+        const matchProducts = (item.productsOrServices || '').toLowerCase().includes(q);
         const matchAreas = Array.isArray(item.workAreas) && item.workAreas.some(a => a.toLowerCase().includes(q));
-        if (!matchName && !matchMuni && !matchAreas) return false;
+        if (!matchName && !matchMuni && !matchProducts && !matchAreas) return false;
       }
       return true;
     });
@@ -141,6 +171,8 @@ export class DirectoryView {
       ? org.workAreas
       : ['Monitoreo Hídrico Comunitario'];
 
+    const productsOrServices = String(org.productsOrServices || '').trim();
+
     const logoHtml = org.logoDataUrl
       ? `<img src="${escapeHtml(org.logoDataUrl)}" alt="${escapeHtml(org.name)}" style="width: 52px; height: 52px; border-radius: 0.6rem; object-fit: cover; border: 1px solid var(--color-neutral-200); flex-shrink: 0;" />`
       : `<div style="width: 52px; height: 52px; border-radius: 0.6rem; background: linear-gradient(135deg, var(--color-green-700), var(--color-blue-700)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0;">
@@ -150,10 +182,9 @@ export class DirectoryView {
     return `
       <div class="card" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between;">
         <div class="card-body" style="display: flex; flex-direction: column; gap: var(--spacing-3);">
-          <div style="display: flex; align-items: flex-start; gap: var(--spacing-3);">
+          <div style="display: flex; align-items: center; gap: var(--spacing-3);">
             ${logoHtml}
             <div style="min-width: 0; flex: 1;">
-              <span class="badge badge-success" style="margin-bottom: 4px; display: inline-block;">${escapeHtml(org.organizationType || 'Organización Comunitaria')}</span>
               <h3 style="font-size: var(--font-size-base); margin: 0; color: var(--color-neutral-900); line-height: 1.3;">
                 ${escapeHtml(org.name)}
               </h3>
@@ -166,6 +197,15 @@ export class DirectoryView {
           <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-700); line-height: 1.55;">
             ${escapeHtml(org.description || 'Organización participante en la red de monitoreo hídrico territorial de Montes de María.')}
           </p>
+
+          ${productsOrServices ? `
+            <div style="padding: 8px 10px; background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); font-size: var(--font-size-xs); color: var(--color-neutral-800); line-height: 1.45;">
+              <strong style="display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--color-green-800); margin-bottom: 2px;">
+                Productos o Servicios / Dedicación:
+              </strong>
+              <span>${escapeHtml(productsOrServices)}</span>
+            </div>
+          ` : ''}
 
           <div>
             <div style="font-size: 0.72rem; font-weight: 600; color: var(--color-neutral-600); margin-bottom: 6px; text-transform: uppercase;">
@@ -248,18 +288,26 @@ export class DirectoryView {
       ? org.workAreas.join(', ')
       : 'Monitoreo Hídrico Comunitario';
 
+    const emailVal = String(org.publicEmail || org.institutionalEmail || '').trim();
+    const phoneVal = String(org.publicPhone || org.phone || '').trim();
+    const whatsappVal = String(org.publicWhatsapp || org.whatsapp || '').trim();
+    const websiteVal = String(org.publicWebsite || org.website || '').trim();
+    const socialVal = String(org.publicSocialLinks || org.socialLinks || '').trim();
+    const contactNameVal = String(org.contactName || org.representativeName || '').trim();
+    const contactRoleVal = String(org.contactRole || org.representativeRole || '').trim();
+
     modal.open({
       title: `Perfil Institucional — ${org.name}`,
       size: 'md',
       content: `
         <div style="display: flex; flex-direction: column; gap: var(--spacing-3); font-size: var(--font-size-sm);">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <span class="badge badge-success">${escapeHtml(org.organizationType || 'Organización Comunitaria')}</span>
-            <span class="badge badge-info">${escapeHtml(org.municipality || '—')}, ${escapeHtml(org.department || '—')}</span>
-          </div>
           <div>
             <strong>Nombre completo:</strong>
             <p style="margin: 2px 0 0; color: var(--color-neutral-700);">${escapeHtml(org.name)}</p>
+          </div>
+          <div>
+            <strong>Ubicación:</strong>
+            <p style="margin: 2px 0 0; color: var(--color-neutral-700);">${escapeHtml(org.municipality || '—')}, ${escapeHtml(org.department || '—')}${org.address ? ` (${escapeHtml(org.address)})` : ''}</p>
           </div>
           ${org.shortName ? `
             <div>
@@ -271,14 +319,70 @@ export class DirectoryView {
             <strong>Descripción institucional:</strong>
             <p style="margin: 2px 0 0; color: var(--color-neutral-700); line-height: 1.55;">${escapeHtml(org.description || '—')}</p>
           </div>
+          ${org.productsOrServices ? `
+            <div>
+              <strong>¿A qué se dedica? (Productos o Servicios que comercializa o brinda):</strong>
+              <p style="margin: 2px 0 0; color: var(--color-neutral-700); line-height: 1.55;">${escapeHtml(org.productsOrServices)}</p>
+            </div>
+          ` : ''}
           <div>
             <strong>Áreas de trabajo en el territorio:</strong>
             <p style="margin: 2px 0 0; color: var(--color-neutral-700);">${escapeHtml(areas)}</p>
           </div>
-          ${org.contactName ? `
+          ${contactNameVal ? `
             <div>
               <strong>Representante / Enlace público autorizado:</strong>
-              <p style="margin: 2px 0 0; color: var(--color-neutral-700);">${escapeHtml(org.contactName)} ${org.contactRole ? `(${escapeHtml(org.contactRole)})` : ''}</p>
+              <p style="margin: 2px 0 0; color: var(--color-neutral-700);">${escapeHtml(contactNameVal)} ${contactRoleVal ? `(${escapeHtml(contactRoleVal)})` : ''}</p>
+            </div>
+          ` : ''}
+          ${websiteVal ? `
+            <div>
+              <strong>Página web oficial:</strong>
+              <p style="margin: 2px 0 0;">
+                <a href="${escapeHtml(this._buildWebsiteHref(websiteVal))}" target="_blank" rel="noopener noreferrer" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline;">
+                  ${escapeHtml(websiteVal)} (Visitar sitio web)
+                </a>
+              </p>
+            </div>
+          ` : ''}
+          ${emailVal ? `
+            <div>
+              <strong>Correo institucional:</strong>
+              <p style="margin: 2px 0 0;">
+                <a href="${this._buildMailtoHref(emailVal, org.name)}" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline;">
+                  ${escapeHtml(emailVal)} (Enviar correo)
+                </a>
+              </p>
+            </div>
+          ` : ''}
+          ${phoneVal ? `
+            <div>
+              <strong>Teléfono:</strong>
+              <p style="margin: 2px 0 0;">
+                <a href="${this._buildTelHref(phoneVal)}" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;">
+                  ${escapeHtml(phoneVal)} (Llamar)
+                </a>
+              </p>
+            </div>
+          ` : ''}
+          ${whatsappVal ? `
+            <div>
+              <strong>WhatsApp:</strong>
+              <p style="margin: 2px 0 0;">
+                <a href="${this._buildWhatsappHref(whatsappVal, org.name)}" target="_blank" rel="noopener" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;">
+                  ${escapeHtml(whatsappVal)} (Enviar WhatsApp)
+                </a>
+              </p>
+            </div>
+          ` : ''}
+          ${socialVal ? `
+            <div>
+              <strong>Redes sociales:</strong>
+              <p style="margin: 2px 0 0; color: var(--color-neutral-700);">
+                ${/^https?:\/\/|^www\./i.test(socialVal)
+                  ? `<a href="${escapeHtml(this._buildWebsiteHref(socialVal))}" target="_blank" rel="noopener noreferrer" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline;">${escapeHtml(socialVal)}</a>`
+                  : escapeHtml(socialVal)}
+              </p>
             </div>
           ` : ''}
         </div>
@@ -290,8 +394,17 @@ export class DirectoryView {
   }
 
   _openContactModal(org) {
+    const emailVal = String(org.publicEmail || org.institutionalEmail || '').trim();
+    const phoneVal = String(org.publicPhone || org.phone || '').trim();
+    const whatsappVal = String(org.publicWhatsapp || org.whatsapp || '').trim();
+    const websiteVal = String(org.publicWebsite || org.website || '').trim();
+    const socialVal = String(org.publicSocialLinks || org.socialLinks || '').trim();
+    const contactNameVal = String(org.contactName || org.representativeName || '').trim();
+    const contactRoleVal = String(org.contactRole || org.representativeRole || '').trim();
+    const addressVal = String(org.address || '').trim();
+
     const hasPublicContact = Boolean(
-      org.publicEmail || org.publicPhone || org.publicWhatsapp || org.publicWebsite || org.publicSocialLinks || org.contactName
+      emailVal || phoneVal || whatsappVal || websiteVal || socialVal || contactNameVal || addressVal
     );
 
     modal.open({
@@ -300,21 +413,63 @@ export class DirectoryView {
       content: `
         <div style="display: flex; flex-direction: column; gap: var(--spacing-3); font-size: var(--font-size-sm);">
           <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-neutral-600);">
-            Canales de contacto autorizados explícitamente por <strong>${escapeHtml(org.name)}</strong> conforme a su configuración de visibilidad pública:
+            Canales de contacto institucionales de <strong>${escapeHtml(org.name)}</strong>:
           </p>
 
           ${!hasPublicContact ? `
             <div style="padding: var(--spacing-4); background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md);">
-              Esta organización aún no ha habilitado canales de contacto público directo (correo o teléfono) en su configuración de privacidad.
+              Esta organización aún no ha registrado canales de contacto público directo.
             </div>
           ` : `
             <div style="display: flex; flex-direction: column; gap: 10px; padding: var(--spacing-3); background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md);">
-              ${org.contactName ? `<div><strong>Contacto / Representante:</strong> ${escapeHtml(org.contactName)} ${org.contactRole ? `— ${escapeHtml(org.contactRole)}` : ''}</div>` : ''}
-              ${org.publicEmail ? `<div><strong>Correo institucional público:</strong> <span class="allow-copy" data-allow-copy="true">${escapeHtml(org.publicEmail)}</span></div>` : '<div><strong>Correo público:</strong> <em>No publicado por preferencia de privacidad</em></div>'}
-              ${org.publicPhone ? `<div><strong>Teléfono:</strong> <span class="allow-copy" data-allow-copy="true">${escapeHtml(org.publicPhone)}</span></div>` : ''}
-              ${org.publicWhatsapp ? `<div><strong>WhatsApp:</strong> <span class="allow-copy" data-allow-copy="true">${escapeHtml(org.publicWhatsapp)}</span></div>` : ''}
-              ${org.publicWebsite ? `<div><strong>Página web:</strong> <a href="${escapeHtml(org.publicWebsite)}" target="_blank" rel="noopener">${escapeHtml(org.publicWebsite)}</a></div>` : ''}
-              ${org.publicSocialLinks ? `<div><strong>Redes sociales:</strong> ${escapeHtml(org.publicSocialLinks)}</div>` : ''}
+              ${contactNameVal ? `<div><strong>Contacto / Representante:</strong> ${escapeHtml(contactNameVal)} ${contactRoleVal ? `— ${escapeHtml(contactRoleVal)}` : ''}</div>` : ''}
+              ${addressVal ? `<div><strong>Dirección / Ubicación:</strong> ${escapeHtml(addressVal)} (${escapeHtml(org.municipality || '')}, ${escapeHtml(org.department || '')})</div>` : ''}
+              ${emailVal ? `
+                <div>
+                  <strong>Correo institucional:</strong>
+                  <a href="${this._buildMailtoHref(emailVal, org.name)}" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline; margin-left: 4px;" title="Enviar correo con un clic">
+                    ${escapeHtml(emailVal)} (Enviar correo)
+                  </a>
+                </div>
+              ` : ''}
+              ${phoneVal ? `
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  <strong>Teléfono:</strong>
+                  <a href="${this._buildTelHref(phoneVal)}" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;">
+                    ${escapeHtml(phoneVal)} (Llamar)
+                  </a>
+                  <a href="${this._buildWhatsappHref(phoneVal, org.name)}" target="_blank" rel="noopener" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;">
+                    (Enviar WhatsApp)
+                  </a>
+                </div>
+              ` : ''}
+              ${whatsappVal ? `
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  <strong>WhatsApp:</strong>
+                  <a href="${this._buildWhatsappHref(whatsappVal, org.name)}" target="_blank" rel="noopener" style="color: var(--color-green-700); font-weight: 600; text-decoration: underline;">
+                    ${escapeHtml(whatsappVal)} (Abrir WhatsApp)
+                  </a>
+                  <a href="${this._buildTelHref(whatsappVal)}" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline;">
+                    (Llamar)
+                  </a>
+                </div>
+              ` : ''}
+              ${websiteVal ? `
+                <div>
+                  <strong>Página web:</strong>
+                  <a href="${escapeHtml(this._buildWebsiteHref(websiteVal))}" target="_blank" rel="noopener noreferrer" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline; margin-left: 4px;" title="Ingresar al sitio web de ${escapeHtml(org.name)}">
+                    ${escapeHtml(websiteVal)} (Visitar sitio web)
+                  </a>
+                </div>
+              ` : ''}
+              ${socialVal ? `
+                <div>
+                  <strong>Redes sociales:</strong>
+                  ${/^https?:\/\/|^www\./i.test(socialVal)
+                    ? `<a href="${escapeHtml(this._buildWebsiteHref(socialVal))}" target="_blank" rel="noopener noreferrer" style="color: var(--color-blue-700); font-weight: 600; text-decoration: underline; margin-left: 4px;">${escapeHtml(socialVal)}</a>`
+                    : `<span style="margin-left: 4px;">${escapeHtml(socialVal)}</span>`}
+                </div>
+              ` : ''}
             </div>
           `}
         </div>

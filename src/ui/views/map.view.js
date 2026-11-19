@@ -123,22 +123,22 @@ export class MapView {
 
         <!-- Contenedor del lienzo Leaflet -->
         <div class="map-canvas" id="territorial-main-map"></div>
+      </div>
 
-        <!-- Leyenda Cartográfica (Sección 6.8) -->
-        <div class="card" style="margin-top: var(--spacing-3);">
-          <div class="card-body" style="padding: var(--spacing-3) var(--spacing-4); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--spacing-3); font-size: 0.8rem;">
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
-              <strong>Leyenda Cartográfica:</strong>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#0077b6;margin-right:4px;"></span>Fuente Disponible / Alta</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e9c46a;margin-right:4px;"></span>Disponibilidad Moderada</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e07a5f;margin-right:4px;"></span>Disponibilidad Baja / Limitada</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#d90429;margin-right:4px;"></span>Crítica / Seca</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#1b4332;margin-right:4px;"></span>Pluviómetro</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#b08968;margin-right:4px;"></span>Comunidad</span>
-              <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2d6a4f;margin-right:4px;"></span>Parcela</span>
-            </div>
-            <div class="text-muted" id="map-filtered-count-label"></div>
+      <!-- Leyenda Cartográfica (Sección 6.8) ubicada debajo del contenedor del mapa para evitar superposiciones -->
+      <div class="card map-legend-card" style="margin-top: var(--spacing-3); margin-bottom: 0;">
+        <div class="card-body" style="padding: var(--spacing-3) var(--spacing-4); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--spacing-3); font-size: 0.8rem;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
+            <strong>Leyenda Cartográfica:</strong>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#0077b6;margin-right:4px;"></span>Fuente Disponible / Alta</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e9c46a;margin-right:4px;"></span>Disponibilidad Moderada</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#e07a5f;margin-right:4px;"></span>Disponibilidad Baja / Limitada</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#d90429;margin-right:4px;"></span>Crítica / Seca</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#1b4332;margin-right:4px;"></span>Pluviómetro</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#b08968;margin-right:4px;"></span>Comunidad</span>
+            <span><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2d6a4f;margin-right:4px;"></span>Parcela</span>
           </div>
+          <div class="text-muted" id="map-filtered-count-label"></div>
         </div>
       </div>
     `;

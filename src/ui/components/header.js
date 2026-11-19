@@ -1,15 +1,16 @@
 /**
  * Componente: Encabezado Superior (Header)
  * Concentra toda la información de sesión (Usuario, Organización, Rol), estado de conexión
- * con Firebase Firestore, centro de Notificaciones/Alertas y acciones rápidas en un menú
- * compacto desplegable ubicado en la parte superior derecha de la barra superior,
- * tanto en escritorio como en dispositivos móviles.
+ * con Firebase Firestore, centro de Notificaciones/Alertas (con opción de descartar y ver
+ * en pantalla completa) y acciones rápidas en un menú compacto desplegable ubicado en la
+ * parte superior derecha de la barra superior.
  */
 
 import { escapeHtml } from '../../core/validators.js';
 import { ThemeService } from '../../core/theme.js';
 import { events } from '../../core/events.js';
 import { sessionService, ROLE_LABELS } from '../../core/session.service.js';
+import { notificationCenter } from '../../core/notification-center.js';
 import { firebaseService } from '../../../js/firebase-service.js';
 import { notification } from './notification.js';
 
@@ -21,9 +22,6 @@ export class Header {
     this.currentBreadcrumb = 'Inicio';
     this.isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     this.firebaseConnected = Boolean(firebaseService.status === 'connected');
-    this.backupWarning = false;
-    this.backupDaysSince = null;
-    this.activeWaterAlerts = [];
     this.isQuickMenuOpen = false;
   }
 
@@ -77,29 +75,24 @@ export class Header {
   }
 
   setBackupWarning(showWarning, daysSince = null, activeAlerts = null) {
-    this.backupWarning = Boolean(showWarning);
-    this.backupDaysSince = daysSince;
-    if (Array.isArray(activeAlerts)) {
-      this.activeWaterAlerts = activeAlerts;
-    }
-    this._refreshNotificationsUI();
+    notificationCenter.setRawNotifications({
+      showBackupWarning: Boolean(showWarning),
+      daysSince,
+      activeAlerts: Array.isArray(activeAlerts) ? activeAlerts : notificationCenter.rawState.activeAlerts
+    });
   }
 
   setNotifications({ showBackupWarning = false, daysSince = null, activeAlerts = [] } = {}) {
-    this.backupWarning = Boolean(showBackupWarning);
-    this.backupDaysSince = daysSince;
-    this.activeWaterAlerts = Array.isArray(activeAlerts) ? activeAlerts : [];
-    this._refreshNotificationsUI();
+    notificationCenter.setRawNotifications({
+      showBackupWarning,
+      daysSince,
+      activeAlerts
+    });
   }
 
   _getNotificationsCount() {
     if (!sessionService.isAuthenticated()) return 0;
-    let count = 0;
-    if (this.backupWarning) count += 1;
-    if (Array.isArray(this.activeWaterAlerts)) {
-      count += this.activeWaterAlerts.length;
-    }
-    return count;
+    return notificationCenter.getAllNotifications().totalActive;
   }
 
   _renderNotificationsSection() {
@@ -113,52 +106,61 @@ export class Header {
       `;
     }
 
-    const totalNotifs = this._getNotificationsCount();
-    const backupMessage = this.backupDaysSince !== null
-      ? `Han transcurrido ${this.backupDaysSince} días desde el último respaldo. Se recomienda exportar una copia JSON o sincronizar con Firebase.`
-      : 'Hay datos registrados localmente sin respaldo reciente. Recuerde sincronizar con Firebase o exportar una copia JSON.';
-
-    const topAlerts = (this.activeWaterAlerts || []).slice(0, 3);
+    const { active, totalActive, totalDismissed } = notificationCenter.getAllNotifications();
+    const topItems = active.slice(0, 4);
 
     return `
       <div class="header-dropdown-section" id="header-dropdown-notifications">
-        <div class="header-dropdown-label" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="header-dropdown-label" style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
           <span>Notificaciones y Alertas</span>
-          <span class="badge ${totalNotifs > 0 ? 'badge-warning' : 'badge-success'}">${totalNotifs}</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            ${totalActive > 0 ? `
+              <button type="button" class="header-notif-text-btn" id="btn-dropdown-dismiss-all-notifs" title="Descartar todas las notificaciones activas">
+                <span>Descartar todas</span>
+              </button>
+            ` : ''}
+            <span class="badge ${totalActive > 0 ? 'badge-warning' : 'badge-success'}">${totalActive}</span>
+          </div>
         </div>
 
-        ${totalNotifs === 0 ? `
+        ${totalActive === 0 ? `
           <div class="header-notif-empty">
-            Sin notificaciones ni alertas pendientes en este momento.
+            Sin notificaciones activas pendientes.
           </div>
         ` : `
           <div class="header-notif-list">
-            ${this.backupWarning ? `
-              <div class="header-notif-card warning">
-                <div class="header-notif-title">Aviso de seguridad territorial</div>
-                <p class="header-notif-text">${escapeHtml(backupMessage)}</p>
-                <button type="button" class="btn btn-primary btn-sm header-notif-action" id="btn-alert-backup-now">
-                  <span>Exportar Ahora</span>
-                </button>
-              </div>
-            ` : ''}
-
-            ${topAlerts.map(alert => `
-              <div class="header-notif-card ${alert.priority === 'alta' ? 'danger' : 'warning'}">
-                <div class="header-notif-title">
-                  Alerta Hídrica (${escapeHtml((alert.priority || 'media').toUpperCase())})
+            ${topItems.map(item => `
+              <div class="header-notif-card ${item.priority === 'alta' ? 'danger' : 'warning'}">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; margin-bottom:2px;">
+                  <div class="header-notif-title">${escapeHtml(item.title)}</div>
+                  <button type="button"
+                          class="header-notif-dismiss-btn"
+                          data-dismiss-notif-id="${escapeHtml(item.id)}"
+                          title="Descartar esta notificación">
+                    <span>Descartar</span>
+                  </button>
                 </div>
-                <p class="header-notif-text">${escapeHtml(alert.description || alert.relatedEntityName || 'Alerta activa en fuente hídrica')}</p>
+                <p class="header-notif-text">${escapeHtml(item.message)}</p>
+                ${item.actionType === 'export_backup' ? `
+                  <button type="button" class="btn btn-primary btn-sm header-notif-action" id="btn-alert-backup-now">
+                    <span>Exportar Ahora</span>
+                  </button>
+                ` : ''}
               </div>
             `).join('')}
-
-            ${this.activeWaterAlerts.length > 0 ? `
-              <button type="button" class="header-dropdown-item" id="btn-dropdown-go-alerts">
-                <span>Ver Alertas Hídricas (${this.activeWaterAlerts.length})</span>
-              </button>
-            ` : ''}
           </div>
         `}
+
+        <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">
+          <button type="button" class="header-dropdown-item" id="btn-dropdown-fullscreen-notifs">
+            <span>Centro de notificaciones</span>
+          </button>
+          ${totalDismissed > 0 ? `
+            <button type="button" class="header-dropdown-item" id="btn-dropdown-view-dismissed" style="font-size:0.72rem; color:var(--color-neutral-500);">
+              <span>Apartado de Descartadas (${totalDismissed})</span>
+            </button>
+          ` : ''}
+        </div>
       </div>
     `;
   }
@@ -287,8 +289,11 @@ export class Header {
     return `
       <header class="app-header">
         <div class="header-left">
-          <button class="menu-toggle-btn" id="btn-toggle-sidebar" aria-label="Abrir menú lateral de navegación">
-            <span>Menú</span>
+          <button class="menu-toggle-btn" id="btn-toggle-sidebar" aria-label="Mostrar u ocultar menú lateral" title="Ocultar o mostrar menú lateral">
+            <svg class="menu-toggle-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
           </button>
 
           <div class="header-title-wrapper">
@@ -357,8 +362,40 @@ export class Header {
     const loginBtn = scope.querySelector('#btn-header-go-login');
     const backupBtn = scope.querySelector('#btn-header-backup');
     const alertBackupBtn = scope.querySelector('#btn-alert-backup-now');
-    const goAlertsBtn = scope.querySelector('#btn-dropdown-go-alerts');
+    const fullscreenNotifsBtn = scope.querySelector('#btn-dropdown-fullscreen-notifs');
+    const viewDismissedBtn = scope.querySelector('#btn-dropdown-view-dismissed');
+    const dismissAllNotifsBtn = scope.querySelector('#btn-dropdown-dismiss-all-notifs');
     const themeBtn = scope.querySelector('#btn-header-theme');
+
+    // Descartar notificación individual desde la ventana desplegable sin cerrar la ventana
+    scope.querySelectorAll('[data-dismiss-notif-id]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.dismissNotifId;
+        notificationCenter.dismiss(id);
+      });
+    });
+
+    if (dismissAllNotifsBtn) {
+      dismissAllNotifsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notificationCenter.dismissAllActive();
+      });
+    }
+
+    if (fullscreenNotifsBtn) {
+      fullscreenNotifsBtn.addEventListener('click', () => {
+        this._closeQuickMenu();
+        window.location.hash = '#notifications?tab=active';
+      });
+    }
+
+    if (viewDismissedBtn) {
+      viewDismissedBtn.addEventListener('click', () => {
+        this._closeQuickMenu();
+        window.location.hash = '#notifications?tab=dismissed';
+      });
+    }
 
     if (profileBtn) {
       profileBtn.addEventListener('click', () => {
@@ -385,13 +422,6 @@ export class Header {
       alertBackupBtn.addEventListener('click', () => {
         this._closeQuickMenu();
         this.onQuickBackup();
-      });
-    }
-
-    if (goAlertsBtn) {
-      goAlertsBtn.addEventListener('click', () => {
-        this._closeQuickMenu();
-        window.location.hash = '#water-alerts';
       });
     }
 
@@ -461,6 +491,10 @@ export class Header {
 
     events.on('session:changed', () => {
       this.refreshSessionUI();
+    });
+
+    events.on('notifications:updated', () => {
+      this._refreshNotificationsUI();
     });
 
     events.on('firebase:status', ({ status, connected }) => {
