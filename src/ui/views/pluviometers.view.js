@@ -87,6 +87,8 @@ export class PluviometersView {
 
     if (params.openModal) {
       this.openFormModal();
+    } else if (params.openDetails && params.highlightId) {
+      this.openDetailsModal(params.highlightId);
     }
   }
 
@@ -111,15 +113,99 @@ export class PluviometersView {
     }
   }
 
+  _formatCodeMaxChars(rawCode, maxChars = 15) {
+    const clean = String(rawCode || '').trim();
+    if (!clean) return '—';
+    const lines = [];
+    for (let i = 0; i < clean.length; i += maxChars) {
+      lines.push(escapeHtml(clean.slice(i, i + maxChars)));
+    }
+    return lines.join('<br/>');
+  }
+
+  _formatCellLines(rawText, maxLen = 24, isBold = false) {
+    const text = String(rawText || '').trim();
+    if (!text) return '—';
+
+    if (text.length <= maxLen) {
+      const span = `<span style="display: block; white-space: nowrap;">${escapeHtml(text)}</span>`;
+      return isBold ? `<strong style="display: block; line-height: 1.35;">${span}</strong>` : `<div style="line-height: 1.35;">${span}</div>`;
+    }
+
+    const words = text.split(/\s+/);
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      if (!currentLine) {
+        currentLine = word;
+      } else if (currentLine.length + 1 + word.length <= maxLen) {
+        currentLine += ` ${word}`;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    const htmlLines = lines
+      .map(line => `<span style="display: block; white-space: nowrap;">${escapeHtml(line)}</span>`)
+      .join('');
+    return isBold
+      ? `<strong style="display: block; line-height: 1.35;">${htmlLines}</strong>`
+      : `<div style="line-height: 1.35;">${htmlLines}</div>`;
+  }
+
+  _formatCoordsCell(coordsDisplay) {
+    const text = String(coordsDisplay || '').trim();
+    if (!text) return '—';
+    const parts = text.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length === 2) {
+      return `
+        <span data-allow-copy="true" class="allow-copy" style="display: inline-block; line-height: 1.35;" title="Coordenadas habilitadas para copia">
+          <span style="display: block; white-space: nowrap;">${escapeHtml(parts[0])},</span>
+          <span style="display: block; white-space: nowrap;">${escapeHtml(parts[1])}</span>
+        </span>
+      `;
+    }
+    return `<span data-allow-copy="true" class="allow-copy" style="display: inline-block; white-space: nowrap;" title="Coordenadas habilitadas para copia">${escapeHtml(text)}</span>`;
+  }
+
   _setupTable(container) {
     this.dataTable = new DataTable({
       columns: [
-        { key: 'code', label: 'Código', render: (item) => `<code data-allow-copy="true" class="allow-copy" title="Código habilitado para copia">${escapeHtml(item.code)}</code>` },
-        { key: 'name', label: 'Nombre Identificador' },
-        { key: 'typeLabel', label: 'Tipo de Equipo' },
-        { key: 'siteName', label: 'Comunidad / Sitio' },
-        { key: 'statusBadge', label: 'Estado', render: (item) => item.statusBadge },
-        { key: 'coordsDisplay', label: 'Coordenadas', render: (item) => `<span data-allow-copy="true" class="allow-copy" title="Coordenadas habilitadas para copia">${escapeHtml(item.coordsDisplay)}</span>` },
+        {
+          key: 'code',
+          label: 'Código',
+          render: (item) => `<code data-allow-copy="true" data-copy-value="${escapeHtml(item.code)}" class="allow-copy source-code-badge" title="Código habilitado para copia: ${escapeHtml(item.code)}">${this._formatCodeMaxChars(item.code, 15)}</code>`
+        },
+        {
+          key: 'name',
+          label: 'Nombre Identificador',
+          render: (item) => this._formatCellLines(item.name, 24, true)
+        },
+        {
+          key: 'typeLabel',
+          label: 'Tipo de Equipo',
+          render: (item) => this._formatCellLines(item.typeLabel, 22, false)
+        },
+        {
+          key: 'siteName',
+          label: 'Comunidad / Sitio',
+          render: (item) => this._formatCellLines(item.siteName, 24, false)
+        },
+        {
+          key: 'statusBadge',
+          label: 'Estado',
+          render: (item) => `<div style="white-space: nowrap;">${item.statusBadge}</div>`
+        },
+        {
+          key: 'coordsDisplay',
+          label: 'Coordenadas',
+          render: (item) => this._formatCoordsCell(item.coordsDisplay)
+        },
         {
           key: 'actions',
           label: 'Acciones',
@@ -226,9 +312,10 @@ export class PluviometersView {
   async openFormModal(id = null) {
     const isEdit = Boolean(id);
     const current = isEdit ? await PluviometersService.getById(id) : null;
+    let assignedCode = isEdit && current && current.code ? current.code : '';
 
     const siteOptions = [
-      { value: '', label: '— Seleccionar comunidad (opcional) —' },
+      { value: '', label: '— Seleccione una comunidad para generar el código —' },
       ...this.sites.map(s => ({ value: s.id, label: `${s.name} (${s.municipality})` }))
     ];
 
@@ -238,15 +325,28 @@ export class PluviometersView {
     const contentHtml = `
       <form id="form-pluviometer">
         <div class="form-grid-2">
-          ${renderTextField({
-            id: 'pluv-code',
-            label: 'Código del Pluviómetro',
-            value: current ? current.code : '',
-            placeholder: 'Ej: PLUV-CARMEN-01',
+          ${renderSelectField({
+            id: 'pluv-site',
+            label: 'Comunidad o Sitio Asociado',
+            value: current ? (current.siteId || '') : '',
+            options: siteOptions,
             required: true,
-            help: 'Identificador único rotulado en el equipo'
+            help: 'Seleccione la comunidad para asignar el código del equipo'
           })}
 
+          ${renderTextField({
+            id: 'pluv-code',
+            label: 'Código del Pluviómetro (Automático)',
+            value: assignedCode,
+            placeholder: 'Seleccione primero la comunidad (Ej: PLUV-CARM-01)',
+            required: true,
+            readonly: true,
+            disabled: true,
+            help: 'Generado automáticamente según la comunidad (no editable)'
+          })}
+        </div>
+
+        <div class="form-grid-2">
           ${renderTextField({
             id: 'pluv-name',
             label: 'Nombre Identificador',
@@ -254,22 +354,13 @@ export class PluviometersView {
             placeholder: 'Ej: Pluviómetro Finca La Esperanza',
             required: true
           })}
-        </div>
 
-        <div class="form-grid-2">
           ${renderSelectField({
             id: 'pluv-type',
             label: 'Tipo de Equipo',
             value: current ? current.equipmentType : 'manual',
             options: typeOptions,
             required: true
-          })}
-
-          ${renderSelectField({
-            id: 'pluv-site',
-            label: 'Comunidad o Sitio Asociado',
-            value: current ? (current.siteId || '') : '',
-            options: siteOptions
           })}
         </div>
 
@@ -329,19 +420,49 @@ export class PluviometersView {
 
         const cancelBtn = dialog.querySelector('#modal-btn-cancel');
         const saveBtn = dialog.querySelector('#modal-btn-save');
+        const siteSelectEl = dialog.querySelector('#pluv-site');
+        const codeInputEl = dialog.querySelector('#pluv-code');
+
+        // Al seleccionar o cambiar la comunidad, generar automáticamente el código único siguiendo el modelo PLUV-CARM-01
+        if (siteSelectEl && codeInputEl && !isEdit) {
+          siteSelectEl.addEventListener('change', async () => {
+            const selectedSiteId = siteSelectEl.value;
+            if (!selectedSiteId) {
+              assignedCode = '';
+              codeInputEl.value = '';
+              return;
+            }
+            const siteObj = this.sites.find(s => s.id === selectedSiteId) || selectedSiteId;
+            assignedCode = await PluviometersService.generateUniqueCodeForSite(siteObj);
+            codeInputEl.value = assignedCode;
+          });
+        }
 
         cancelBtn.addEventListener('click', () => modal.close());
 
         saveBtn.addEventListener('click', async () => {
+          const selectedSiteId = dialog.querySelector('#pluv-site')?.value || '';
+          if (!selectedSiteId) {
+            notification.warning('Comunidad obligatoria', 'Seleccione primero la comunidad o sitio asociado para generar automáticamente el código del pluviómetro.');
+            siteSelectEl?.focus();
+            return;
+          }
+
+          if (!assignedCode) {
+            const siteObj = this.sites.find(s => s.id === selectedSiteId) || selectedSiteId;
+            assignedCode = await PluviometersService.generateUniqueCodeForSite(siteObj);
+            if (codeInputEl) codeInputEl.value = assignedCode;
+          }
+
           saveBtn.disabled = true;
           saveBtn.textContent = 'Guardando...';
 
           try {
             const formData = {
-              code: dialog.querySelector('#pluv-code').value,
+              code: assignedCode,
               name: dialog.querySelector('#pluv-name').value,
               equipmentType: dialog.querySelector('#pluv-type').value,
-              siteId: dialog.querySelector('#pluv-site').value || null,
+              siteId: selectedSiteId,
               status: dialog.querySelector('#pluv-status').value,
               installDate: dialog.querySelector('#pluv-install-date').value || null,
               responsible: dialog.querySelector('#pluv-responsible').value,
@@ -381,6 +502,22 @@ export class PluviometersView {
     ]);
 
     const totalMm = measurements.reduce((acc, m) => acc + (Number(m.precipitationMm) || 0), 0);
+    const coordsText = formatCoordinates(pluv.latitude, pluv.longitude);
+    const hasValidCoords = pluv.latitude !== null && pluv.latitude !== undefined && pluv.latitude !== '' &&
+      pluv.longitude !== null && pluv.longitude !== undefined && pluv.longitude !== '';
+
+    const copyIconSvg = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    `;
+
+    const checkIconSvg = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-green-700, #15803d)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    `;
 
     modal.open({
       title: `Ficha Técnica: ${escapeHtml(pluv.name)} (${escapeHtml(pluv.code)})`,
@@ -403,8 +540,25 @@ export class PluviometersView {
           </div>
 
           <div class="coords-picker-box mb-4">
-            <strong>Georreferenciación (copia habilitada):</strong>
-            <p data-allow-copy="true" class="allow-copy">${formatCoordinates(pluv.latitude, pluv.longitude)}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+              <strong>Georreferenciación (Coordenadas):</strong>
+              ${hasValidCoords ? `
+                <button type="button" class="btn btn-outline btn-sm" id="btn-locate-pluv-map" title="Ver ubicación exacta del pluviómetro en el mapa territorial">
+                  <span>Ubicar en el Mapa</span>
+                </button>
+              ` : ''}
+            </div>
+            <div style="position: relative; background-color: var(--color-white); border: 1px solid var(--color-neutral-300); border-radius: var(--radius-md); padding: 10px 44px 10px 12px;">
+              <p id="pluv-detail-coords-text" data-allow-copy="true" class="allow-copy" style="margin: 0; font-family: var(--font-family-mono, monospace); font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-800);">${escapeHtml(coordsText)}</p>
+              ${hasValidCoords ? `
+                <button type="button" id="btn-copy-pluv-coords"
+                  title="Copiar coordenadas al portapapeles"
+                  aria-label="Copiar coordenadas"
+                  style="position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--color-neutral-200); background-color: var(--color-neutral-50); color: var(--color-neutral-700); cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease;">
+                  ${copyIconSvg}
+                </button>
+              ` : ''}
+            </div>
           </div>
 
           <div class="card mb-4">
@@ -461,6 +615,49 @@ export class PluviometersView {
           addRainBtn.addEventListener('click', () => {
             modal.close();
             this.router.navigate('rainfall', { openModal: true, pluviometerId: id });
+          });
+        }
+
+        const copyCoordsBtn = dialog.querySelector('#btn-copy-pluv-coords');
+        if (copyCoordsBtn) {
+          copyCoordsBtn.addEventListener('click', async () => {
+            try {
+              if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                await navigator.clipboard.writeText(coordsText);
+              } else {
+                const tempTa = document.createElement('textarea');
+                tempTa.value = coordsText;
+                tempTa.style.position = 'fixed';
+                tempTa.style.opacity = '0';
+                document.body.appendChild(tempTa);
+                tempTa.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTa);
+              }
+              copyCoordsBtn.innerHTML = checkIconSvg;
+              notification.success('Coordenadas copiadas', `Se copió "${coordsText}" al portapapeles.`);
+              setTimeout(() => {
+                if (copyCoordsBtn.isConnected) {
+                  copyCoordsBtn.innerHTML = copyIconSvg;
+                }
+              }, 1600);
+            } catch {
+              notification.error('Error al copiar', 'No se pudo copiar automáticamente las coordenadas.');
+            }
+          });
+        }
+
+        const locateMapBtn = dialog.querySelector('#btn-locate-pluv-map');
+        if (locateMapBtn) {
+          locateMapBtn.addEventListener('click', () => {
+            modal.close();
+            this.router.navigate('map', {
+              focusType: 'pluviometer',
+              focusId: pluv.id,
+              lat: pluv.latitude,
+              lon: pluv.longitude,
+              zoom: 16
+            });
           });
         }
       }

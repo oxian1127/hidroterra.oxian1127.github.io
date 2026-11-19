@@ -3,6 +3,7 @@
  */
 
 import { renderEmptyState } from './empty-state.js';
+import { ThemeService } from '../../core/theme.js';
 
 export class DataTable {
   /**
@@ -16,7 +17,7 @@ export class DataTable {
   constructor(options = {}) {
     this.columns = options.columns || [];
     this.items = options.items || [];
-    this.pageSize = options.pageSize || 15;
+    this.pageSize = options.pageSize || ThemeService.getDefaultPageSize() || 15;
     this.currentPage = 1;
     this.emptyTitle = options.emptyTitle || 'No se encontraron registros';
     this.emptyDescription = options.emptyDescription || 'No hay elementos para mostrar con los filtros aplicados.';

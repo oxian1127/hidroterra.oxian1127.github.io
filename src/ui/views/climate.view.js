@@ -105,12 +105,12 @@ export class ClimateView {
     container.innerHTML = `
       <div class="climate-view">
         <!-- Encabezado de la Vista -->
-        <div class="view-header d-flex justify-between align-center mb-4">
+        <div class="view-header mb-4" style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-3);">
           <div>
             <h2>HIDROTERRA CLIMA — Monitoreo Meteorológico y Análisis Agroclimático</h2>
-            <p class="text-muted">Condiciones meteorológicas actuales, pronóstico horario y de 7 días, evapotranspiración FAO ET₀ y balance de lluvias en Montes de María.</p>
+            <p class="text-muted" style="margin-bottom: 0;">Condiciones meteorológicas actuales, pronóstico horario y de 7 días, evapotranspiración FAO ET₀ y balance de lluvias en Montes de María.</p>
           </div>
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2" style="flex-wrap: wrap;">
             <button type="button" class="btn btn-primary" id="btn-climate-refresh">
               <span>Actualizar Pronóstico</span>
             </button>

@@ -28,7 +28,7 @@ import { events } from '../../core/events.js';
 export class SettingsView {
   constructor(router) {
     this.router = router;
-    this.activeTab = 'sync'; // 'sync' | 'profile' | 'organization' | 'security' | 'users' | 'local'
+    this.activeTab = 'local'; // 'local' | 'profile' | 'organization' | 'security' | 'users' | 'sync'
     this.filterOrgIdForUsers = 'all';
     this.syncAnalysis = null;
     this.syncPreview = null;
@@ -111,10 +111,10 @@ export class SettingsView {
           </div>
         </div>
 
-        <!-- Pestañas de Configuración Reorganizadas (Sección 11 + Sección 9 Prioritaria) -->
+        <!-- Pestañas de Configuración Reorganizadas: Apariencia y Respaldos Locales primero, Sincronizar Datos con Firebase último -->
         <div class="nav-tabs mb-4" role="tablist" style="display: flex; flex-wrap: wrap; gap: 6px;">
-          <button type="button" class="nav-tab-btn ${this.activeTab === 'sync' ? 'active' : ''}" data-tab="sync">
-            <span>Sincronizar Datos con Firebase</span>
+          <button type="button" class="nav-tab-btn ${this.activeTab === 'local' ? 'active' : ''}" data-tab="local">
+            <span>Apariencia y Respaldos Locales</span>
           </button>
           <button type="button" class="nav-tab-btn ${this.activeTab === 'profile' ? 'active' : ''}" data-tab="profile">
             <span>Mi Perfil</span>
@@ -132,8 +132,8 @@ export class SettingsView {
               <span>Gestión de Usuarios</span>
             </button>
           ` : ''}
-          <button type="button" class="nav-tab-btn ${this.activeTab === 'local' ? 'active' : ''}" data-tab="local">
-            <span>Apariencia y Respaldos Locales</span>
+          <button type="button" class="nav-tab-btn ${this.activeTab === 'sync' ? 'active' : ''}" data-tab="sync">
+            <span>Sincronizar Datos con Firebase</span>
           </button>
         </div>
 
@@ -1437,20 +1437,22 @@ export class SettingsView {
   }
 
   // =========================================================================
-  // 6. PESTAÑA: APARIENCIA Y RESPALDOS LOCALES (Funcionalidades existentes conservadas)
+  // 6. PESTAÑA: APARIENCIA Y RESPALDOS LOCALES (Funcionalidades existentes conservadas + 7 nuevas opciones)
   // =========================================================================
   async _renderLocalAndAppearanceTab(outlet, rootContainer) {
     const storageInfo = await BackupService.getStorageInfo();
     const isDark = ThemeService.isDark();
     const isOverflowTooltipOn = ThemeService.isOverflowTooltipEnabled();
+    const isBadgeMarqueeOn = ThemeService.isBadgeMarqueeEnabled();
+    const prefs = ThemeService.getPreferences();
 
     outlet.innerHTML = `
-      <!-- Configuración de Apariencia y Visualización -->
-      <div class="card mb-4" id="card-theme-settings">
+      <!-- Configuración de Apariencia, Accesibilidad y Visualización -->
+      <div class="card mb-4" id="card-theme-settings" data-no-truncate="true">
         <div class="card-header">
           <div>
-            <h3 class="card-title">Apariencia y Opciones de Visualización</h3>
-            <p class="card-subtitle">Personalice el tema de la interfaz y el comportamiento de lectura de textos recortados</p>
+            <h3 class="card-title">Apariencia, Accesibilidad en Campo y Visualización</h3>
+            <p class="card-subtitle">Personalice el tema, tamaño de letra, densidad de tablas y lectura de textos recortados</p>
           </div>
           <span class="badge ${isDark ? 'badge-info' : 'badge-success'}" id="settings-theme-badge">
             ${isDark ? 'Modo Oscuro' : 'Modo Claro'}
@@ -1492,11 +1494,154 @@ export class SettingsView {
               </span>
             </div>
           </div>
+
+          <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-neutral-200); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-4);">
+            <div style="max-width: 600px;">
+              <h4 style="margin-bottom: 6px; font-size: var(--font-size-base);">Desplazamiento Horizontal en Etiquetas con Texto Largo</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); margin: 0; line-height: 1.5;">
+                Cuando el texto de una etiqueta o insignia de estado no cabe completo en su espacio, desplaza el texto suavemente de forma horizontal sobre la etiqueta para poder leerlo completo sin ensanchar las columnas.
+              </p>
+            </div>
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="settings-badge-marquee-toggle">
+                <input type="checkbox" id="settings-badge-marquee-toggle" ${isBadgeMarqueeOn ? 'checked' : ''} />
+                <span class="theme-slider"><span class="theme-slider-thumb"></span></span>
+              </label>
+              <span id="settings-badge-marquee-status" style="font-weight: 600; font-size: var(--font-size-sm);">
+                ${isBadgeMarqueeOn ? 'Activado' : 'Desactivado'}
+              </span>
+            </div>
+          </div>
+
+          <!-- 1 y 2. Tamaño de Fuente, Densidad de Tablas y Cantidad de Registros por Página -->
+          <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-neutral-200);">
+            <h4 style="margin-bottom: 10px; font-size: var(--font-size-base);">Accesibilidad Visual y Paginación de Tablas</h4>
+            <div class="form-grid-2" style="gap: var(--spacing-3);">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-font-scale">Tamaño de Fuente (Lectura en Campo)</label>
+                <select id="pref-font-scale" class="form-control" data-no-truncate="true">
+                  <option value="normal" ${prefs.fontSizeScale === 'normal' ? 'selected' : ''}>Normal (100% — Estándar)</option>
+                  <option value="large" ${prefs.fontSizeScale === 'large' ? 'selected' : ''}>Grande (108% — Mayor legibilidad)</option>
+                  <option value="xlarge" ${prefs.fontSizeScale === 'xlarge' ? 'selected' : ''}>Extra Grande (116% — Exteriores / Sol)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-table-density">Densidad de Filas en Tablas</label>
+                <select id="pref-table-density" class="form-control" data-no-truncate="true">
+                  <option value="compact" ${prefs.tableDensity === 'compact' ? 'selected' : ''}>Compacta (Más registros visibles)</option>
+                  <option value="comfortable" ${prefs.tableDensity === 'comfortable' ? 'selected' : ''}>Cómoda (Predeterminada)</option>
+                  <option value="spacious" ${prefs.tableDensity === 'spacious' ? 'selected' : ''}>Amplia (Fácil pulsación táctil)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-default-pagesize">Registros por Página Predeterminados</label>
+                <select id="pref-default-pagesize" class="form-control" data-no-truncate="true">
+                  <option value="10" ${Number(prefs.defaultPageSize) === 10 ? 'selected' : ''}>10 registros por página</option>
+                  <option value="15" ${Number(prefs.defaultPageSize) === 15 ? 'selected' : ''}>15 registros por página (Predeterminado)</option>
+                  <option value="25" ${Number(prefs.defaultPageSize) === 25 ? 'selected' : ''}>25 registros por página</option>
+                  <option value="50" ${Number(prefs.defaultPageSize) === 50 ? 'selected' : ''}>50 registros por página</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-session-timeout">Cierre Automático de Sesión por Inactividad</label>
+                <select id="pref-session-timeout" class="form-control" data-no-truncate="true">
+                  <option value="0" ${Number(prefs.sessionTimeoutMinutes) === 0 ? 'selected' : ''}>Nunca (Mantener sesión abierta)</option>
+                  <option value="15" ${Number(prefs.sessionTimeoutMinutes) === 15 ? 'selected' : ''}>Tras 15 minutos de inactividad</option>
+                  <option value="30" ${Number(prefs.sessionTimeoutMinutes) === 30 ? 'selected' : ''}>Tras 30 minutos de inactividad</option>
+                  <option value="60" ${Number(prefs.sessionTimeoutMinutes) === 60 ? 'selected' : ''}>Tras 1 hora de inactividad</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Copias de Seguridad JSON Locales -->
-      <div class="card mb-4">
+      <!-- 3, 5 y 6. Unidades de Medida, Umbrales de Alertas Hídricas/Climáticas y Modo Ahorro de Datos -->
+      <div class="card mb-4" data-no-truncate="true">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Unidades de Medida, Umbrales de Alertas y Sincronización</h3>
+            <p class="card-subtitle">Configure unidades territoriales, criterios preventivos de alerta y uso de datos móviles</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid-2 mb-4" style="gap: var(--spacing-3);">
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" for="pref-volume-unit">Unidad de Volumen de Agua Preferida</label>
+              <select id="pref-volume-unit" class="form-control" data-no-truncate="true">
+                <option value="L" ${prefs.volumeUnit === 'L' ? 'selected' : ''}>Litros (L)</option>
+                <option value="m3" ${prefs.volumeUnit === 'm3' ? 'selected' : ''}>Metros cúbicos (m³)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" for="pref-coord-format">Formato de Visualización de Coordenadas</label>
+              <select id="pref-coord-format" class="form-control" data-no-truncate="true">
+                <option value="decimal" ${prefs.coordinateFormat === 'decimal' ? 'selected' : ''}>Grados Decimales (9.71800° N, 75.12180° W)</option>
+                <option value="dms" ${prefs.coordinateFormat === 'dms' ? 'selected' : ''}>Grados, Minutos y Segundos — GMS (9° 43' 04.8" N)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="padding-top: var(--spacing-3); border-top: 1px solid var(--color-neutral-200); margin-bottom: var(--spacing-4);">
+            <h4 style="margin-bottom: 8px; font-size: var(--font-size-base);">Umbrales Personalizados de Alertas Hídricas y Climáticas</h4>
+            <p style="font-size: var(--font-size-xs); color: var(--color-neutral-600); margin-bottom: 12px;">
+              Defina a partir de qué porcentaje de capacidad disponible se clasifica una fuente en alerta preventiva o crítica y cuántos días sin lluvia disparan alerta de periodo seco.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-3);">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-water-low-pct">Umbral de Alerta Preventiva / Nivel Bajo (%)</label>
+                <select id="pref-water-low-pct" class="form-control" data-no-truncate="true">
+                  <option value="50" ${Number(prefs.waterLowAlertPct) === 50 ? 'selected' : ''}>50% de capacidad disponible</option>
+                  <option value="45" ${Number(prefs.waterLowAlertPct) === 45 ? 'selected' : ''}>45% de capacidad disponible</option>
+                  <option value="40" ${Number(prefs.waterLowAlertPct) === 40 ? 'selected' : ''}>40% de capacidad (Predeterminado)</option>
+                  <option value="35" ${Number(prefs.waterLowAlertPct) === 35 ? 'selected' : ''}>35% de capacidad disponible</option>
+                  <option value="30" ${Number(prefs.waterLowAlertPct) === 30 ? 'selected' : ''}>30% de capacidad disponible</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-water-crit-pct">Umbral de Alerta Crítica de Agua (%)</label>
+                <select id="pref-water-crit-pct" class="form-control" data-no-truncate="true">
+                  <option value="25" ${Number(prefs.waterCriticalAlertPct) === 25 ? 'selected' : ''}>25% de capacidad disponible</option>
+                  <option value="20" ${Number(prefs.waterCriticalAlertPct) === 20 ? 'selected' : ''}>20% de capacidad (Predeterminado)</option>
+                  <option value="15" ${Number(prefs.waterCriticalAlertPct) === 15 ? 'selected' : ''}>15% de capacidad disponible</option>
+                  <option value="10" ${Number(prefs.waterCriticalAlertPct) === 10 ? 'selected' : ''}>10% de capacidad disponible</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="pref-drought-days">Alerta Climática por Días Secos Seguidos</label>
+                <select id="pref-drought-days" class="form-control" data-no-truncate="true">
+                  <option value="3" ${Number(prefs.droughtDryDaysAlert) === 3 ? 'selected' : ''}>3 días secos consecutivos</option>
+                  <option value="4" ${Number(prefs.droughtDryDaysAlert) === 4 ? 'selected' : ''}>4 días secos consecutivos (Predeterminado)</option>
+                  <option value="5" ${Number(prefs.droughtDryDaysAlert) === 5 ? 'selected' : ''}>5 días secos consecutivos</option>
+                  <option value="6" ${Number(prefs.droughtDryDaysAlert) === 6 ? 'selected' : ''}>6 días secos consecutivos</option>
+                  <option value="7" ${Number(prefs.droughtDryDaysAlert) === 7 ? 'selected' : ''}>7 días secos consecutivos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding-top: var(--spacing-3); border-top: 1px solid var(--color-neutral-200); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-4);">
+            <div style="max-width: 600px;">
+              <h4 style="margin-bottom: 6px; font-size: var(--font-size-base);">Sincronización Automática con Firebase (Desactivar para Ahorro de Datos)</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); margin: 0; line-height: 1.5;">
+                Cuando está activada, cada registro nuevo o editado se envía automáticamente a Firestore. Si la desactiva (<strong>Modo Ahorro de Datos en Campo</strong>), los registros se guardan solo en IndexedDB local y podrá sincronizarlos por lote cuando tenga Wi-Fi.
+              </p>
+            </div>
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="pref-auto-firestore-sync">
+                <input type="checkbox" id="pref-auto-firestore-sync" ${prefs.autoFirestoreSync ? 'checked' : ''} />
+                <span class="theme-slider"><span class="theme-slider-thumb"></span></span>
+              </label>
+              <span id="pref-auto-firestore-sync-status" style="font-weight: 600; font-size: var(--font-size-sm);">
+                ${prefs.autoFirestoreSync ? 'Tiempo Real Activado' : 'Modo Ahorro de Datos'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Copias de Seguridad JSON Locales y Recordatorios Automáticos -->
+      <div class="card mb-4" data-no-truncate="true">
         <div class="card-header">
           <div>
             <h3 class="card-title">Copias de Seguridad Locales (Archivos JSON) y Datos de Muestra</h3>
@@ -1504,6 +1649,30 @@ export class SettingsView {
           </div>
         </div>
         <div class="card-body">
+          <div class="form-grid-2 mb-4" style="gap: var(--spacing-3); padding-bottom: var(--spacing-3); border-bottom: 1px solid var(--color-neutral-200);">
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" for="pref-backup-warning-days">Frecuencia de Recordatorio de Respaldo Local</label>
+              <select id="pref-backup-warning-days" class="form-control" data-no-truncate="true">
+                <option value="3" ${Number(prefs.backupWarningDays) === 3 ? 'selected' : ''}>Recordar cada 3 días</option>
+                <option value="7" ${Number(prefs.backupWarningDays) === 7 ? 'selected' : ''}>Recordar cada 7 días (Predeterminado)</option>
+                <option value="15" ${Number(prefs.backupWarningDays) === 15 ? 'selected' : ''}>Recordar cada 15 días</option>
+                <option value="30" ${Number(prefs.backupWarningDays) === 30 ? 'selected' : ''}>Recordar cada 30 días</option>
+              </select>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+              <label class="form-label" style="margin-bottom: 6px;">Auto-Descarga de Respaldo al Cerrar Sesión</label>
+              <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="pref-auto-backup-logout">
+                  <input type="checkbox" id="pref-auto-backup-logout" ${prefs.autoBackupOnLogout ? 'checked' : ''} />
+                  <span class="theme-slider"><span class="theme-slider-thumb"></span></span>
+                </label>
+                <span id="pref-auto-backup-logout-status" style="font-weight: 600; font-size: var(--font-size-xs);">
+                  ${prefs.autoBackupOnLogout ? 'Descargar JSON al cerrar sesión' : 'Solo descarga manual'}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div class="form-grid-2 mb-4">
             <div style="background-color: var(--color-neutral-50); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); padding: var(--spacing-4);">
               <h4>Exportar Respaldo Completo JSON</h4>
@@ -1568,6 +1737,8 @@ export class SettingsView {
     const themeToggle = outlet.querySelector('#settings-theme-toggle');
     const overflowTooltipToggle = outlet.querySelector('#settings-overflow-tooltip-toggle');
     const overflowTooltipStatus = outlet.querySelector('#settings-overflow-tooltip-status');
+    const badgeMarqueeToggle = outlet.querySelector('#settings-badge-marquee-toggle');
+    const badgeMarqueeStatus = outlet.querySelector('#settings-badge-marquee-status');
 
     themeToggle?.addEventListener('change', () => {
       ThemeService.setTheme(themeToggle.checked ? 'dark' : 'light');
@@ -1583,6 +1754,70 @@ export class SettingsView {
         enabled
           ? 'Se mostrará el texto completo al pasar el cursor o presionar elementos con (...).'
           : 'No se mostrarán globos emergentes en textos recortados.'
+      );
+    });
+
+    badgeMarqueeToggle?.addEventListener('change', () => {
+      const enabled = ThemeService.setBadgeMarqueeEnabled(badgeMarqueeToggle.checked);
+      if (badgeMarqueeStatus) {
+        badgeMarqueeStatus.textContent = enabled ? 'Activado' : 'Desactivado';
+      }
+      notification.info(
+        enabled ? 'Desplazamiento en etiquetas activado' : 'Desplazamiento en etiquetas desactivado',
+        enabled
+          ? 'Los textos largos dentro de las etiquetas se desplazarán horizontalmente para su lectura completa.'
+          : 'Las etiquetas con texto largo se mantendrán estáticas.'
+      );
+    });
+
+    // Eventos de las 7 nuevas opciones de configuración
+    const bindSelectPref = (selector, key, labelMsg) => {
+      const el = outlet.querySelector(selector);
+      if (!el) return;
+      el.addEventListener('change', () => {
+        ThemeService.updatePreferences({ [key]: el.value });
+        notification.info('Preferencia actualizada', labelMsg);
+      });
+    };
+
+    bindSelectPref('#pref-font-scale', 'fontSizeScale', 'El tamaño de fuente de la interfaz ha sido actualizado.');
+    bindSelectPref('#pref-table-density', 'tableDensity', 'La densidad de filas de las tablas ha sido actualizada.');
+    bindSelectPref('#pref-default-pagesize', 'defaultPageSize', 'La cantidad predeterminada de registros por página ha sido guardada.');
+    bindSelectPref('#pref-session-timeout', 'sessionTimeoutMinutes', 'El tiempo de cierre automático de sesión por inactividad fue actualizado.');
+    bindSelectPref('#pref-volume-unit', 'volumeUnit', 'La unidad de medida de volumen preferida ha sido actualizada.');
+    bindSelectPref('#pref-coord-format', 'coordinateFormat', 'El formato de coordenadas geográficas ha sido actualizado.');
+    bindSelectPref('#pref-water-low-pct', 'waterLowAlertPct', 'El umbral de alerta preventiva de disponibilidad hídrica fue actualizado.');
+    bindSelectPref('#pref-water-crit-pct', 'waterCriticalAlertPct', 'El umbral de alerta crítica de disponibilidad hídrica fue actualizado.');
+    bindSelectPref('#pref-drought-days', 'droughtDryDaysAlert', 'El umbral de días secos consecutivos para alerta climática fue actualizado.');
+    bindSelectPref('#pref-backup-warning-days', 'backupWarningDays', 'La frecuencia de recordatorio de copia de seguridad local fue actualizada.');
+
+    const autoSyncToggle = outlet.querySelector('#pref-auto-firestore-sync');
+    const autoSyncStatus = outlet.querySelector('#pref-auto-firestore-sync-status');
+    autoSyncToggle?.addEventListener('change', () => {
+      const updated = ThemeService.updatePreferences({ autoFirestoreSync: autoSyncToggle.checked });
+      if (autoSyncStatus) {
+        autoSyncStatus.textContent = updated.autoFirestoreSync ? 'Tiempo Real Activado' : 'Modo Ahorro de Datos';
+      }
+      notification.info(
+        updated.autoFirestoreSync ? 'Sincronización en tiempo real activada' : 'Modo Ahorro de Datos activado',
+        updated.autoFirestoreSync
+          ? 'Los cambios se sincronizarán automáticamente con Firebase Firestore.'
+          : 'Los registros se guardarán primero en IndexedDB local para ahorrar datos móviles.'
+      );
+    });
+
+    const autoBackupLogoutToggle = outlet.querySelector('#pref-auto-backup-logout');
+    const autoBackupLogoutStatus = outlet.querySelector('#pref-auto-backup-logout-status');
+    autoBackupLogoutToggle?.addEventListener('change', () => {
+      const updated = ThemeService.updatePreferences({ autoBackupOnLogout: autoBackupLogoutToggle.checked });
+      if (autoBackupLogoutStatus) {
+        autoBackupLogoutStatus.textContent = updated.autoBackupOnLogout ? 'Descargar JSON al cerrar sesión' : 'Solo descarga manual';
+      }
+      notification.info(
+        updated.autoBackupOnLogout ? 'Respaldo automático al salir activado' : 'Respaldo automático al salir desactivado',
+        updated.autoBackupOnLogout
+          ? 'Se descargará automáticamente un respaldo JSON antes de cerrar su sesión.'
+          : 'Los respaldos JSON se descargarán únicamente cuando lo solicite.'
       );
     });
 

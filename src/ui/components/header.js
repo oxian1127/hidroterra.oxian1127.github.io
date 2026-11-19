@@ -12,6 +12,7 @@ import { events } from '../../core/events.js';
 import { sessionService, ROLE_LABELS } from '../../core/session.service.js';
 import { notificationCenter } from '../../core/notification-center.js';
 import { firebaseService } from '../../../js/firebase-service.js';
+import { JsonExportService } from '../../infrastructure/files/json-export.js';
 import { notification } from './notification.js';
 
 export class Header {
@@ -428,6 +429,14 @@ export class Header {
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {
         this._closeQuickMenu();
+        if (ThemeService.getPreferences().autoBackupOnLogout) {
+          try {
+            const res = await JsonExportService.exportFullBackup();
+            notification.success('Respaldo automático al salir', `Se descargó "${res.filename}" antes de cerrar sesión.`);
+          } catch {
+            // Continuar con el cierre de sesión aunque falle la descarga
+          }
+        }
         await sessionService.logout();
         notification.info('Sesión cerrada', 'Ha cerrado su sesión en HIDROTERRA.');
         window.location.hash = '#login';

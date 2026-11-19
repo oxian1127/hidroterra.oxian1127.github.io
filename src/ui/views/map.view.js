@@ -39,7 +39,8 @@ export class MapView {
     };
   }
 
-  async render(container) {
+  async render(container, params = {}) {
+    this.initialFocusParams = params || {};
     const [waterSources, pluviometers, sites, parcels] = await Promise.all([
       WaterAvailabilityService.getSourcesAvailabilityOverview({ onlyActive: true }),
       PluviometersService.getAll(),
@@ -152,14 +153,22 @@ export class MapView {
       this.mapService.destroy();
     }
 
+    const p = this.initialFocusParams || {};
+    const hasSpecificTarget = (p.lat !== undefined && p.lat !== null && p.lat !== '' && p.lon !== undefined && p.lon !== null && p.lon !== '') || Boolean(p.focusId);
+
     this.mapService = new MapService('territorial-main-map', {
-      center: APP_CONFIG.geo.defaultCenter,
-      zoom: APP_CONFIG.geo.defaultZoom,
-      fitBounds: true
+      center: hasSpecificTarget && p.lat != null && p.lon != null ? [Number(p.lat), Number(p.lon)] : APP_CONFIG.geo.defaultCenter,
+      zoom: hasSpecificTarget ? (p.zoom || 16) : APP_CONFIG.geo.defaultZoom,
+      fitBounds: !hasSpecificTarget
     });
 
     this.mapService.init();
     this._refreshMarkers();
+
+    if (hasSpecificTarget) {
+      this.mapService.focusElement(p.focusType || 'pluviometer', p.focusId || null, p.lat, p.lon, p.zoom || 16);
+      this.initialFocusParams = {};
+    }
   }
 
   _refreshMarkers() {
