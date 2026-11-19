@@ -112,6 +112,27 @@ class FirebaseService {
   }
 
   /**
+   * Ejecuta una promesa de red con tiempo límite para evitar bloqueos en redes móviles lentas
+   */
+  _withTimeout(promise, timeoutMs = 3800) {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('Tiempo de espera agotado consultando Firestore (red móvil lenta)'));
+      }, timeoutMs);
+
+      Promise.resolve(promise)
+        .then((val) => {
+          clearTimeout(timer);
+          resolve(val);
+        })
+        .catch((err) => {
+          clearTimeout(timer);
+          reject(err);
+        });
+    });
+  }
+
+  /**
    * Comprueba la conexión real con Firestore
    */
   async checkConnection() {
@@ -128,7 +149,7 @@ class FirebaseService {
 
     try {
       const ref = sdk.doc(db, FIRESTORE_COLLECTIONS.app_settings, 'connection_probe');
-      await sdk.getDoc(ref);
+      await this._withTimeout(sdk.getDoc(ref), 3000);
       this._setStatus('connected');
       return { connected: true, status: 'connected' };
     } catch (err) {
@@ -147,7 +168,7 @@ class FirebaseService {
     if (available && db && sdk && (typeof navigator === 'undefined' || navigator.onLine)) {
       try {
         const docRef = sdk.doc(db, collectionName, String(docId));
-        const snap = await sdk.getDoc(docRef);
+        const snap = await this._withTimeout(sdk.getDoc(docRef), 3800);
         this._setStatus('connected');
         if (snap.exists()) {
           const data = { id: snap.id, ...snap.data() };
@@ -182,7 +203,7 @@ class FirebaseService {
           q = sdk.query(colRef, sdk.where(filters.field, '==', filters.value));
         }
 
-        const snap = await sdk.getDocs(q);
+        const snap = await this._withTimeout(sdk.getDocs(q), 4200);
         const results = [];
         snap.forEach(docSnap => {
           results.push({ id: docSnap.id, ...docSnap.data() });
@@ -219,30 +240,40 @@ class FirebaseService {
    * Crea o reemplaza (con merge opcional) un documento en Firestore y en el espejo local
    */
   async setDocument(collectionName, docId, data, merge = true) {
-    const cleanId = String(docId || data?.id || crypto.randomUUID());
-    const payload = this._sanitizeForFirestore({
-      ...data,
-      id: cleanId,
-      updatedAt: data?.updatedAt || nowIso()
-    });
+    const isSilent = collectionName === FIRESTORE_COLLECTIONS.audit_logs;
+    if (!isSilent) {
+      events.emit('app:busy', { busy: true, label: 'Guardando información en Firestore...' });
+    }
+    try {
+      const cleanId = String(docId || data?.id || crypto.randomUUID());
+      const payload = this._sanitizeForFirestore({
+        ...data,
+        id: cleanId,
+        updatedAt: data?.updatedAt || nowIso()
+      });
 
-    await this._upsertInLocalMirror(collectionName, cleanId, payload);
+      await this._upsertInLocalMirror(collectionName, cleanId, payload);
 
-    const { db, sdk, available } = await getFirebaseInstance();
-    if (available && db && sdk && (typeof navigator === 'undefined' || navigator.onLine)) {
-      try {
-        const docRef = sdk.doc(db, collectionName, cleanId);
-        await sdk.setDoc(docRef, payload, { merge });
-        this._setStatus('connected');
-        return { ...payload, _syncedToFirestore: true };
-      } catch (err) {
-        logger.error(`Error al escribir en Firestore (${collectionName}/${cleanId})`, err);
-        this._setStatus('error', err.message);
-        return { ...payload, _syncedToFirestore: false, _syncError: err.message };
+      const { db, sdk, available } = await getFirebaseInstance();
+      if (available && db && sdk && (typeof navigator === 'undefined' || navigator.onLine)) {
+        try {
+          const docRef = sdk.doc(db, collectionName, cleanId);
+          await this._withTimeout(sdk.setDoc(docRef, payload, { merge }), 4200);
+          this._setStatus('connected');
+          return { ...payload, _syncedToFirestore: true };
+        } catch (err) {
+          logger.error(`Error al escribir en Firestore (${collectionName}/${cleanId})`, err);
+          this._setStatus('error', err.message);
+          return { ...payload, _syncedToFirestore: false, _syncError: err.message };
+        }
+      } else {
+        this._setStatus('offline');
+        return { ...payload, _syncedToFirestore: false };
       }
-    } else {
-      this._setStatus('offline');
-      return { ...payload, _syncedToFirestore: false };
+    } finally {
+      if (!isSilent) {
+        events.emit('app:busy', { busy: false });
+      }
     }
   }
 
@@ -251,23 +282,28 @@ class FirebaseService {
    */
   async deleteDocument(collectionName, docId) {
     if (!docId) return false;
-    const cleanId = String(docId);
-    await this._deleteFromLocalMirror(collectionName, cleanId);
+    events.emit('app:busy', { busy: true, label: 'Eliminando registro en Firestore...' });
+    try {
+      const cleanId = String(docId);
+      await this._deleteFromLocalMirror(collectionName, cleanId);
 
-    const { db, sdk, available } = await getFirebaseInstance();
-    if (available && db && sdk && (typeof navigator === 'undefined' || navigator.onLine)) {
-      try {
-        const docRef = sdk.doc(db, collectionName, cleanId);
-        await sdk.deleteDoc(docRef);
-        this._setStatus('connected');
-        return true;
-      } catch (err) {
-        logger.error(`Error al eliminar en Firestore (${collectionName}/${cleanId})`, err);
-        this._setStatus('error', err.message);
-        return false;
+      const { db, sdk, available } = await getFirebaseInstance();
+      if (available && db && sdk && (typeof navigator === 'undefined' || navigator.onLine)) {
+        try {
+          const docRef = sdk.doc(db, collectionName, cleanId);
+          await this._withTimeout(sdk.deleteDoc(docRef), 4200);
+          this._setStatus('connected');
+          return true;
+        } catch (err) {
+          logger.error(`Error al eliminar en Firestore (${collectionName}/${cleanId})`, err);
+          this._setStatus('error', err.message);
+          return false;
+        }
       }
+      return true;
+    } finally {
+      events.emit('app:busy', { busy: false });
     }
-    return true;
   }
 
   /**
@@ -334,8 +370,8 @@ class FirebaseService {
   }
 
   /**
-   * Sincroniza los almacenes operativos desde Firestore hacia IndexedDB local
-   * para que todos los módulos existentes dispongan de los datos centralizados.
+   * Sincroniza los almacenes operativos desde Firestore hacia IndexedDB local en paralelo
+   * para que todos los módulos existentes dispongan de los datos centralizados sin bloquear el inicio de sesión.
    */
   async pullOperationalDataToIndexedDB(organizationId = null) {
     const { db, sdk, available } = await getFirebaseInstance();
@@ -345,7 +381,8 @@ class FirebaseService {
 
     const summary = {};
     try {
-      for (const [storeName, collectionName] of Object.entries(STORE_TO_FIRESTORE_COLLECTION)) {
+      const entries = Object.entries(STORE_TO_FIRESTORE_COLLECTION);
+      await Promise.all(entries.map(async ([storeName, collectionName]) => {
         const filters = organizationId ? { organizationId } : {};
         const remoteDocs = await this.getCollection(collectionName, filters);
         if (Array.isArray(remoteDocs) && remoteDocs.length > 0) {
@@ -355,8 +392,8 @@ class FirebaseService {
           }));
           await idb.putBatch(storeName, markedDocs);
         }
-        summary[storeName] = remoteDocs.length;
-      }
+        summary[storeName] = Array.isArray(remoteDocs) ? remoteDocs.length : 0;
+      }));
       this._setStatus('connected');
       return { synced: true, summary };
     } catch (err) {

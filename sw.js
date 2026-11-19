@@ -3,7 +3,7 @@
  * Garantiza autonomía y funcionamiento 100% offline tras la instalación inicial.
  */
 
-const CACHE_NAME = 'hidroterra-cache-v2.2.5';
+const CACHE_NAME = 'hidroterra-cache-v2.3.15';
 
 const PRECACHE_ASSETS = [
   './',
@@ -50,6 +50,7 @@ const PRECACHE_ASSETS = [
   './src/core/date-utils.js',
   './src/core/crypto-auth.js',
   './src/core/session.service.js',
+  './src/core/notification-center.js',
   './src/domain/models/WaterSource.js',
   './src/domain/models/WaterMeasurement.js',
   './src/domain/models/WaterAlert.js',
@@ -127,6 +128,7 @@ const PRECACHE_ASSETS = [
   './src/ui/views/directory.view.js',
   './src/ui/views/superadmin.view.js',
   './src/ui/views/audit.view.js',
+  './src/ui/views/notifications.view.js',
   './src/modules/climate/config/weatherConfig.js',
   './src/modules/climate/utils/weatherValidators.js',
   './src/modules/climate/utils/weatherFormatters.js',
